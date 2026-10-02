@@ -1,4 +1,4 @@
-import { user } from "@orcestra-desafios/db";
+import { profileGift, user } from "@orcestra-desafios/db";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -6,6 +6,39 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../index";
 
 export const userRouter = router({
+	deleteGift: protectedProcedure
+		.input(z.object({ giftId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const userId = ctx.session.user.id;
+			const userRole = ctx.session.user.role;
+
+			const gift = await ctx.db.query.profileGift.findFirst({
+				where: { id: input.giftId },
+			});
+
+			if (!gift) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Presente não encontrado",
+				});
+			}
+
+			const isRecipient = gift.recipientId === userId;
+			const isSender = gift.senderId === userId;
+			const isAdmin = userRole === "ADMIN";
+
+			if (!(isRecipient || isSender || isAdmin)) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: "Você não tem permissão para remover este presente",
+				});
+			}
+
+			await ctx.db.delete(profileGift).where(eq(profileGift.id, input.giftId));
+
+			return { success: true };
+		}),
+
 	ensureDevAdmin: publicProcedure.mutation(async ({ ctx }) => {
 		const adminEmail = "admin@orcestra.com";
 		const existing = await ctx.db.query.user.findFirst({
@@ -54,6 +87,81 @@ export const userRouter = router({
 		return { message: "Admin inicial verificado/criado", success: true };
 	}),
 
+	getProfile: protectedProcedure
+		.input(
+			z
+				.object({
+					userId: z.string().optional(),
+				})
+				.optional()
+		)
+		.query(async ({ ctx, input }) => {
+			const targetUserId = input?.userId || ctx.session.user.id;
+			const foundUser = await ctx.db.query.user.findFirst({
+				where: { id: targetUserId },
+			});
+
+			if (!foundUser) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Usuário não encontrado",
+				});
+			}
+
+			const badges = await ctx.db.query.userBadge.findMany({
+				where: { userId: targetUserId },
+				with: {
+					badge: true,
+				},
+			});
+
+			const gifts = await ctx.db.query.profileGift.findMany({
+				orderBy: { createdAt: "desc" },
+				where: { recipientId: targetUserId },
+				with: {
+					sender: {
+						columns: {
+							department: true,
+							gifUrl: true,
+							id: true,
+							image: true,
+							name: true,
+						},
+					},
+				},
+			});
+
+			// Calculate completed approved challenges
+			const pairs = await ctx.db.query.pair.findMany({
+				where: {
+					OR: [
+						{ member1Id: targetUserId },
+						{ member2Id: targetUserId },
+						{ member3Id: targetUserId },
+					],
+					status: "APPROVED",
+				},
+			});
+
+			let tracks: string[] = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+			if (foundUser.trackPreferences) {
+				try {
+					tracks = JSON.parse(foundUser.trackPreferences);
+				} catch {
+					tracks = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+				}
+			}
+
+			return {
+				...foundUser,
+				badges: badges.map((b) => b.badge),
+				completedChallenges: pairs.length,
+				gifts,
+				isOwner: ctx.session.user.id === targetUserId,
+				trackPreferencesList: tracks,
+			};
+		}),
+
 	listAssessors: protectedProcedure.query(async ({ ctx }) => {
 		const assessors = await ctx.db.query.user.findMany({
 			columns: {
@@ -68,6 +176,7 @@ export const userRouter = router({
 		});
 		return assessors;
 	}),
+
 	me: protectedProcedure.query(async ({ ctx }) => {
 		const userId = ctx.session.user.id;
 		const foundUser = await ctx.db.query.user.findFirst({
@@ -103,6 +212,44 @@ export const userRouter = router({
 			trackPreferencesList: tracks,
 		};
 	}),
+
+	sendGift: protectedProcedure
+		.input(
+			z.object({
+				mediaUrl: z.string().min(1, "URL da imagem ou GIF é obrigatória"),
+				message: z
+					.string()
+					.max(300, "Mensagem deve ter no máximo 300 caracteres")
+					.optional()
+					.nullable(),
+				recipientId: z.string().min(1, "Destinatário não especificado"),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const senderId = ctx.session.user.id;
+
+			const recipient = await ctx.db.query.user.findFirst({
+				where: { id: input.recipientId },
+			});
+
+			if (!recipient) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Destinatário não encontrado",
+				});
+			}
+
+			const id = crypto.randomUUID();
+			await ctx.db.insert(profileGift).values({
+				id,
+				mediaUrl: input.mediaUrl.trim(),
+				message: input.message?.trim() || null,
+				recipientId: input.recipientId,
+				senderId,
+			});
+
+			return { id, success: true };
+		}),
 
 	updateProfile: protectedProcedure
 		.input(

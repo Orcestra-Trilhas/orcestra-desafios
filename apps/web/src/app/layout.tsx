@@ -23,12 +23,12 @@ export const metadata: Metadata = {
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "default",
-		title: "Orcestra Desafios",
+		title: "orc//desafios",
 	},
 	description:
 		"Plataforma de desafios técnicos em duplas, suporte via WhatsApp e gamificação para a Empresa Júnior.",
 	manifest: "/manifest.webmanifest",
-	title: "Orcestra Desafios // EJ Gamificação",
+	title: "orc//desafios",
 };
 
 export const viewport: Viewport = {

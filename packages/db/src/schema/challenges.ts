@@ -113,8 +113,28 @@ export const adminLog = pgTable(
 	(table) => [index("admin_log_actorId_idx").on(table.actorId)]
 );
 
+export const profileGift = pgTable(
+	"profile_gift",
+	{
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		id: text("id").primaryKey(),
+		mediaUrl: text("media_url").notNull(),
+		message: text("message"),
+		recipientId: text("recipient_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		senderId: text("sender_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+	},
+	(table) => [
+		index("profile_gift_recipientId_idx").on(table.recipientId),
+		index("profile_gift_senderId_idx").on(table.senderId),
+	]
+);
+
 export const challengeRelations = defineRelationsPart(
-	{ adminLog, badge, challenge, pair, user, userBadge },
+	{ adminLog, badge, challenge, pair, profileGift, user, userBadge },
 	(r) => ({
 		adminLog: {
 			actor: r.one.user({
@@ -153,6 +173,16 @@ export const challengeRelations = defineRelationsPart(
 			}),
 			member3: r.one.user({
 				from: r.pair.member3Id,
+				to: r.user.id,
+			}),
+		},
+		profileGift: {
+			recipient: r.one.user({
+				from: r.profileGift.recipientId,
+				to: r.user.id,
+			}),
+			sender: r.one.user({
+				from: r.profileGift.senderId,
 				to: r.user.id,
 			}),
 		},

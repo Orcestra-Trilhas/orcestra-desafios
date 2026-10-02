@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 import {
 	BauhausSkeleton,
-	PopBadge,
 	PopPointsBadge,
 	PopStamp,
 	PopTrackBadge,
@@ -40,9 +39,6 @@ export default function Dashboard() {
 	const currentUser = userMe.data ?? session?.user;
 	const points =
 		userMe.data?.points ?? (session?.user as { points?: number })?.points ?? 0;
-	const department =
-		userMe.data?.department ??
-		(session?.user as { department?: string })?.department;
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:space-y-6 sm:px-4 sm:py-6">
@@ -53,12 +49,6 @@ export default function Dashboard() {
 
 				<div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-5">
 					<div className="space-y-1.5 sm:space-y-2">
-						<div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-							<PopBadge color="vermilion">SPRINT ATIVA</PopBadge>
-							{department ? (
-								<PopBadge color="yellow">{department}</PopBadge>
-							) : null}
-						</div>
 						<h1 className="font-black font-display text-xl uppercase tracking-tight sm:text-3xl">
 							OLÁ, {currentUser?.name?.split(" ")[0] ?? "MEMBRO"}
 						</h1>
@@ -87,7 +77,7 @@ export default function Dashboard() {
 				<div className="flex items-center gap-2">
 					<div className="h-3 w-3 rounded-full border-2 border-black bg-[#FF4A1C] dark:border-white" />
 					<h2 className="font-black font-display text-base uppercase tracking-tight sm:text-lg">
-						MEUS DESAFIOS ATIVOS // SPRINT
+						MEUS DESAFIOS ATIVOS {"//"} MISSÕES
 					</h2>
 				</div>
 				<span className="font-bold font-mono text-[10px] text-muted-foreground sm:text-xs">
@@ -179,20 +169,27 @@ export default function Dashboard() {
 
 										<div className="space-y-2.5 sm:space-y-3">
 											{partners.map((partner) => {
-												const zapMsg = `Olá ${partner.name}! Vamos alinhar nosso desafio "${ch.title}" da Orcestra?`;
+												const zapMsg = `Olá ${partner.name}! Vamos alinhar nosso desafio "${ch.title}" no orc//desafios?`;
 												return (
 													<div
 														className="flex items-center justify-between gap-2"
 														key={partner.id}
 													>
 														<div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-															<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#1E40AF] font-black text-white text-xs sm:h-8 sm:w-8 dark:border-white">
+															<Link
+																className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#1E40AF] font-black text-white text-xs transition hover:opacity-80 sm:h-8 sm:w-8 dark:border-white"
+																href={`/profile?id=${partner.id}`}
+																title={`Ver perfil de ${partner.name}`}
+															>
 																{partner.name.charAt(0)}
-															</div>
+															</Link>
 															<div className="flex min-w-0 flex-col">
-																<span className="truncate font-bold font-display text-xs uppercase">
+																<Link
+																	className="truncate font-bold font-display text-xs uppercase hover:text-[#FF4A1C] hover:underline"
+																	href={`/profile?id=${partner.id}`}
+																>
 																	{partner.name}
-																</span>
+																</Link>
 																<span className="font-mono text-[9px] text-muted-foreground sm:text-[10px]">
 																	{partner.department}
 																</span>
@@ -224,13 +221,20 @@ export default function Dashboard() {
 										{assessor ? (
 											<div className="flex items-center justify-between gap-2">
 												<div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-													<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#FACC15] font-black text-[#121212] text-xs sm:h-8 sm:w-8 dark:border-white">
+													<Link
+														className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#FACC15] font-black text-[#121212] text-xs transition hover:opacity-80 sm:h-8 sm:w-8 dark:border-white"
+														href={`/profile?id=${assessor.id}`}
+														title={`Ver perfil de ${assessor.name}`}
+													>
 														{assessor.name.charAt(0)}
-													</div>
+													</Link>
 													<div className="flex min-w-0 flex-col">
-														<span className="truncate font-bold font-display text-xs uppercase">
+														<Link
+															className="truncate font-bold font-display text-xs uppercase hover:text-[#FF4A1C] hover:underline"
+															href={`/profile?id=${assessor.id}`}
+														>
 															{assessor.name}
-														</span>
+														</Link>
 														<span className="font-mono text-[9px] text-muted-foreground sm:text-[10px]">
 															{assessor.department}
 														</span>
@@ -239,7 +243,7 @@ export default function Dashboard() {
 
 												<PopWhatsAppButton
 													label="DÚVIDAS"
-													message={`Oi ${assessor.name}! Sou da dupla do desafio "${ch.title}" da Orcestra e gostaríamos de tirar uma dúvida técnica.`}
+													message={`Oi ${assessor.name}! Sou da dupla do desafio "${ch.title}" no orc//desafios e gostaríamos de tirar uma dúvida técnica.`}
 													phone={assessor.whatsapp}
 												/>
 											</div>
@@ -307,7 +311,7 @@ export default function Dashboard() {
 						</h3>
 						<p className="mx-auto max-w-sm font-medium text-muted-foreground text-xs">
 							O sorteio das duplas ocorre após o fechamento das inscrições de
-							cada sprint.
+							cada missão.
 						</p>
 					</div>
 					<div className="flex flex-wrap items-center justify-center gap-3 pt-2">

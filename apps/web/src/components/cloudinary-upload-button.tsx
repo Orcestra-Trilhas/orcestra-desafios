@@ -69,7 +69,7 @@ export default function CloudinaryUploadButton({
 
 			const data = await res.json();
 			if (data.secure_url) {
-				toast.success("Upload realizado com sucesso no Cloudinary! ☁️");
+				toast.success("Upload realizado com sucesso no Cloudinary!");
 				onUploadSuccess(data.secure_url);
 			} else {
 				throw new Error("Resposta inválida do Cloudinary");

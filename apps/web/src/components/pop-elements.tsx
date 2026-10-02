@@ -2,23 +2,36 @@
 
 import type React from "react";
 
-export function PopLogo({ className = "h-8" }: { className?: string }) {
+export function PopLogo({
+	className = "h-8",
+	hideText = false,
+	hideTextOnMobile = false,
+}: {
+	className?: string;
+	hideText?: boolean;
+	hideTextOnMobile?: boolean;
+}) {
 	return (
 		<div className={`inline-flex items-center gap-2.5 ${className}`}>
 			{/* Bauhaus / Fauve geometric icon: circle + triangle + bar */}
-			<div className="relative flex h-8 w-8 items-center justify-center rounded-sm border-2 border-black bg-[#FF4A1C] shadow-hard-sm dark:border-[#2E3658] dark:bg-[#F04D30]">
+			<div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#FF4A1C] shadow-hard-sm dark:border-[#2E3658] dark:bg-[#F04D30]">
 				<div className="h-3.5 w-3.5 rounded-full border-2 border-black bg-[#FACC15] dark:border-[#2E3658] dark:bg-[#F59E0B]" />
 				<div className="absolute -top-1 -right-1 h-2.5 w-2.5 rotate-45 border-2 border-black bg-[#1E40AF] dark:border-[#2E3658] dark:bg-[#3B6FE8]" />
 			</div>
-			<div className="flex flex-col">
-				<span className="font-black font-display text-base text-foreground uppercase tracking-tight">
-					ORCESTRA<span className="text-[#FF4A1C] dark:text-[#F04D30]">//</span>
-					EJ
-				</span>
-				<span className="hidden font-bold text-[9px] text-muted-foreground uppercase tracking-widest sm:block">
-					Desafios & Sprints
-				</span>
-			</div>
+			{!hideText && (
+				<div
+					className={`${hideTextOnMobile ? "hidden sm:flex" : "flex"} flex-col`}
+				>
+					<span className="font-black font-display text-base text-foreground lowercase tracking-tight">
+						orc
+						<span className="text-[#FF4A1C] dark:text-[#F04D30]">{"//"}</span>
+						desafios
+					</span>
+					<span className="hidden font-bold text-[9px] text-muted-foreground uppercase tracking-widest sm:block">
+						Missões & Desafios
+					</span>
+				</div>
+			)}
 		</div>
 	);
 }

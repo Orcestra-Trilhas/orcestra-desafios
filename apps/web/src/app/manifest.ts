@@ -20,8 +20,8 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: "image/png",
 			},
 		],
-		name: "Orcestra Desafios | EJ Gamificação",
-		short_name: "Orcestra",
+		name: "orc//desafios",
+		short_name: "orc//desafios",
 		start_url: "/dashboard",
 		theme_color: "#4f46e5",
 	};

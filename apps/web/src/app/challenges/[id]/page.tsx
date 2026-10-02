@@ -199,7 +199,7 @@ export default function ChallengeDetailPage() {
 				</div>
 
 				<p className="font-mono text-[10px] text-muted-foreground uppercase sm:text-[11px]">
-					CADA ENTREGA SOMA PARA A PONTUAÇÃO COLETIVA DA EJ NA SPRINT.
+					CADA ENTREGA SOMA PARA A PONTUAÇÃO COLETIVA DA EJ NAS MISSÕES.
 				</p>
 			</div>
 
@@ -354,7 +354,7 @@ export default function ChallengeDetailPage() {
 									</div>
 								</div>
 								<p className="font-medium text-muted-foreground text-xs">
-									O assessor da sprint analisará a qualidade técnica, padrões de
+									O assessor do desafio analisará a qualidade técnica, padrões de
 									código e pontuação.
 								</p>
 

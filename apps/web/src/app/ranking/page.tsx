@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import {
 	BauhausSkeleton,
@@ -22,6 +23,39 @@ const TRACKS = [
 	{ id: "PROTOTIPACAO", label: "PROTÓTIPO" },
 	{ id: "DEVOPS", label: "DEVOPS" },
 ] as const;
+
+type LeaderboardItem = {
+	id?: string;
+	name?: string;
+	members?: Array<{ id: string; name: string }>;
+};
+
+function renderMemberLinks(item: LeaderboardItem, short = false) {
+	if ("members" in item && Array.isArray(item.members) && item.members.length > 0) {
+		return item.members.map((m, idx) => (
+			<span key={m.id || idx}>
+				<Link
+					className="hover:text-[#FF4A1C] hover:underline"
+					href={`/profile?id=${m.id}`}
+				>
+					{short ? m.name.split(" ")[0] : m.name}
+				</Link>
+				{idx < (item.members?.length ?? 0) - 1 ? " & " : ""}
+			</span>
+		));
+	}
+	if (item.id && item.name) {
+		return (
+			<Link
+				className="hover:text-[#FF4A1C] hover:underline"
+				href={`/profile?id=${item.id}`}
+			>
+				{short ? item.name.split(" ")[0] : item.name}
+			</Link>
+		);
+	}
+	return item.name || "MEMBRO";
+}
 
 export default function RankingPage() {
 	const [filterType, setFilterType] = useState<"ALL" | "DEPARTMENT" | "TRACK">(
@@ -61,20 +95,20 @@ export default function RankingPage() {
 					<PopBadge color="black">GAMIFICAÇÃO EJ</PopBadge>
 				</div>
 				<h1 className="mt-2 font-black font-display text-3xl uppercase tracking-tight sm:text-4xl">
-					RANKING // SPRINT
+					RANKING {"//"} MISSÕES
 				</h1>
 				<p className="font-medium text-muted-foreground text-xs">
 					Pontuação acumulada por duplas cooperativas e membros da EJ
 				</p>
 			</div>
 
-			{/* Collective Sprint Thermometer */}
+			{/* Collective Missions Thermometer */}
 			<div className="space-y-3 rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:p-5 dark:border-white">
 				<div className="flex items-center justify-between gap-2">
 					<div className="flex min-w-0 items-center gap-2">
 						<div className="h-3 w-3 shrink-0 rounded-full border-2 border-black bg-[#FF4A1C] dark:border-white" />
 						<span className="truncate font-black font-display text-xs uppercase tracking-wider">
-							TERMÔMETRO GERAL DA SPRINT
+							TERMÔMETRO GERAL DAS MISSÕES
 						</span>
 					</div>
 					<span className="shrink-0 font-black font-mono text-[11px] sm:text-xs">
@@ -97,7 +131,7 @@ export default function RankingPage() {
 					<span className="font-bold text-foreground">
 						{thermometer.percentage >= 100
 							? "[META ALCANÇADA]"
-							: "[SPRINT EM ANDAMENTO]"}
+							: "[MISSÕES EM ANDAMENTO]"}
 					</span>
 				</div>
 			</div>
@@ -246,11 +280,7 @@ export default function RankingPage() {
 									</div>
 									<div className="min-w-0 flex-1">
 										<span className="block truncate font-black font-display text-base uppercase">
-											{"members" in top3[0]
-												? top3[0].members
-														.map((m) => m.name.split(" ")[0])
-														.join(" & ")
-												: top3[0].name}
+											{renderMemberLinks(top3[0], true)}
 										</span>
 										<span className="font-bold font-mono text-[10px] uppercase opacity-80">
 											{"department" in top3[0] && top3[0].department
@@ -276,11 +306,7 @@ export default function RankingPage() {
 									</div>
 									<div className="min-w-0">
 										<span className="block truncate font-black font-display text-xs uppercase">
-											{"members" in top3[1]
-												? top3[1].members
-														.map((m) => m.name.split(" ")[0])
-														.join(" & ")
-												: top3[1].name}
+											{renderMemberLinks(top3[1], true)}
 										</span>
 									</div>
 								</div>
@@ -298,11 +324,7 @@ export default function RankingPage() {
 									</div>
 									<div className="min-w-0">
 										<span className="block truncate font-black font-display text-xs uppercase">
-											{"members" in top3[2]
-												? top3[2].members
-														.map((m) => m.name.split(" ")[0])
-														.join(" & ")
-												: top3[2].name}
+											{renderMemberLinks(top3[2], true)}
 										</span>
 									</div>
 								</div>
@@ -317,11 +339,7 @@ export default function RankingPage() {
 							<div className="flex flex-1 flex-col items-center">
 								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-secondary p-3 text-center shadow-hard-sm dark:border-white">
 									<span className="block truncate font-black font-display text-xs uppercase">
-										{"members" in top3[1]
-											? top3[1].members
-													.map((m) => m.name.split(" ")[0])
-													.join(" & ")
-											: top3[1].name}
+										{renderMemberLinks(top3[1], true)}
 									</span>
 									<span className="font-bold font-mono text-muted-foreground text-xs">
 										{"score" in top3[1] ? top3[1].score : top3[1].points} PTS
@@ -341,11 +359,7 @@ export default function RankingPage() {
 							<div className="flex flex-1 flex-col items-center">
 								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-[#FACC15] p-3.5 text-center text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#0B0E1E]">
 									<span className="block truncate font-black font-display text-sm uppercase">
-										{"members" in top3[0]
-											? top3[0].members
-													.map((m) => m.name.split(" ")[0])
-													.join(" & ")
-											: top3[0].name}
+										{renderMemberLinks(top3[0], true)}
 									</span>
 									<span className="font-black font-mono text-xs">
 										{"score" in top3[0] ? top3[0].score : top3[0].points} PTS
@@ -365,11 +379,7 @@ export default function RankingPage() {
 							<div className="flex flex-1 flex-col items-center">
 								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-secondary p-3 text-center shadow-hard-sm dark:border-white">
 									<span className="block truncate font-black font-display text-xs uppercase">
-										{"members" in top3[2]
-											? top3[2].members
-													.map((m) => m.name.split(" ")[0])
-													.join(" & ")
-											: top3[2].name}
+										{renderMemberLinks(top3[2], true)}
 									</span>
 									<span className="font-bold font-mono text-muted-foreground text-xs">
 										{"score" in top3[2] ? top3[2].score : top3[2].points} PTS
@@ -437,9 +447,7 @@ export default function RankingPage() {
 
 										<div className="flex min-w-0 flex-1 flex-col">
 											<span className="truncate font-black font-display text-xs uppercase sm:text-sm">
-												{"members" in item
-													? item.members.map((m) => m.name).join(" & ")
-													: item.name}
+												{renderMemberLinks(item, false)}
 											</span>
 											<span className="truncate font-mono text-[10px] text-muted-foreground uppercase">
 												{"department" in item && item.department

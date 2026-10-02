@@ -625,8 +625,8 @@ export default function AdminPage() {
 								>
 									<option value="FRONT">FRONTEND</option>
 									<option value="BACK">BACKEND</option>
-									<option value="PROTOTIPACAO">PROTOTIPAGEM</option>
-									<option value="DEVOPS">DEVOPS // INFRA</option>
+									<option value="PROTOTIPACAO">PROTÓTIPO</option>
+									<option value="DEVOPS">DEVOPS</option>
 								</select>
 							</div>
 

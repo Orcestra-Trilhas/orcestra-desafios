@@ -6,7 +6,7 @@ export default function Loader() {
 				<div className="m-1 h-3.5 w-3.5 rounded-full border-2 border-black bg-[#FACC15]" />
 			</div>
 			<span className="font-black font-display text-[10px] text-muted-foreground uppercase tracking-widest">
-				CARREGANDO // ORCESTRA
+				CARREGANDO {"//"} ORC{"//"}DESAFIOS
 			</span>
 		</div>
 	);

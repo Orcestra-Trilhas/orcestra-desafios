@@ -4,23 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { PopBadge, PopLogo } from "@/components/pop-elements";
+import { PopLogo } from "@/components/pop-elements";
 import { authClient } from "@/lib/auth-client";
 
 import Loader from "./loader";
 
-const DEPARTMENTS = [
-	{ id: "DIPROJ", label: "DIPROJ // Projetos & Desenvolvimento" },
-	{ id: "DIBIS", label: "DIBIS // Negócios & Comercial" },
-	{ id: "DICOM", label: "DICOM // Marketing & Comunicação" },
-	{ id: "TOPS", label: "TOPS // Gente, Gestão & Presidência" },
-] as const;
-
 const TRACKS = [
 	{ color: "vermilion" as const, id: "FRONT", label: "FRONTEND" },
 	{ color: "cobalt" as const, id: "BACK", label: "BACKEND" },
-	{ color: "green" as const, id: "PROTOTIPACAO", label: "PROTOTIPAGEM" },
-	{ color: "yellow" as const, id: "DEVOPS", label: "DEVOPS // INFRA" },
+	{ color: "green" as const, id: "PROTOTIPACAO", label: "PROTÓTIPO" },
+	{ color: "yellow" as const, id: "DEVOPS", label: "DEVOPS" },
 ] as const;
 
 export default function SignUpForm({
@@ -34,8 +27,6 @@ export default function SignUpForm({
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [whatsapp, setWhatsapp] = useState("");
-	const [department, setDepartment] = useState<string>("DIPROJ");
 	const [selectedTracks, setSelectedTracks] = useState<string[]>([
 		"FRONT",
 		"BACK",
@@ -68,13 +59,11 @@ export default function SignUpForm({
 		try {
 			await authClient.signUp.email(
 				{
-					// @ts-expect-error additionalFields defined on server
-					department,
 					email,
 					name,
 					password,
+					// @ts-expect-error additionalFields defined on server
 					trackPreferences: JSON.stringify(selectedTracks),
-					whatsapp: whatsapp ? whatsapp.replace(/\D/g, "") : null,
 				},
 				{
 					onError: (error) => {
@@ -104,16 +93,11 @@ export default function SignUpForm({
 				<div className="mb-3 flex justify-center">
 					<PopLogo className="h-10 scale-110" />
 				</div>
-				<div className="mt-2 flex items-center justify-center gap-2">
-					<PopBadge color="cobalt">NOVO MEMBRO</PopBadge>
-					<PopBadge color="yellow">ORCESTRA 2026</PopBadge>
-				</div>
 				<h1 className="mt-4 font-black font-display text-3xl uppercase tracking-tight">
-					CADASTRO // EJ
+					CADASTRO {"//"} EJ
 				</h1>
 				<p className="mt-1 font-medium text-muted-foreground text-xs">
-					Cadastre seus dados para o sorteio de duplas e participação nas
-					rodadas
+					Cadastre seus dados para acessar as missões e desafios da EJ
 				</p>
 			</div>
 
@@ -173,50 +157,9 @@ export default function SignUpForm({
 						/>
 					</div>
 
-					<div className="space-y-1.5">
-						<label
-							className="font-bold font-display text-xs uppercase tracking-wider"
-							htmlFor="whatsapp"
-						>
-							WhatsApp com DDD
-						</label>
-						<input
-							className="h-11 w-full rounded-md border-2 border-black bg-background px-3 font-medium text-sm transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
-							id="whatsapp"
-							onChange={(e) => setWhatsapp(e.target.value)}
-							placeholder="Ex: 5511999998888"
-							type="tel"
-							value={whatsapp}
-						/>
-						<p className="font-mono text-[10px] text-muted-foreground">
-							Código do país + DDD + número (ex: 5511999998888)
-						</p>
-					</div>
-
-					<div className="space-y-1.5">
-						<label
-							className="font-bold font-display text-xs uppercase tracking-wider"
-							htmlFor="department"
-						>
-							Diretoria na Orcestra
-						</label>
-						<select
-							className="h-11 w-full rounded-md border-2 border-black bg-background px-3 font-medium text-sm transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
-							id="department"
-							onChange={(e) => setDepartment(e.target.value)}
-							value={department}
-						>
-							{DEPARTMENTS.map((dept) => (
-								<option key={dept.id} value={dept.id}>
-									{dept.label}
-								</option>
-							))}
-						</select>
-					</div>
-
-					<div className="space-y-2 pt-2">
+					<div className="space-y-2 pt-1">
 						<label className="font-bold font-display text-xs uppercase tracking-wider">
-							Trilhas Técnicas de Interesse (Sorteio)
+							Áreas de Interesse (Sorteio)
 						</label>
 						<div className="grid grid-cols-2 gap-2">
 							{TRACKS.map((t) => {
@@ -253,7 +196,7 @@ export default function SignUpForm({
 
 				<div className="mt-5 text-center">
 					<button
-						className="font-bold font-display text-xs uppercase tracking-wider hover:underline"
+						className="font-bold font-display text-[11px] text-muted-foreground uppercase tracking-wider hover:text-foreground hover:underline"
 						onClick={onSwitchToSignIn}
 						type="button"
 					>
