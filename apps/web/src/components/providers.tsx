@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { queryClient } from "@/utils/trpc";
 
+import { PwaProvider } from "./pwa-provider";
 import { ThemeProvider } from "./theme-provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -17,7 +18,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 			enableSystem
 		>
 			<QueryClientProvider client={queryClient}>
-				{children}
+				<PwaProvider>{children}</PwaProvider>
 				<ReactQueryDevtools />
 			</QueryClientProvider>
 			<Toaster richColors />

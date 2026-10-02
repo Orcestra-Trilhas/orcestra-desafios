@@ -1,30 +1,103 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 	<head>
 		<meta charset="utf-8">
-		<meta content="width=device-width, initial-scale=1" name="viewport">
-		<title>You are offline</title>
+		<meta
+			content="width=device-width, initial-scale=1, viewport-fit=cover"
+			name="viewport"
+		>
+		<title>Sem Conexão // orc//desafios</title>
+		<link href="/favicon/favicon.svg" rel="icon" type="image/svg+xml">
 		<style>
-		:root {
-			font-family: system-ui, sans-serif;
-			color-scheme: light dark;
+		* {
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
 		}
 		body {
-			display: grid;
-			place-content: center;
-			min-height: 90vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
 			padding: 1.5rem;
+			font-family:
+				-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+				Arial, sans-serif;
+			color: #ffffff;
+			background-color: #121212;
 		}
-		a {
-			color: inherit;
+		.card {
+			width: 100%;
+			max-width: 440px;
+			padding: 2rem 1.5rem;
+			text-align: center;
+			background-color: #1e1e1e;
+			border: 2px solid #ffffff;
+			border-radius: 8px;
+			box-shadow: 4px 4px 0px 0px #ff4a1c;
+		}
+		.tag {
+			display: inline-block;
+			padding: 4px 8px;
+			margin-bottom: 1.25rem;
+			font-size: 11px;
+			font-weight: 900;
+			color: #ffffff;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			background-color: #ff4a1c;
+			border: 2px solid #000000;
+			border-radius: 4px;
+		}
+		h1 {
+			margin-bottom: 0.75rem;
+			font-size: 1.25rem;
+			font-weight: 900;
+			text-transform: uppercase;
+			letter-spacing: -0.02em;
+		}
+		p {
+			margin-bottom: 1.75rem;
+			font-size: 0.875rem;
+			line-height: 1.5;
+			color: rgba(255, 255, 255, 0.7);
+		}
+		.btn {
+			display: inline-block;
+			width: 100%;
+			padding: 0.75rem 1.25rem;
+			font-size: 0.8125rem;
+			font-weight: 900;
+			color: #ffffff;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			text-decoration: none;
+			cursor: pointer;
+			background-color: #ff4a1c;
+			border: 2px solid #000000;
+			border-radius: 6px;
+			box-shadow: 3px 3px 0px 0px #000000;
+			transition:
+				transform 0.1s ease,
+				box-shadow 0.1s ease;
+		}
+		.btn:active {
+			box-shadow: 1px 1px 0px 0px #000000;
+			transform: translate(2px, 2px);
 		}
 		</style>
 	</head>
 	<body>
-		<main>
-			<h1>You are offline</h1>
-			<p>Reconnect to the internet to load this page.</p>
-			<a href="/">Try again</a>
-		</main>
+		<div class="card">
+			<span class="tag">orc//desafios</span>
+			<h1>Sem Conexão</h1>
+			<p>
+				Você está desconectado da internet. Conecte-se a uma rede Wi-Fi ou dados
+				móveis para continuar sincronizando suas missões e desafios.
+			</p>
+			<button class="btn" onclick="window.location.reload()" type="button">
+				TENTAR NOVAMENTE
+			</button>
+		</div>
 	</body>
 </html>

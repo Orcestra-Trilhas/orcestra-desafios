@@ -15,11 +15,13 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 import { PopBadge } from "@/components/pop-elements";
+import { usePwa } from "@/components/pwa-provider";
 import { authClient } from "@/lib/auth-client";
 
 export default function UserMenu() {
 	const router = useRouter();
 	const { data: session, isPending } = authClient.useSession();
+	const { isStandalone, installApp } = usePwa();
 
 	const handleSignOut = useCallback(() => {
 		authClient.signOut({
@@ -46,6 +48,10 @@ export default function UserMenu() {
 	const handleNavigateAdmin = useCallback(() => {
 		router.push("/admin");
 	}, [router]);
+
+	const handleInstallApp = useCallback(() => {
+		installApp();
+	}, [installApp]);
 
 	if (isPending) {
 		return (
@@ -134,6 +140,18 @@ export default function UserMenu() {
 							PAINEL ADMIN
 						</DropdownMenuItem>
 					) : null}
+
+					{isStandalone ? null : (
+						<>
+							<DropdownMenuSeparator className="my-1.5 bg-black/20 dark:bg-white/20" />
+							<DropdownMenuItem
+								className="cursor-pointer rounded-sm px-2.5 py-2 font-black font-display text-[#FF4A1C] text-xs uppercase tracking-wider transition hover:bg-[#FF4A1C] hover:text-white dark:hover:bg-[#FF4A1C] dark:hover:text-white"
+								onClick={handleInstallApp}
+							>
+								INSTALAR APLICATIVO
+							</DropdownMenuItem>
+						</>
+					)}
 
 					<DropdownMenuSeparator className="my-1.5 bg-black/20 dark:bg-white/20" />
 

@@ -1,5 +1,5 @@
 // Bump this version when changing offline.html so installed apps refresh it.
-const CACHE_NAME = "bts-pwa-offline-v1";
+const CACHE_NAME = "orc-desafios-offline-v2";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
@@ -17,7 +17,10 @@ self.addEventListener("activate", (event) => {
 			await Promise.all(
 				keys
 					.filter(
-						(key) => key.startsWith("bts-pwa-offline-") && key !== CACHE_NAME
+						(key) =>
+							(key.startsWith("orc-desafios-offline-") ||
+								key.startsWith("bts-pwa-offline-")) &&
+							key !== CACHE_NAME
 					)
 					.map((key) => caches.delete(key))
 			);

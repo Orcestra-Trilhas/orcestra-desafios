@@ -31,7 +31,11 @@ type LeaderboardItem = {
 };
 
 function renderMemberLinks(item: LeaderboardItem, short = false) {
-	if ("members" in item && Array.isArray(item.members) && item.members.length > 0) {
+	if (
+		"members" in item &&
+		Array.isArray(item.members) &&
+		item.members.length > 0
+	) {
 		return item.members.map((m, idx) => (
 			<span key={m.id || idx}>
 				<Link

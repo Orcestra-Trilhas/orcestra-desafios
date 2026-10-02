@@ -10,6 +10,7 @@ import {
 	PopTrackBadge,
 	PopWhatsAppButton,
 } from "@/components/pop-elements";
+import { PwaInstallBanner } from "@/components/pwa-install-banner";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
@@ -42,6 +43,9 @@ export default function Dashboard() {
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:space-y-6 sm:px-4 sm:py-6">
+			{/* PWA Install Banner */}
+			<PwaInstallBanner />
+
 			{/* Bauhaus / Fauvist Poster Banner */}
 			<div className="relative overflow-hidden rounded-lg border-2 border-black bg-[#121212] p-4 text-white shadow-hard sm:p-6 dark:border-white dark:bg-[#131738]">
 				{/* Color geometric accent strip */}

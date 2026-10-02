@@ -146,7 +146,8 @@ function ProfileContent() {
 		if (profile && isOwner) {
 			setName(profile.name || "");
 			setDepartment(
-				(profile.department as "DIPROJ" | "DIBIS" | "DICOM" | "TOPS") || "DIPROJ"
+				(profile.department as "DIPROJ" | "DIBIS" | "DICOM" | "TOPS") ||
+					"DIPROJ"
 			);
 			setWhatsapp(profile.whatsapp || "");
 			setGifUrl(profile.gifUrl || "");
@@ -450,7 +451,11 @@ function ProfileContent() {
 							>
 								Escolha Rápida de GIF Reação:
 							</label>
-							<div aria-labelledby="preset-label" className="flex flex-wrap gap-1.5" id="preset-buttons">
+							<div
+								aria-labelledby="preset-label"
+								className="flex flex-wrap gap-1.5"
+								id="preset-buttons"
+							>
 								{GIF_PRESETS.map((preset) => (
 									<button
 										className={`btn-tactile rounded border-2 px-2 py-1 font-black font-display text-[10px] uppercase transition ${
@@ -549,14 +554,10 @@ function ProfileContent() {
 							</button>
 							<button
 								className="btn-tactile rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 dark:border-white"
-								disabled={
-									sendGiftMutation.isPending || !giftMediaUrl.trim()
-								}
+								disabled={sendGiftMutation.isPending || !giftMediaUrl.trim()}
 								type="submit"
 							>
-								{sendGiftMutation.isPending
-									? "ENVIANDO..."
-									: "ENVIAR PRESENTE"}
+								{sendGiftMutation.isPending ? "ENVIANDO..." : "ENVIAR PRESENTE"}
 							</button>
 						</div>
 					</form>
@@ -619,7 +620,7 @@ function ProfileContent() {
 									</div>
 
 									{/* Media view */}
-									<div className="relative my-1 flex min-h-[140px] max-h-56 items-center justify-center overflow-hidden rounded-md border-2 border-black bg-black/5 dark:border-white dark:bg-black/20">
+									<div className="relative my-1 flex max-h-56 min-h-[140px] items-center justify-center overflow-hidden rounded-md border-2 border-black bg-black/5 dark:border-white dark:bg-black/20">
 										<img
 											alt="Presente"
 											className="max-h-56 w-full object-contain"
@@ -691,7 +692,7 @@ function ProfileContent() {
 							? tracks.includes(t.id)
 							: (profile.trackPreferencesList || []).includes(t.id);
 
-						if (!isOwner && !isEnabled) {
+						if (!(isOwner || isEnabled)) {
 							return null;
 						}
 
