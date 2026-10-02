@@ -1,0 +1,263 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@source "../../../apps/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	/* Bauhaus Light Mode */
+	--background: #faf8f5;
+	--foreground: #121212;
+	--card: #ffffff;
+	--card-foreground: #121212;
+	--popover: #ffffff;
+	--popover-foreground: #121212;
+	--primary: #121212;
+	--primary-foreground: #faf8f5;
+	--secondary: #f3efea;
+	--secondary-foreground: #121212;
+	--muted: #efece6;
+	--muted-foreground: #5a5854;
+	--accent: #ff4a1c;
+	--accent-foreground: #ffffff;
+	--destructive: #dc2626;
+	--border: #121212;
+	--input: #121212;
+	--ring: #ff4a1c;
+	--chart-1: #ff4a1c;
+	--chart-2: #1e40af;
+	--chart-3: #facc15;
+	--chart-4: #15803d;
+	--chart-5: #121212;
+	--radius: 0.375rem;
+	--sidebar: #faf8f5;
+	--sidebar-foreground: #121212;
+	--sidebar-primary: #ff4a1c;
+	--sidebar-primary-foreground: #ffffff;
+	--sidebar-accent: #f3efea;
+	--sidebar-accent-foreground: #121212;
+	--sidebar-border: #121212;
+	--sidebar-ring: #ff4a1c;
+	--baugasm-vermilion: #ff4a1c;
+	--baugasm-cobalt: #1e40af;
+	--baugasm-yellow: #facc15;
+	--baugasm-green: #15803d;
+	--baugasm-cream: #faf8f5;
+	--baugasm-black: #121212;
+}
+
+.dark {
+	/* Fauvism Night Canvas (Matisse / Derain expressive palette - velvety & comfortable) */
+	--background: #0b0e1e; /* Deep Velvet Indigo-Violet Night */
+	--foreground: #ede8dd; /* Warm Ivory Parchment */
+	--card: #141731; /* Parisian Night Velour */
+	--card-foreground: #ede8dd;
+	--popover: #141731;
+	--popover-foreground: #ede8dd;
+	--primary: #f04d30; /* Warm Matisse Vermilion */
+	--primary-foreground: #ffffff;
+	--secondary: #1c2142; /* Midnight Cobalt Slate */
+	--secondary-foreground: #ede8dd;
+	--muted: #171b36;
+	--muted-foreground: #8c96bf; /* Soft Lavender Slate */
+	--accent: #f04d30;
+	--accent-foreground: #ffffff;
+	--destructive: #f43f5e; /* Vivid Rose Crimson */
+	--border: #2e3658; /* Comfortable slate/indigo ink border */
+	--input: #2e3658;
+	--ring: #f04d30;
+
+	/* Fauvist Chromatic Saturation (Warm gouache pigments) */
+	--chart-1: #f04d30; /* Matisse Vermilion */
+	--chart-2: #3b6fe8; /* Velvet Ultramarine */
+	--chart-3: #f59e0b; /* Golden Cadmium Yellow */
+	--chart-4: #10b981; /* Fauve Jade / Emerald */
+	--chart-5: #c026d3; /* Warm Magenta */
+
+	--sidebar: #141731;
+	--sidebar-foreground: #ede8dd;
+	--sidebar-primary: #f04d30;
+	--sidebar-primary-foreground: #ffffff;
+	--sidebar-accent: #1c2142;
+	--sidebar-accent-foreground: #ede8dd;
+	--sidebar-border: #2e3658;
+	--sidebar-ring: #f04d30;
+
+	--baugasm-vermilion: #f04d30;
+	--baugasm-cobalt: #3b6fe8;
+	--baugasm-yellow: #f59e0b;
+	--baugasm-green: #10b981;
+	--baugasm-cream: #ede8dd;
+	--baugasm-black: #0b0e1e;
+}
+
+@theme inline {
+	--font-sans: var(--font-sans), sans-serif;
+	--font-display: var(--font-display), sans-serif;
+	--color-baugasm-vermilion: var(--baugasm-vermilion);
+	--color-baugasm-cobalt: var(--baugasm-cobalt);
+	--color-baugasm-yellow: var(--baugasm-yellow);
+	--color-baugasm-green: var(--baugasm-green);
+	--color-baugasm-cream: var(--baugasm-cream);
+	--color-baugasm-black: var(--baugasm-black);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar: var(--sidebar);
+	--color-chart-5: var(--chart-5);
+	--color-chart-4: var(--chart-4);
+	--color-chart-3: var(--chart-3);
+	--color-chart-2: var(--chart-2);
+	--color-chart-1: var(--chart-1);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+	--color-foreground: var(--foreground);
+	--color-background: var(--background);
+	--radius-sm: calc(var(--radius) - 2px);
+	--radius-md: var(--radius);
+	--radius-lg: calc(var(--radius) + 2px);
+	--radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer utilities {
+	/* Bauhaus & Fauvism Hard Shadows */
+	.shadow-hard {
+		box-shadow: 4px 4px 0px #121212;
+	}
+	:is(.dark *) .shadow-hard {
+		box-shadow: 4px 4px 0px #050711; /* Clean deep shadow */
+	}
+	.shadow-hard-sm {
+		box-shadow: 2px 2px 0px #121212;
+	}
+	:is(.dark *) .shadow-hard-sm {
+		box-shadow: 2px 2px 0px #050711;
+	}
+	.shadow-hard-lg {
+		box-shadow: 6px 6px 0px #121212;
+	}
+	:is(.dark *) .shadow-hard-lg {
+		box-shadow: 6px 6px 0px #050711;
+	}
+	.shadow-hard-vermilion {
+		box-shadow: 3px 3px 0px #ff4a1c;
+	}
+	:is(.dark *) .shadow-hard-vermilion {
+		box-shadow: 3px 3px 0px #f04d30;
+	}
+	.shadow-hard-cobalt {
+		box-shadow: 3px 3px 0px #1e40af;
+	}
+	:is(.dark *) .shadow-hard-cobalt {
+		box-shadow: 3px 3px 0px #3b6fe8;
+	}
+	.shadow-hard-yellow {
+		box-shadow: 3px 3px 0px #facc15;
+	}
+	:is(.dark *) .shadow-hard-yellow {
+		box-shadow: 3px 3px 0px #f59e0b;
+	}
+	.shadow-hard-green {
+		box-shadow: 3px 3px 0px #15803d;
+	}
+	:is(.dark *) .shadow-hard-green {
+		box-shadow: 3px 3px 0px #10b981;
+	}
+
+	/* Fauvist Soft Ink Borders in Dark Mode (Gentle on the eyes, elegant contrast) */
+	:is(.dark *) .dark\:border-white {
+		border-color: rgba(237, 232, 221, 0.28) !important;
+	}
+	:is(.dark *) .border-black {
+		border-color: #2e3658;
+	}
+	:is(.dark *) .border-black\/10,
+	:is(.dark *) .border-black\/20,
+	:is(.dark *) .border-black\/30 {
+		border-color: rgba(46, 54, 88, 0.45);
+	}
+	:is(.dark *) .dark\:border-white\/10,
+	:is(.dark *) .dark\:border-white\/20,
+	:is(.dark *) .dark\:border-white\/30 {
+		border-color: rgba(237, 232, 221, 0.12) !important;
+	}
+
+	/* Automatic translation of primary palettes in Fauvism Dark Mode (Warm gouache pigments) */
+	:is(.dark *) .bg-\[\#FF4A1C\] {
+		background-color: #f04d30;
+	}
+	:is(.dark *) .bg-\[\#1E40AF\] {
+		background-color: #3b6fe8;
+	}
+	:is(.dark *) .bg-\[\#FACC15\] {
+		background-color: #f59e0b;
+	}
+	:is(.dark *) .bg-\[\#15803D\] {
+		background-color: #10b981;
+	}
+	:is(.dark *) .text-\[\#FF4A1C\] {
+		color: #f04d30;
+	}
+	:is(.dark *) .text-\[\#1E40AF\] {
+		color: #3b6fe8;
+	}
+	:is(.dark *) .text-\[\#FACC15\] {
+		color: #f59e0b;
+	}
+	:is(.dark *) .text-\[\#15803D\] {
+		color: #10b981;
+	}
+	:is(.dark *) .hover\:bg-\[\#E03A10\]:hover {
+		background-color: #d93b1f;
+	}
+	:is(.dark *) .hover\:text-\[\#FF4A1C\]:hover {
+		color: #f04d30;
+	}
+
+	.btn-tactile {
+		transition:
+			transform 0.1s cubic-bezier(0.16, 1, 0.3, 1),
+			box-shadow 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+	.btn-tactile:active {
+		box-shadow: 2px 2px 0px currentColor;
+		transform: translate(2px, 2px);
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply font-sans bg-background text-foreground;
+	}
+	h1,
+	h2,
+	h3,
+	h4,
+	.font-display {
+		font-family: var(--font-display, "Syne", sans-serif);
+		letter-spacing: -0.02em;
+	}
+}

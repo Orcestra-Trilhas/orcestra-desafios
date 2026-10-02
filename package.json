@@ -1,0 +1,53 @@
+{
+  "name": "orcestra-desafios",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "auth:generate": "cd apps/web && npm run auth:generate",
+    "build": "npm run build --workspaces --if-present",
+    "check": "ultracite check",
+    "check-types": "npm run check-types --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace @orcestra-desafios/db --",
+    "db:migrate": "npm run db:migrate --workspace @orcestra-desafios/db --",
+    "db:push": "npm run db:push --workspace @orcestra-desafios/db --",
+    "db:studio": "npm run db:studio --workspace @orcestra-desafios/db --",
+    "deploy": "npx --yes vercel deploy",
+    "deploy:check": "npx --yes vercel deploy --dry",
+    "deploy:prod": "npx --yes vercel deploy --prod",
+    "deploy:setup": "npx --yes vercel link",
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:vercel": "npx --yes vercel dev -L",
+    "dev:web": "npm run dev --workspace web --",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
+    "env:preview": "tsx scripts/sync-vercel-env.ts preview",
+    "env:production": "tsx scripts/sync-vercel-env.ts production",
+    "fix": "ultracite fix",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/"
+  },
+  "overrides": {
+    "@next/env": "npm:@varlock/nextjs-integration@1.2.2"
+  },
+  "dependencies": {
+    "@neon/config": "^1.8.3",
+    "@neon/env": "^1.4.8",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "@orcestra-desafios/config": "*",
+    "@types/node": "^26.4.1",
+    "tsx": "^4.23.13",
+    "typescript": "^6.0.3",
+    "ultracite": "7.11.0",
+    "varlock": "1.18.0"
+  },
+  "packageManager": "npm@12.1.0",
+  "allowScripts": {
+    "esbuild": true,
+    "sharp": true
+  }
+}

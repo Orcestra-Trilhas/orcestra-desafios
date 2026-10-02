@@ -1,0 +1,23 @@
+{
+  "name": "@orcestra-desafios/api",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orcestra-desafios/auth": "*",
+    "@orcestra-desafios/db": "*",
+    "@trpc/client": "^11.18.0",
+    "@trpc/server": "^11.18.0",
+    "cloudinary": "^2.11.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@orcestra-desafios/config": "*",
+    "typescript": "^6.0.3"
+  }
+}
