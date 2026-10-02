@@ -67,7 +67,19 @@ export const challengeRouter = router({
 				});
 			}
 
-			const userId = ctx.session.user.id;
+			const sessionUser = ctx.session.user as { id: string; role?: string };
+			const userId = sessionUser.id;
+			let isAdmin = sessionUser.role === "ADMIN";
+
+			if (!isAdmin) {
+				const dbUser = await ctx.db.query.user.findFirst({
+					where: { id: userId },
+				});
+				if (dbUser?.role === "ADMIN") {
+					isAdmin = true;
+				}
+			}
+
 			const myPair = ch.pairs.find(
 				(p) =>
 					p.member1Id === userId ||
@@ -83,10 +95,65 @@ export const challengeRouter = router({
 				(p) => p.status === "APPROVED"
 			).length;
 
+			const isDeadlinePassed = new Date(ch.deadline).getTime() < Date.now();
+			const myPairSubmitted =
+				myPair?.status === "SUBMITTED" || myPair?.status === "APPROVED";
+			const canViewAllSolutions =
+				isAdmin || myPairSubmitted || isDeadlinePassed;
+
+			const submissions = ch.pairs
+				.filter((p) => p.status === "SUBMITTED" || p.status === "APPROVED")
+				.map((p) => {
+					const isMyOwnPair = p.id === myPair?.id;
+					const isUnlocked = canViewAllSolutions || isMyOwnPair;
+
+					return {
+						currentStep: p.currentStep,
+						feedback: isUnlocked ? p.feedback : null,
+						id: p.id,
+						isMyOwnPair,
+						isSpoilerLocked: !isUnlocked,
+						member1: p.member1
+							? {
+									department: p.member1.department,
+									gifUrl: p.member1.gifUrl,
+									id: p.member1.id,
+									name: p.member1.name,
+							  }
+							: null,
+						member2: p.member2
+							? {
+									department: p.member2.department,
+									gifUrl: p.member2.gifUrl,
+									id: p.member2.id,
+									name: p.member2.name,
+							  }
+							: null,
+						member3: p.member3
+							? {
+									department: p.member3.department,
+									gifUrl: p.member3.gifUrl,
+									id: p.member3.id,
+									name: p.member3.name,
+							  }
+							: null,
+						prUrl: isUnlocked ? p.prUrl : null,
+						repoUrl: isUnlocked ? p.repoUrl : null,
+						reviewedAt: p.reviewedAt,
+						status: p.status,
+						submissionNotes: isUnlocked ? p.submissionNotes : null,
+						submissionType: p.submissionType,
+						updatedAt: p.updatedAt,
+					};
+				});
+
 			return {
 				...ch,
 				approvedPairs,
+				canViewAllSolutions,
+				isDeadlinePassed,
 				myPair: myPair ?? null,
+				submissions,
 				submittedPairs,
 				totalPairs,
 			};

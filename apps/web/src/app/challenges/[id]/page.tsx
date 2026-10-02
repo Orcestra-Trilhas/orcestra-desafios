@@ -1,9 +1,10 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ExternalLink, GitPullRequest, Lock, Unlock } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import CloudinaryUploadButton from "@/components/cloudinary-upload-button";
 import {
@@ -14,6 +15,63 @@ import {
 	PopTrackBadge,
 } from "@/components/pop-elements";
 import { trpc } from "@/utils/trpc";
+
+function renderSubmissionNotes(notes: string) {
+	const imgRegex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g;
+	const parts: React.ReactNode[] = [];
+	let lastIndex = 0;
+	let match = imgRegex.exec(notes);
+
+	while (match !== null) {
+		const [fullMatch, altText, imgUrl] = match;
+		const textBefore = notes.slice(lastIndex, match.index);
+		if (textBefore.trim()) {
+			parts.push(
+				<p
+					className="whitespace-pre-wrap leading-relaxed"
+					key={`text-${lastIndex}`}
+				>
+					{textBefore.trim()}
+				</p>
+			);
+		}
+		parts.push(
+			<div
+				className="my-2 overflow-hidden rounded-md border-2 border-black bg-black/5 dark:border-white dark:bg-black/20"
+				key={`img-${match.index}`}
+			>
+				<img
+					alt={altText || "Evidência da Solução"}
+					className="max-h-72 w-full object-contain"
+					height={288}
+					loading="lazy"
+					src={imgUrl}
+					width={400}
+				/>
+			</div>
+		);
+		lastIndex = match.index + fullMatch.length;
+		match = imgRegex.exec(notes);
+	}
+
+	const remainingText = notes.slice(lastIndex);
+	if (remainingText.trim()) {
+		parts.push(
+			<p
+				className="whitespace-pre-wrap leading-relaxed"
+				key={`text-${lastIndex}`}
+			>
+				{remainingText.trim()}
+			</p>
+		);
+	}
+
+	return parts.length > 0 ? (
+		parts
+	) : (
+		<p className="whitespace-pre-wrap">{notes}</p>
+	);
+}
 
 export default function ChallengeDetailPage() {
 	const params = useParams();
@@ -103,6 +161,13 @@ export default function ChallengeDetailPage() {
 		}
 		advanceStepMutation.mutate({ pairId: myPair.id });
 	};
+
+	const handleOpenSubmit = useCallback(() => {
+		if (myPair && currentStep === 1) {
+			advanceStepMutation.mutate({ pairId: myPair.id });
+		}
+		setIsSubmitModalOpen(true);
+	}, [advanceStepMutation, currentStep, myPair]);
 
 	const handleSubmitSolution = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -354,8 +419,8 @@ export default function ChallengeDetailPage() {
 									</div>
 								</div>
 								<p className="font-medium text-muted-foreground text-xs">
-									O assessor do desafio analisará a qualidade técnica, padrões de
-									código e pontuação.
+									O assessor do desafio analisará a qualidade técnica, padrões
+									de código e pontuação.
 								</p>
 
 								{myPair.feedback && (
@@ -375,6 +440,211 @@ export default function ChallengeDetailPage() {
 					<div className="rounded-md border-2 border-black border-dashed bg-secondary/40 p-6 text-center dark:border-white">
 						<p className="font-black font-display text-muted-foreground text-xs uppercase">
 							Você ainda não foi alocado em uma dupla para este desafio.
+						</p>
+					</div>
+				)}
+			</div>
+
+			{/* Community Solutions & Anti-Spoiler Section */}
+			<div className="space-y-4 rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:space-y-5 sm:p-6 dark:border-white">
+				<div className="flex flex-col justify-between gap-2 border-black/10 border-b-2 pb-3 sm:flex-row sm:items-center dark:border-white/10">
+					<div className="space-y-1">
+						<div className="flex items-center gap-2">
+							<div className="flex h-6 w-6 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] text-white dark:border-white">
+								{ch.canViewAllSolutions ? (
+									<Unlock className="h-3.5 w-3.5" />
+								) : (
+									<Lock className="h-3.5 w-3.5" />
+								)}
+							</div>
+							<h3 className="font-black font-display text-xs uppercase tracking-wider sm:text-sm">
+								SOLUÇÕES {"//"} ENTREGAS DAS DUPLAS
+							</h3>
+						</div>
+						<p className="font-medium text-muted-foreground text-xs">
+							{ch.canViewAllSolutions
+								? "Você já enviou sua solução ou o prazo expirou. Todas as submissões estão desbloqueadas para estudo e comparação."
+								: "Modo anti-spoiler ativo. As respostas de outras duplas estão protegidas com tarja preta até que sua dupla submeta a solução."}
+						</p>
+					</div>
+
+					<div>
+						{ch.canViewAllSolutions ? (
+							<PopBadge color="green">SPOILER LIBERADO</PopBadge>
+						) : (
+							<PopBadge color="yellow">ANTI-SPOILER ATIVO</PopBadge>
+						)}
+					</div>
+				</div>
+
+				{/* Submissions List */}
+				{ch.submissions && ch.submissions.length > 0 ? (
+					<div className="space-y-4">
+						{ch.submissions.map((sub) => {
+							const members = [sub.member1, sub.member2, sub.member3].filter(
+								(m): m is NonNullable<typeof m> => Boolean(m)
+							);
+							const isLocked = sub.isSpoilerLocked;
+
+							return (
+								<div
+									className={`rounded-md border-2 p-3.5 transition sm:p-4 ${
+										sub.isMyOwnPair
+											? "border-[#FF4A1C] bg-[#FF4A1C]/5 shadow-hard-sm"
+											: "border-black bg-card dark:border-white"
+									}`}
+									key={sub.id}
+								>
+									{/* Submission Header */}
+									<div className="flex flex-col justify-between gap-2 border-black/10 border-b pb-2.5 sm:flex-row sm:items-center dark:border-white/10">
+										<div className="flex items-center gap-2">
+											<div className="flex -space-x-1.5 overflow-hidden">
+												{members.map((m) =>
+													m.gifUrl ? (
+														<img
+															alt={m.name}
+															className="inline-block h-6 w-6 rounded-full border border-black object-cover dark:border-white"
+															height={24}
+															key={m.id}
+															src={m.gifUrl}
+															width={24}
+														/>
+													) : (
+														<div
+															className="flex h-6 w-6 items-center justify-center rounded-full border border-black bg-secondary font-black font-display text-[9px] uppercase dark:border-white"
+															key={m.id}
+														>
+															{m.name.charAt(0)}
+														</div>
+													)
+												)}
+											</div>
+
+											<div className="flex flex-wrap items-center gap-1.5">
+												<span className="font-black font-display text-xs uppercase">
+													{members
+														.map((m) => m.name.split(" ")[0])
+														.join(" & ")}
+												</span>
+												{sub.isMyOwnPair ? (
+													<PopBadge color="neutral">SUA DUPLA</PopBadge>
+												) : null}
+											</div>
+										</div>
+
+										<div className="flex items-center gap-2 text-[10px] sm:text-xs">
+											<span className="font-mono text-muted-foreground uppercase">
+												{new Date(sub.updatedAt).toLocaleDateString("pt-BR", {
+													day: "2-digit",
+													hour: "2-digit",
+													minute: "2-digit",
+													month: "short",
+												})}
+											</span>
+											<PopBadge
+												color={sub.status === "APPROVED" ? "green" : "neutral"}
+											>
+												{sub.status === "APPROVED" ? "APROVADO" : "SUBMETIDO"}
+											</PopBadge>
+										</div>
+									</div>
+
+									{/* Submission Content */}
+									<div className="pt-3">
+										{isLocked ? (
+											/* Neo-brutalist "Documento Censurado" / anti-spoiler redacted block */
+											<div className="relative overflow-hidden rounded-md border-2 border-black bg-[#121212] p-4 text-white shadow-hard dark:border-white dark:bg-[#0A0A0A]">
+												<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+													<div className="space-y-1.5">
+														<div className="flex items-center gap-2">
+															<span className="rounded-xs border border-white/40 bg-[#FF4A1C] px-1.5 py-0.5 font-black font-mono text-[9px] text-white uppercase tracking-wider">
+																[ CONTEÚDO BLOQUEADO {"//"} ANTI-SPOILER ]
+															</span>
+														</div>
+														<h4 className="font-black font-display text-xs text-white uppercase sm:text-sm">
+															RESPOSTAS E ARQUIVOS OCULTOS
+														</h4>
+														<p className="max-w-md font-medium text-white/70 text-xs">
+															O código, link de PR e anotações desta entrega foram tarjados de preto para evitar spoilers. Envie a solução da sua dupla para desbloquear.
+														</p>
+													</div>
+
+													{myPair ? (
+														<button
+															className="btn-tactile shrink-0 rounded-md border-2 border-white bg-[#FF4A1C] px-3.5 py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10]"
+															onClick={handleOpenSubmit}
+															type="button"
+														>
+															SUBMETER MINHA SOLUÇÃO &rarr;
+														</button>
+													) : null}
+												</div>
+											</div>
+										) : (
+											/* Unlocked Solution Content */
+											<div className="space-y-3 font-sans text-xs">
+												{/* Link de PR ou Repositório */}
+												<div className="flex flex-wrap items-center gap-2">
+													{sub.prUrl ? (
+														<a
+															className="btn-tactile inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#1E40AF] px-3 py-1.5 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#1D4ED8] dark:border-white"
+															href={sub.prUrl}
+															rel="noopener noreferrer"
+															target="_blank"
+														>
+															<GitPullRequest className="h-3.5 w-3.5" />
+															<span>VER PULL REQUEST &rarr;</span>
+														</a>
+													) : null}
+
+													{sub.repoUrl ? (
+														<a
+															className="btn-tactile inline-flex items-center gap-1.5 rounded-md border border-black bg-secondary px-2.5 py-1.5 font-mono text-[11px] text-foreground hover:bg-muted dark:border-white"
+															href={sub.repoUrl}
+															rel="noopener noreferrer"
+															target="_blank"
+														>
+															<ExternalLink className="h-3 w-3" />
+															<span className="max-w-xs truncate">{sub.repoUrl}</span>
+														</a>
+													) : null}
+												</div>
+
+												{/* Notas e Explicações / Evidências */}
+												{sub.submissionNotes ? (
+													<div className="rounded-md border border-black/20 bg-secondary/30 p-3 dark:border-white/20">
+														<span className="mb-1 block font-mono text-[10px] text-muted-foreground uppercase">
+															NOTAS {"//"} EXPLICAÇÃO DA DUPLA:
+														</span>
+														<div className="font-mono text-xs leading-relaxed">
+															{renderSubmissionNotes(sub.submissionNotes)}
+														</div>
+													</div>
+												) : null}
+
+												{/* Feedback do Assessor se houver */}
+												{sub.feedback ? (
+													<div className="rounded-md border border-[#15803D]/40 bg-[#15803D]/10 p-2.5 font-mono text-[#15803D] text-xs dark:text-[#4ADE80]">
+														<strong className="block font-bold text-[10px] uppercase">
+															FEEDBACK DO ASSESSOR:
+														</strong>
+														<p className="mt-0.5">{sub.feedback}</p>
+													</div>
+												) : null}
+											</div>
+										)}
+									</div>
+								</div>
+							);
+						})}
+					</div>
+				) : (
+					<div className="rounded-md border-2 border-black border-dashed bg-secondary/30 p-6 text-center dark:border-white">
+						<span className="block font-black font-mono text-[11px] text-muted-foreground uppercase tracking-widest">
+							[ NENHUMA DUPLA SUBMETEU AINDA ]
+						</span>
+						<p className="mt-1 font-sans text-muted-foreground text-xs">
+							Assim que a primeira entrega for enviada pelos membros, ela aparecerá aqui.
 						</p>
 					</div>
 				)}
