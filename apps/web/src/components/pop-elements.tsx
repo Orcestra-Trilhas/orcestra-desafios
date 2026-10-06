@@ -126,6 +126,7 @@ export function PopPointsBadge({
 			className={`inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FACC15] font-black text-[#121212] shadow-hard-sm dark:border-[#2E3658] dark:bg-[#F59E0B] dark:text-[#0B0E1E] ${sizeClasses}`}
 		>
 			<svg
+				aria-hidden="true"
 				className="h-4 w-4 fill-current"
 				viewBox="0 0 24 24"
 				xmlns="http://www.w3.org/2000/svg"
@@ -174,6 +175,7 @@ export function PopWhatsAppButton({
 			title={label}
 		>
 			<svg
+				aria-hidden="true"
 				className="h-3.5 w-3.5 shrink-0 fill-current sm:h-4 sm:w-4"
 				viewBox="0 0 24 24"
 				xmlns="http://www.w3.org/2000/svg"

@@ -4,234 +4,659 @@
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark *, .orc-dark *));
 
 :root {
-	/* Bauhaus Light Mode */
-	--background: #faf8f5;
-	--foreground: #121212;
+	/* Pop Art Light Mode (Andy Warhol Factory Silkscreen) */
+	--background: #fffdfa; /* Papel serigráfico marfim claro */
+	--foreground: #18181b; /* Tinta preta gráfica */
 	--card: #ffffff;
-	--card-foreground: #121212;
+	--card-foreground: #18181b;
 	--popover: #ffffff;
-	--popover-foreground: #121212;
-	--primary: #121212;
-	--primary-foreground: #faf8f5;
-	--secondary: #f3efea;
-	--secondary-foreground: #121212;
-	--muted: #efece6;
-	--muted-foreground: #5a5854;
-	--accent: #ff4a1c;
+	--popover-foreground: #18181b;
+	--primary: #ec4899; /* Hot Pink / Marilyn Magenta de Warhol */
+	--primary-foreground: #ffffff;
+	--secondary: #fdf2f8; /* Rosa serigráfico suave */
+	--secondary-foreground: #831843;
+	--muted: #f4f4f5;
+	--muted-foreground: #71717a;
+	--accent: #ec4899;
 	--accent-foreground: #ffffff;
-	--destructive: #dc2626;
-	--border: #121212;
-	--input: #121212;
-	--ring: #ff4a1c;
-	--chart-1: #ff4a1c;
-	--chart-2: #1e40af;
-	--chart-3: #facc15;
-	--chart-4: #15803d;
-	--chart-5: #121212;
+	--destructive: #ef4444;
+	--border: #18181b; /* Traço nítido de serigrafia */
+	--input: #18181b;
+	--ring: #ec4899;
+	--chart-1: #ec4899; /* Hot Pink */
+	--chart-2: #06b6d4; /* Ciano Elétrico */
+	--chart-3: #facc15; /* Amarelo Banana */
+	--chart-4: #84cc16; /* Verde Ácido */
+	--chart-5: #18181b;
 	--radius: 0.375rem;
-	--sidebar: #faf8f5;
-	--sidebar-foreground: #121212;
-	--sidebar-primary: #ff4a1c;
+	--sidebar: #fffdfa;
+	--sidebar-foreground: #18181b;
+	--sidebar-primary: #ec4899;
 	--sidebar-primary-foreground: #ffffff;
-	--sidebar-accent: #f3efea;
-	--sidebar-accent-foreground: #121212;
-	--sidebar-border: #121212;
-	--sidebar-ring: #ff4a1c;
-	--baugasm-vermilion: #ff4a1c;
-	--baugasm-cobalt: #1e40af;
+	--sidebar-accent: #fdf2f8;
+	--sidebar-accent-foreground: #831843;
+	--sidebar-border: #18181b;
+	--sidebar-ring: #ec4899;
+	--baugasm-vermilion: #ec4899;
+	--baugasm-cobalt: #06b6d4;
 	--baugasm-yellow: #facc15;
-	--baugasm-green: #15803d;
-	--baugasm-cream: #faf8f5;
-	--baugasm-black: #121212;
+	--baugasm-green: #84cc16;
+	--baugasm-cream: #fffdfa;
+	--baugasm-black: #18181b;
 }
 
 .dark {
-	/* Fauvism Night Canvas (Matisse / Derain expressive palette - velvety & comfortable) */
-	--background: #0b0e1e; /* Deep Velvet Indigo-Violet Night */
-	--foreground: #ede8dd; /* Warm Ivory Parchment */
-	--card: #141731; /* Parisian Night Velour */
-	--card-foreground: #ede8dd;
-	--popover: #141731;
-	--popover-foreground: #ede8dd;
-	--primary: #f04d30; /* Warm Matisse Vermilion */
+	/* Fauvism Night Canvas (Henri Matisse "La Danse" / André Derain) */
+	--background: #0a0f24; /* Tela noturna azul-índigo profundo */
+	--foreground: #f4ede0; /* Marfim pergaminho suave */
+	--card: #12193b; /* Veludo noturno azul mediterrâneo */
+	--card-foreground: #f4ede0;
+	--popover: #12193b;
+	--popover-foreground: #f4ede0;
+	--primary: #d9381e; /* Vermilion / Terracota ardente de La Danse */
 	--primary-foreground: #ffffff;
-	--secondary: #1c2142; /* Midnight Cobalt Slate */
-	--secondary-foreground: #ede8dd;
-	--muted: #171b36;
-	--muted-foreground: #8c96bf; /* Soft Lavender Slate */
-	--accent: #f04d30;
+	--secondary: #1a234f; /* Ardósia noturna */
+	--secondary-foreground: #f4ede0;
+	--muted: #151d42;
+	--muted-foreground: #9ba5cf; /* Ardósia suave para textos secundários */
+	--accent: #d9381e;
 	--accent-foreground: #ffffff;
-	--destructive: #f43f5e; /* Vivid Rose Crimson */
-	--border: #2e3658; /* Comfortable slate/indigo ink border */
-	--input: #2e3658;
-	--ring: #f04d30;
+	--destructive: #ef4444;
+	--border: #273463; /* Ardósia índigo noturna suave */
+	--input: #273463;
+	--ring: #d9381e;
 
-	/* Fauvist Chromatic Saturation (Warm gouache pigments) */
-	--chart-1: #f04d30; /* Matisse Vermilion */
-	--chart-2: #3b6fe8; /* Velvet Ultramarine */
-	--chart-3: #f59e0b; /* Golden Cadmium Yellow */
-	--chart-4: #10b981; /* Fauve Jade / Emerald */
-	--chart-5: #c026d3; /* Warm Magenta */
+	/* Cores primárias autênticas do Fauvismo */
+	--chart-1: #d9381e; /* Vermilion Matisse */
+	--chart-2: #2563eb; /* Azul Cobalto Mediterrâneo */
+	--chart-3: #eab308; /* Amarelo Cádmio solar */
+	--chart-4: #16a34a; /* Verde Esmeralda */
+	--chart-5: #c026d3;
 
-	--sidebar: #141731;
-	--sidebar-foreground: #ede8dd;
-	--sidebar-primary: #f04d30;
+	--sidebar: #12193b;
+	--sidebar-foreground: #f4ede0;
+	--sidebar-primary: #d9381e;
 	--sidebar-primary-foreground: #ffffff;
-	--sidebar-accent: #1c2142;
-	--sidebar-accent-foreground: #ede8dd;
-	--sidebar-border: #2e3658;
-	--sidebar-ring: #f04d30;
+	--sidebar-accent: #1a234f;
+	--sidebar-accent-foreground: #f4ede0;
+	--sidebar-border: #273463;
+	--sidebar-ring: #d9381e;
 
-	--baugasm-vermilion: #f04d30;
-	--baugasm-cobalt: #3b6fe8;
-	--baugasm-yellow: #f59e0b;
-	--baugasm-green: #10b981;
-	--baugasm-cream: #ede8dd;
-	--baugasm-black: #0b0e1e;
+	--baugasm-vermilion: #d9381e;
+	--baugasm-cobalt: #2563eb;
+	--baugasm-yellow: #eab308;
+	--baugasm-green: #16a34a;
+	--baugasm-cream: #f4ede0;
+	--baugasm-black: #0a0f24;
+}
+
+.orc-dark {
+	/* Orc'estra Dark Mode (Dark & Clean Sofisticado - Suave e Confortável) */
+	--background: #080f07; /* Carvão profundo com suave respiro floresta */
+	--foreground: #f0f7ef; /* Branco suave de alta legibilidade */
+	--card: #0f1d0d; /* Verde escuro aveludado e confortável */
+	--card-foreground: #f0f7ef;
+	--popover: #122410;
+	--popover-foreground: #f0f7ef;
+	--primary: #3bc90c; /* Orc'estra Verde Claro vibrante */
+	--primary-foreground: #040d03; /* Texto escuro com contraste AAA */
+	--secondary: #152c13; /* Verde floresta escuro */
+	--secondary-foreground: #f0f7ef;
+	--muted: #11200f;
+	--muted-foreground: #88b384; /* Verde sálvia suave para legendas */
+	--accent: #3bc90c;
+	--accent-foreground: #040d03;
+	--destructive: #ef4444;
+	--border: #1e3b1a; /* Bordas suaves em verde musgo escuro */
+	--input: #152c13;
+	--ring: #3bc90c;
+
+	--chart-1: #3bc90c; /* Verde Claro */
+	--chart-2: #22c55e; /* Esmeralda */
+	--chart-3: #86efac; /* Menta Suave */
+	--chart-4: #f0f7ef; /* Branco Suave */
+	--chart-5: #0f1d0d; /* Verde Escuro */
+
+	--sidebar: #0f1d0d;
+	--sidebar-foreground: #f0f7ef;
+	--sidebar-primary: #3bc90c;
+	--sidebar-primary-foreground: #040d03;
+	--sidebar-accent: #152c13;
+	--sidebar-accent-foreground: #f0f7ef;
+	--sidebar-border: #1e3b1a;
+	--sidebar-ring: #3bc90c;
+
+	--baugasm-vermilion: #3bc90c;
+	--baugasm-cobalt: #22c55e;
+	--baugasm-yellow: #86efac;
+	--baugasm-green: #3bc90c;
+	--baugasm-cream: #f0f7ef;
+	--baugasm-black: #080f07;
+}
+
+.orc-light {
+	/* Orc'estra Light Mode (Clean & Refinado) */
+	--background: #f9fbf9; /* Branco linho limpo com toque menta suave */
+	--foreground: #071a06; /* Verde escuro floresta profundo */
+	--card: #ffffff; /* Branco puro */
+	--card-foreground: #071a06;
+	--popover: #ffffff;
+	--popover-foreground: #071a06;
+	--primary: #0d3309; /* Verde Floresta Escuro */
+	--primary-foreground: #ffffff;
+	--secondary: #ebf5ea; /* Verde pastel suave */
+	--secondary-foreground: #071a06;
+	--muted: #f0f7ef;
+	--muted-foreground: #41633e; /* Verde sálvia suave */
+	--accent: #3bc90c; /* Orc'estra Verde Claro */
+	--accent-foreground: #071a06;
+	--destructive: #dc2626;
+	--border: #234a1f; /* Verde musgo escuro estruturado */
+	--input: #234a1f;
+	--ring: #3bc90c;
+
+	--chart-1: #0d3309; /* Verde Escuro */
+	--chart-2: #3bc90c; /* Verde Claro */
+	--chart-3: #15803d; /* Forest Green */
+	--chart-4: #22c55e; /* Esmeralda */
+	--chart-5: #071a06; /* Preto/Verde */
+
+	--sidebar: #ffffff;
+	--sidebar-foreground: #071a06;
+	--sidebar-primary: #0d3309;
+	--sidebar-primary-foreground: #ffffff;
+	--sidebar-accent: #ebf5ea;
+	--sidebar-accent-foreground: #071a06;
+	--sidebar-border: #234a1f;
+	--sidebar-ring: #3bc90c;
+
+	--baugasm-vermilion: #0d3309;
+	--baugasm-cobalt: #15803d;
+	--baugasm-yellow: #3bc90c;
+	--baugasm-green: #3bc90c;
+	--baugasm-cream: #f9fbf9;
+	--baugasm-black: #071a06;
 }
 
 @theme inline {
-	--font-sans: var(--font-sans), sans-serif;
-	--font-display: var(--font-display), sans-serif;
-	--color-baugasm-vermilion: var(--baugasm-vermilion);
-	--color-baugasm-cobalt: var(--baugasm-cobalt);
-	--color-baugasm-yellow: var(--baugasm-yellow);
-	--color-baugasm-green: var(--baugasm-green);
-	--color-baugasm-cream: var(--baugasm-cream);
-	--color-baugasm-black: var(--baugasm-black);
-	--color-sidebar-ring: var(--sidebar-ring);
-	--color-sidebar-border: var(--sidebar-border);
-	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-	--color-sidebar-accent: var(--sidebar-accent);
-	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-	--color-sidebar-primary: var(--sidebar-primary);
-	--color-sidebar-foreground: var(--sidebar-foreground);
-	--color-sidebar: var(--sidebar);
-	--color-chart-5: var(--chart-5);
-	--color-chart-4: var(--chart-4);
-	--color-chart-3: var(--chart-3);
-	--color-chart-2: var(--chart-2);
-	--color-chart-1: var(--chart-1);
-	--color-ring: var(--ring);
-	--color-input: var(--input);
-	--color-border: var(--border);
-	--color-destructive: var(--destructive);
-	--color-accent-foreground: var(--accent-foreground);
-	--color-accent: var(--accent);
-	--color-muted-foreground: var(--muted-foreground);
-	--color-muted: var(--muted);
-	--color-secondary-foreground: var(--secondary-foreground);
-	--color-secondary: var(--secondary);
-	--color-primary-foreground: var(--primary-foreground);
-	--color-primary: var(--primary);
-	--color-popover-foreground: var(--popover-foreground);
-	--color-popover: var(--popover);
-	--color-card-foreground: var(--card-foreground);
-	--color-card: var(--card);
-	--color-foreground: var(--foreground);
 	--color-background: var(--background);
-	--radius-sm: calc(var(--radius) - 2px);
-	--radius-md: var(--radius);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-baugasm-black: var(--baugasm-black);
+	--color-baugasm-cobalt: var(--baugasm-cobalt);
+	--color-baugasm-cream: var(--baugasm-cream);
+	--color-baugasm-green: var(--baugasm-green);
+	--color-baugasm-vermilion: var(--baugasm-vermilion);
+	--color-baugasm-yellow: var(--baugasm-yellow);
+	--font-display: var(--font-display), sans-serif;
+	--font-sans: var(--font-sans), sans-serif;
 	--radius-lg: calc(var(--radius) + 2px);
+	--radius-md: var(--radius);
+	--radius-sm: calc(var(--radius) - 2px);
 	--radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer utilities {
-	/* Bauhaus & Fauvism Hard Shadows */
+	/* Pop Art (Andy Warhol Factory) Hard Shadows */
 	.shadow-hard {
-		box-shadow: 4px 4px 0px #121212;
-	}
-	:is(.dark *) .shadow-hard {
-		box-shadow: 4px 4px 0px #050711; /* Clean deep shadow */
+		box-shadow: 4px 4px 0px #18181b;
 	}
 	.shadow-hard-sm {
-		box-shadow: 2px 2px 0px #121212;
-	}
-	:is(.dark *) .shadow-hard-sm {
-		box-shadow: 2px 2px 0px #050711;
+		box-shadow: 2px 2px 0px #18181b;
 	}
 	.shadow-hard-lg {
-		box-shadow: 6px 6px 0px #121212;
-	}
-	:is(.dark *) .shadow-hard-lg {
-		box-shadow: 6px 6px 0px #050711;
+		box-shadow: 6px 6px 0px #18181b;
 	}
 	.shadow-hard-vermilion {
-		box-shadow: 3px 3px 0px #ff4a1c;
-	}
-	:is(.dark *) .shadow-hard-vermilion {
-		box-shadow: 3px 3px 0px #f04d30;
+		box-shadow: 3px 3px 0px #ec4899;
 	}
 	.shadow-hard-cobalt {
-		box-shadow: 3px 3px 0px #1e40af;
-	}
-	:is(.dark *) .shadow-hard-cobalt {
-		box-shadow: 3px 3px 0px #3b6fe8;
+		box-shadow: 3px 3px 0px #06b6d4;
 	}
 	.shadow-hard-yellow {
 		box-shadow: 3px 3px 0px #facc15;
 	}
-	:is(.dark *) .shadow-hard-yellow {
-		box-shadow: 3px 3px 0px #f59e0b;
-	}
 	.shadow-hard-green {
-		box-shadow: 3px 3px 0px #15803d;
-	}
-	:is(.dark *) .shadow-hard-green {
-		box-shadow: 3px 3px 0px #10b981;
+		box-shadow: 3px 3px 0px #84cc16;
 	}
 
-	/* Fauvist Soft Ink Borders in Dark Mode (Gentle on the eyes, elegant contrast) */
+	/* Pop Art Palette Translations (Hot Pink #ec4899 como assinatura de Warhol) */
+	.bg-\[\#FF4A1C\] {
+		color: #ffffff;
+		background-color: #ec4899;
+	}
+	.hover\:bg-\[\#E03A10\]:hover {
+		background-color: #db2777;
+	}
+	.text-\[\#FF4A1C\] {
+		color: #ec4899;
+	}
+	.hover\:text-\[\#FF4A1C\]:hover {
+		color: #f472b6;
+	}
+	.focus\:border-\[\#FF4A1C\]:focus {
+		border-color: #ec4899 !important;
+	}
+	.bg-\[\#1E40AF\] {
+		font-weight: 800;
+		color: #18181b;
+		background-color: #06b6d4;
+	}
+	.text-\[\#1E40AF\] {
+		color: #0891b2;
+	}
+	.bg-\[\#FACC15\] {
+		color: #18181b;
+		background-color: #facc15;
+	}
+	.text-\[\#FACC15\] {
+		color: #ca8a04;
+	}
+	.bg-\[\#15803D\] {
+		color: #18181b;
+		background-color: #84cc16;
+	}
+	.text-\[\#15803D\] {
+		color: #65a30d;
+	}
+
+	/* Fauvism (Henri Matisse "La Danse") Hard Shadows */
+	:is(.dark *) .shadow-hard {
+		box-shadow: 4px 4px 0px #040714;
+	}
+	:is(.dark *) .shadow-hard-sm {
+		box-shadow: 2px 2px 0px #040714;
+	}
+	:is(.dark *) .shadow-hard-lg {
+		box-shadow: 6px 6px 0px #040714;
+	}
+	:is(.dark *) .shadow-hard-vermilion {
+		box-shadow: 3px 3px 0px #d9381e;
+	}
+	:is(.dark *) .shadow-hard-cobalt {
+		box-shadow: 3px 3px 0px #2563eb;
+	}
+	:is(.dark *) .shadow-hard-yellow {
+		box-shadow: 3px 3px 0px #eab308;
+	}
+	:is(.dark *) .shadow-hard-green {
+		box-shadow: 3px 3px 0px #16a34a;
+	}
+
+	/* Fauvist Soft Ink Borders in Dark Mode */
 	:is(.dark *) .dark\:border-white {
-		border-color: rgba(237, 232, 221, 0.28) !important;
+		border-color: #273463 !important;
 	}
 	:is(.dark *) .border-black {
-		border-color: #2e3658;
+		border-color: #273463;
 	}
 	:is(.dark *) .border-black\/10,
 	:is(.dark *) .border-black\/20,
 	:is(.dark *) .border-black\/30 {
-		border-color: rgba(46, 54, 88, 0.45);
+		border-color: rgba(39, 52, 99, 0.45);
 	}
 	:is(.dark *) .dark\:border-white\/10,
 	:is(.dark *) .dark\:border-white\/20,
 	:is(.dark *) .dark\:border-white\/30 {
-		border-color: rgba(237, 232, 221, 0.12) !important;
+		border-color: rgba(244, 237, 224, 0.15) !important;
 	}
 
-	/* Automatic translation of primary palettes in Fauvism Dark Mode (Warm gouache pigments) */
+	/* Fauvism Color Palette Translations (Vermilion #d9381e & Cobalto #2563eb de La Danse) */
 	:is(.dark *) .bg-\[\#FF4A1C\] {
-		background-color: #f04d30;
-	}
-	:is(.dark *) .bg-\[\#1E40AF\] {
-		background-color: #3b6fe8;
-	}
-	:is(.dark *) .bg-\[\#FACC15\] {
-		background-color: #f59e0b;
-	}
-	:is(.dark *) .bg-\[\#15803D\] {
-		background-color: #10b981;
-	}
-	:is(.dark *) .text-\[\#FF4A1C\] {
-		color: #f04d30;
-	}
-	:is(.dark *) .text-\[\#1E40AF\] {
-		color: #3b6fe8;
-	}
-	:is(.dark *) .text-\[\#FACC15\] {
-		color: #f59e0b;
-	}
-	:is(.dark *) .text-\[\#15803D\] {
-		color: #10b981;
+		color: #ffffff;
+		background-color: #d9381e;
 	}
 	:is(.dark *) .hover\:bg-\[\#E03A10\]:hover {
-		background-color: #d93b1f;
+		background-color: #b92d15;
+	}
+	:is(.dark *) .text-\[\#FF4A1C\] {
+		color: #d9381e;
 	}
 	:is(.dark *) .hover\:text-\[\#FF4A1C\]:hover {
-		color: #f04d30;
+		color: #ea580c;
+	}
+	:is(.dark *) .focus\:border-\[\#FF4A1C\]:focus {
+		border-color: #d9381e !important;
+	}
+	:is(.dark *) .bg-\[\#1E40AF\] {
+		color: #ffffff;
+		background-color: #2563eb;
+	}
+	:is(.dark *) .text-\[\#1E40AF\] {
+		color: #60a5fa;
+	}
+	:is(.dark *) .bg-\[\#FACC15\] {
+		font-weight: 800;
+		color: #0a0f24;
+		background-color: #eab308;
+	}
+	:is(.dark *) .text-\[\#FACC15\] {
+		color: #facc15;
+	}
+	:is(.dark *) .bg-\[\#15803D\] {
+		color: #ffffff;
+		background-color: #16a34a;
+	}
+	:is(.dark *) .text-\[\#15803D\] {
+		color: #4ade80;
+	}
+	:is(.dark *) .dark\:bg-\[\#F04D30\] {
+		background-color: #d9381e;
+	}
+	:is(.dark *) .dark\:bg-\[\#3B6FE8\] {
+		background-color: #2563eb;
+	}
+	:is(.dark *) .dark\:bg-\[\#10B981\] {
+		background-color: #16a34a;
+	}
+	:is(.dark *) .dark\:bg-\[\#F59E0B\] {
+		background-color: #eab308;
+	}
+	:is(.dark *) .dark\:text-\[\#0B0E1E\] {
+		color: #0a0f24;
+	}
+	:is(.dark *) .dark\:border-\[\#F04D30\]\/50,
+	:is(.dark *) .dark\:border-\[\#F04D30\]\/60 {
+		border-color: rgba(217, 56, 30, 0.6) !important;
+	}
+	:is(.dark *) .dark\:border-\[\#3B6FE8\]\/50,
+	:is(.dark *) .dark\:border-\[\#3B6FE8\]\/60 {
+		border-color: rgba(37, 99, 235, 0.6) !important;
+	}
+	:is(.dark *) .dark\:text-\[\#F04D30\] {
+		color: #d9381e !important;
+	}
+
+	/* Orc'estra Dark Mode Shadows (Soft velvet dark shadow, non-harsh) */
+	:is(.orc-dark *) .shadow-hard {
+		box-shadow: 4px 4px 0px #020602 !important;
+	}
+	:is(.orc-dark *) .shadow-hard-sm {
+		box-shadow: 2px 2px 0px #020602 !important;
+	}
+	:is(.orc-dark *) .shadow-hard-lg {
+		box-shadow: 6px 6px 0px #020602 !important;
+	}
+	:is(.orc-dark *) .shadow-hard-vermilion {
+		box-shadow: 3px 3px 0px #3bc90c !important;
+	}
+	:is(.orc-dark *) .shadow-hard-cobalt {
+		box-shadow: 3px 3px 0px #22c55e !important;
+	}
+	:is(.orc-dark *) .shadow-hard-yellow {
+		box-shadow: 3px 3px 0px #86efac !important;
+	}
+	:is(.orc-dark *) .shadow-hard-green {
+		box-shadow: 3px 3px 0px #3bc90c !important;
+	}
+
+	/* Orc'estra Light Mode Shadows (Solid dark forest shadow) */
+	:is(.orc-light *) .shadow-hard {
+		box-shadow: 4px 4px 0px #0c2609 !important;
+	}
+	:is(.orc-light *) .shadow-hard-sm {
+		box-shadow: 2px 2px 0px #0c2609 !important;
+	}
+	:is(.orc-light *) .shadow-hard-lg {
+		box-shadow: 6px 6px 0px #0c2609 !important;
+	}
+	:is(.orc-light *) .shadow-hard-vermilion {
+		box-shadow: 3px 3px 0px #0d3309 !important;
+	}
+	:is(.orc-light *) .shadow-hard-cobalt {
+		box-shadow: 3px 3px 0px #15803d !important;
+	}
+	:is(.orc-light *) .shadow-hard-yellow {
+		box-shadow: 3px 3px 0px #3bc90c !important;
+	}
+	:is(.orc-light *) .shadow-hard-green {
+		box-shadow: 3px 3px 0px #3bc90c !important;
+	}
+
+	/* Orc'estra Dark Borders (Soft moss dark borders, non-harsh) */
+	:is(.orc-dark *) .border-black,
+	:is(.orc-dark *) .dark\:border-white,
+	:is(.orc-dark *) .dark\:border-\[\#2E3658\] {
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-dark *) .border-black\/10,
+	:is(.orc-dark *) .dark\:border-white\/10 {
+		border-color: rgba(30, 59, 26, 0.3) !important;
+	}
+	:is(.orc-dark *) .border-black\/20,
+	:is(.orc-dark *) .dark\:border-white\/20 {
+		border-color: rgba(30, 59, 26, 0.5) !important;
+	}
+	:is(.orc-dark *) .border-black\/30,
+	:is(.orc-dark *) .dark\:border-white\/30 {
+		border-color: rgba(30, 59, 26, 0.7) !important;
+	}
+
+	/* Orc'estra Light Borders (Deep Forest Structured lines) */
+	:is(.orc-light *) .border-black,
+	:is(.orc-light *) .dark\:border-white,
+	:is(.orc-light *) .dark\:border-\[\#2E3658\] {
+		border-color: #234a1f !important;
+	}
+	:is(.orc-light *) .border-black\/10,
+	:is(.orc-light *) .dark\:border-white\/10 {
+		border-color: rgba(35, 74, 31, 0.15) !important;
+	}
+	:is(.orc-light *) .border-black\/20,
+	:is(.orc-light *) .dark\:border-white\/20 {
+		border-color: rgba(35, 74, 31, 0.25) !important;
+	}
+	:is(.orc-light *) .border-black\/30,
+	:is(.orc-light *) .dark\:border-white\/30 {
+		border-color: rgba(35, 74, 31, 0.4) !important;
+	}
+
+	/* Orc'estra Dark Mode Palette Translations (Verde Escuro #0f1d0d, Verde Claro #3bc90c, Branco #f0f7ef) */
+	:is(.orc-dark *) .bg-\[\#FF4A1C\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+		border-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .bg-\[\#121212\],
+	:is(.orc-dark *) .dark\:bg-\[\#131738\],
+	:is(.orc-dark *) .dark\:bg-\[\#141731\],
+	:is(.orc-dark *) .dark\:bg-\[\#1C2142\] {
+		color: #f0f7ef !important;
+		background-color: #0f1d0d !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-dark *) .bg-\[\#1E40AF\] {
+		color: #f0f7ef !important;
+		background-color: #152c13 !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-dark *) .bg-\[\#FACC15\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .bg-\[\#15803D\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .text-\[\#FF4A1C\] {
+		color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .text-\[\#1E40AF\] {
+		color: #88b384 !important;
+	}
+	:is(.orc-dark *) .text-\[\#FACC15\] {
+		color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .text-\[\#15803D\] {
+		color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .hover\:bg-\[\#E03A10\]:hover {
+		color: #040d03 !important;
+		background-color: #4ade80 !important;
+	}
+	:is(.orc-dark *) .hover\:text-\[\#FF4A1C\]:hover {
+		color: #4ade80 !important;
+	}
+	:is(.orc-dark *) .focus\:border-\[\#FF4A1C\]:focus {
+		border-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .dark\:bg-white {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .dark\:text-\[\#121212\] {
+		color: #040d03 !important;
+	}
+	:is(.orc-dark *) .dark\:text-\[\#EDE8DD\] {
+		color: #f0f7ef !important;
+	}
+	:is(.orc-dark *) .dark\:bg-\[\#F04D30\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .dark\:bg-\[\#3B6FE8\] {
+		color: #f0f7ef !important;
+		background-color: #152c13 !important;
+	}
+	:is(.orc-dark *) .dark\:bg-\[\#10B981\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .dark\:bg-\[\#F59E0B\] {
+		color: #040d03 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-dark *) .dark\:text-\[\#0B0E1E\] {
+		color: #040d03 !important;
+	}
+	:is(.orc-dark *) .dark\:border-\[\#F04D30\]\/50,
+	:is(.orc-dark *) .dark\:border-\[\#F04D30\]\/60 {
+		border-color: rgba(59, 201, 12, 0.4) !important;
+	}
+	:is(.orc-dark *) .dark\:border-\[\#3B6FE8\]\/50,
+	:is(.orc-dark *) .dark\:border-\[\#3B6FE8\]\/60 {
+		border-color: rgba(30, 59, 26, 0.6) !important;
+	}
+	:is(.orc-dark *) .dark\:text-\[\#F04D30\] {
+		color: #3bc90c !important;
+	}
+
+	/* Orc'estra Light Mode Palette Translations (Verde Escuro #0d3309, Verde Claro #3bc90c, Branco #f9fbf9) */
+	:is(.orc-light *) .bg-\[\#FF4A1C\] {
+		color: #ffffff !important;
+		background-color: #0d3309 !important;
+	}
+	:is(.orc-light *) .bg-\[\#121212\],
+	:is(.orc-light *) .dark\:bg-\[\#131738\],
+	:is(.orc-light *) .dark\:bg-\[\#141731\],
+	:is(.orc-light *) .dark\:bg-\[\#1C2142\] {
+		color: #ffffff !important;
+		background-color: #0d3309 !important;
+	}
+	:is(.orc-light *) .bg-\[\#1E40AF\] {
+		color: #ffffff !important;
+		background-color: #152c13 !important;
+	}
+	:is(.orc-light *) .bg-\[\#FACC15\] {
+		color: #071a06 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-light *) .bg-\[\#15803D\] {
+		color: #071a06 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-light *) .text-\[\#FF4A1C\] {
+		color: #0d3309 !important;
+	}
+	:is(.orc-light *) .text-\[\#1E40AF\] {
+		color: #0d3309 !important;
+	}
+	:is(.orc-light *) .text-\[\#FACC15\] {
+		color: #071a06 !important;
+	}
+	:is(.orc-light *) .text-\[\#15803D\] {
+		color: #071a06 !important;
+	}
+	:is(.orc-light *) .hover\:bg-\[\#E03A10\]:hover {
+		color: #ffffff !important;
+		background-color: #14490f !important;
+	}
+	:is(.orc-light *) .hover\:text-\[\#FF4A1C\]:hover {
+		color: #3bc90c !important;
+	}
+	:is(.orc-light *) .focus\:border-\[\#FF4A1C\]:focus {
+		border-color: #3bc90c !important;
+	}
+	:is(.orc-light *) .dark\:bg-white {
+		color: #ffffff !important;
+		background-color: #0d3309 !important;
+	}
+	:is(.orc-light *) .dark\:text-\[\#121212\] {
+		color: #071a06 !important;
+	}
+	:is(.orc-light *) .dark\:text-\[\#EDE8DD\] {
+		color: #071a06 !important;
+	}
+	:is(.orc-light *) .dark\:bg-\[\#F04D30\] {
+		color: #ffffff !important;
+		background-color: #0d3309 !important;
+	}
+	:is(.orc-light *) .dark\:bg-\[\#3B6FE8\] {
+		color: #ffffff !important;
+		background-color: #152c13 !important;
+	}
+	:is(.orc-light *) .dark\:bg-\[\#10B981\] {
+		color: #071a06 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-light *) .dark\:bg-\[\#F59E0B\] {
+		color: #071a06 !important;
+		background-color: #3bc90c !important;
+	}
+	:is(.orc-light *) .dark\:text-\[\#0B0E1E\] {
+		color: #071a06 !important;
+	}
+	:is(.orc-light *) .dark\:border-\[\#F04D30\]\/50,
+	:is(.orc-light *) .dark\:border-\[\#F04D30\]\/60 {
+		border-color: rgba(35, 74, 31, 0.4) !important;
+	}
+	:is(.orc-light *) .dark\:border-\[\#3B6FE8\]\/50,
+	:is(.orc-light *) .dark\:border-\[\#3B6FE8\]\/60 {
+		border-color: rgba(35, 74, 31, 0.4) !important;
+	}
+	:is(.orc-light *) .dark\:text-\[\#F04D30\] {
+		color: #0d3309 !important;
 	}
 
 	.btn-tactile {

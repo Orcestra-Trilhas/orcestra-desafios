@@ -13,9 +13,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<ThemeProvider
 			attribute="class"
-			defaultTheme="system"
+			defaultTheme="orc-dark"
 			disableTransitionOnChange
 			enableSystem
+			themes={["orc-dark", "orc-light", "dark", "light"]}
 		>
 			<QueryClientProvider client={queryClient}>
 				<PwaProvider>{children}</PwaProvider>
