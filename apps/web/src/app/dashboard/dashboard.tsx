@@ -39,7 +39,7 @@ export default function Dashboard() {
 
 	const currentUser = userMe.data ?? session?.user;
 	const points =
-		userMe.data?.points ?? (session?.user as { points?: number })?.points ?? 0;
+		userMe.data?.points ?? (session?.user as { points?: number }).points ?? 0;
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:space-y-6 sm:px-4 sm:py-6">
@@ -47,16 +47,16 @@ export default function Dashboard() {
 			<PwaInstallBanner />
 
 			{/* Bauhaus / Fauvist Poster Banner */}
-			<div className="relative overflow-hidden rounded-lg border-2 border-black bg-[#121212] p-4 text-white shadow-hard sm:p-6 dark:border-white dark:bg-[#131738]">
+			<div className="relative overflow-hidden rounded-lg border-2 border-black bg-[#121212] p-4 text-white shadow-hard sm:p-6 dark:border-white dark:bg-card dark:text-foreground">
 				{/* Color geometric accent strip */}
-				<div className="absolute top-0 right-0 left-0 h-1.5 bg-[#FF4A1C] dark:bg-[#FF3B1E]" />
+				<div className="absolute top-0 right-0 left-0 h-1.5 bg-primary" />
 
 				<div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-5">
 					<div className="space-y-1.5 sm:space-y-2">
 						<h1 className="font-black font-display text-xl uppercase tracking-tight sm:text-3xl">
 							OLÁ, {currentUser?.name?.split(" ")[0] ?? "MEMBRO"}
 						</h1>
-						<p className="max-w-md font-medium text-white/70 text-xs">
+						<p className="max-w-md font-medium text-white/70 text-xs dark:text-muted-foreground">
 							Trabalhe com sua dupla, sincronize no WhatsApp e submeta os
 							checkpoints técnicos da rodada.
 						</p>
@@ -66,7 +66,7 @@ export default function Dashboard() {
 						<PopPointsBadge points={points} size="md" />
 
 						<button
-							className="btn-tactile flex-1 rounded-md border-2 border-white bg-[#FF4A1C] px-3.5 py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] sm:flex-initial sm:px-4"
+							className="btn-tactile flex-1 rounded-md border-2 border-black bg-primary px-3.5 py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 sm:flex-initial sm:px-4 dark:border-white"
 							onClick={() => setShowExplorer(true)}
 							type="button"
 						>
@@ -274,20 +274,20 @@ export default function Dashboard() {
 									<div className="grid grid-cols-3 gap-2">
 										<div
 											className={`h-3 rounded-xs border-2 border-black dark:border-white ${
-												p.currentStep >= 1 ? "bg-[#FF4A1C]" : "bg-muted"
+												p.currentStep >= 1 ? "bg-primary" : "bg-muted"
 											}`}
 										/>
 										<div
 											className={`h-3 rounded-xs border-2 border-black dark:border-white ${
-												p.currentStep >= 2 ? "bg-[#FF4A1C]" : "bg-muted"
+												p.currentStep >= 2 ? "bg-primary" : "bg-muted"
 											}`}
 										/>
 										<div
 											className={`h-3 rounded-xs border-2 border-black dark:border-white ${
 												p.status === "APPROVED"
-													? "bg-[#15803D]"
+													? "bg-[#15803D] dark:bg-[#16A34A]"
 													: p.currentStep >= 3
-														? "bg-[#FACC15]"
+														? "bg-[#FACC15] dark:bg-[#F59E0B]"
 														: "bg-muted"
 											}`}
 										/>
@@ -395,7 +395,7 @@ export default function Dashboard() {
 										)}
 
 										<Link
-											className="btn-tactile rounded-md border-2 border-black bg-[#121212] px-3 py-1 font-black font-display text-white text-xs uppercase shadow-hard-sm dark:border-white dark:bg-white dark:text-[#121212]"
+											className="btn-tactile rounded-md border-2 border-black bg-foreground px-3 py-1 font-black font-display text-background text-xs uppercase shadow-hard-sm dark:border-white"
 											href={`/challenges/${ch.id}`}
 											onClick={() => setShowExplorer(false)}
 										>

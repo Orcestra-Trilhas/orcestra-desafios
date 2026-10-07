@@ -1,5 +1,5 @@
 // Bump this version when changing offline.html so installed apps refresh it.
-const CACHE_NAME = "orc-desafios-offline-v2";
+const CACHE_NAME = "orc-desafios-offline-v3";
 const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {

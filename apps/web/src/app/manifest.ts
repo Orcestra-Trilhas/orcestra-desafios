@@ -84,6 +84,6 @@ export default function manifest(): MetadataRoute.Manifest {
 			},
 		],
 		start_url: "/dashboard",
-		theme_color: "#FF4A1C",
+		theme_color: "#02571E",
 	};
 }

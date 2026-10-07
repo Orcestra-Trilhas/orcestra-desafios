@@ -362,4 +362,79 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 		expect(metrics.submittedPairs).toBe(1);
 		expect(metrics.approvalRate).toBe(50); // 1 aprovado / 2 submetidos = 50%
 	});
+
+	it("deve excluir desafio com sucesso, remover suas duplas e registrar log de auditoria", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			title: "Desafio Para Deletar",
+			trackTheme: "BACK",
+		});
+
+		// Cria uma dupla para este desafio
+		await createTestPair(testDb.db, {
+			challengeId: chal.id,
+			member1Id: memberPersona.id,
+			member2Id: assessorPersona.id,
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		const deleteRes = await adminCaller.admin.deleteChallenge({
+			id: chal.id,
+		});
+
+		expect(deleteRes.success).toBe(true);
+
+		// Verifica que o desafio não existe mais
+		const dbChal = await testDb.db.query.challenge.findFirst({
+			where: { id: chal.id },
+		});
+		expect(dbChal).toBeUndefined();
+
+		// Verifica que as duplas associadas foram excluídas
+		const dbPairs = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+		expect(dbPairs).toHaveLength(0);
+
+		// Verifica log de auditoria
+		const log = await testDb.db.query.adminLog.findFirst({
+			where: { action: "DELETOU_DESAFIO" },
+		});
+		expect(log).toBeDefined();
+		expect(log?.actorId).toBe(adminPersona.id);
+	});
+
+	it("deve lançar NOT_FOUND ao tentar excluir desafio inexistente", async () => {
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		await expect(
+			adminCaller.admin.deleteChallenge({
+				id: "id-inexistente",
+			})
+		).rejects.toThrow("Desafio não encontrado");
+	});
+
+	it("não deve permitir que membro comum exclua desafio", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+		});
+
+		const memberCaller = createTestCaller({
+			db: testDb.db,
+			persona: "member",
+		});
+
+		await expect(
+			memberCaller.admin.deleteChallenge({
+				id: chal.id,
+			})
+		).rejects.toThrow();
+	});
 });

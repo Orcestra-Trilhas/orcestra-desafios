@@ -414,7 +414,7 @@ function ProfileContent() {
 						<span className="block truncate font-black font-display text-[9px] text-muted-foreground uppercase sm:text-[10px]">
 							PONTUAÇÃO
 						</span>
-						<span className="font-black font-display text-[#FF4A1C] text-lg sm:text-2xl">
+						<span className="font-black font-display text-[#FF4A1C] text-lg sm:text-2xl dark:text-orange-400">
 							{points} PTS
 						</span>
 					</div>
@@ -576,8 +576,8 @@ function ProfileContent() {
 										<button
 											className={`btn-tactile rounded border-2 px-2 py-1 font-black font-display text-[10px] uppercase transition ${
 												giftMediaUrl === preset.url
-													? "border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white"
-													: "border-black/30 bg-background text-muted-foreground hover:border-black dark:border-white/30"
+													? "border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#F59E0B] dark:text-[#121212]"
+													: "border-black/30 bg-background text-muted-foreground hover:border-black dark:border-white/30 dark:hover:text-foreground"
 											}`}
 											key={preset.label}
 											onClick={() => setGiftMediaUrl(preset.url)}
@@ -841,9 +841,9 @@ function ProfileContent() {
 									</div>
 
 									<div
-										className={`flex h-6 w-8 shrink-0 items-center justify-center rounded-sm border-2 border-black font-black text-xs ${
+										className={`flex h-6 w-8 shrink-0 items-center justify-center rounded-sm border-2 border-black font-black text-xs dark:border-white ${
 											isEnabled
-												? "bg-[#15803D] text-white"
+												? "bg-[#15803D] text-white dark:bg-[#16A34A]"
 												: "bg-muted text-muted-foreground"
 										}`}
 									>

@@ -2,6 +2,8 @@
 
 import type React from "react";
 
+import { OrcLogo } from "./orc-logo";
+
 export function PopLogo({
 	className = "h-8",
 	hideText = false,
@@ -12,27 +14,11 @@ export function PopLogo({
 	hideTextOnMobile?: boolean;
 }) {
 	return (
-		<div className={`inline-flex items-center gap-2.5 ${className}`}>
-			{/* Bauhaus / Fauve geometric icon: circle + triangle + bar */}
-			<div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-[#FF4A1C] shadow-hard-sm dark:border-[#2E3658] dark:bg-[#F04D30]">
-				<div className="h-3.5 w-3.5 rounded-full border-2 border-black bg-[#FACC15] dark:border-[#2E3658] dark:bg-[#F59E0B]" />
-				<div className="absolute -top-1 -right-1 h-2.5 w-2.5 rotate-45 border-2 border-black bg-[#1E40AF] dark:border-[#2E3658] dark:bg-[#3B6FE8]" />
-			</div>
-			{!hideText && (
-				<div
-					className={`${hideTextOnMobile ? "hidden sm:flex" : "flex"} flex-col`}
-				>
-					<span className="font-black font-display text-base text-foreground lowercase tracking-tight">
-						orc
-						<span className="text-[#FF4A1C] dark:text-[#F04D30]">{"//"}</span>
-						desafios
-					</span>
-					<span className="hidden font-bold text-[9px] text-muted-foreground uppercase tracking-widest sm:block">
-						Missões & Desafios
-					</span>
-				</div>
-			)}
-		</div>
+		<OrcLogo
+			className={className}
+			hideText={hideText}
+			hideTextOnMobile={hideTextOnMobile}
+		/>
 	);
 }
 
@@ -42,22 +28,31 @@ export function PopBadge({
 	className = "",
 }: {
 	children: React.ReactNode;
-	color?: "vermilion" | "cobalt" | "yellow" | "green" | "black" | "neutral";
+	color?:
+		| "vermilion"
+		| "cobalt"
+		| "yellow"
+		| "green"
+		| "purple"
+		| "black"
+		| "neutral";
 	className?: string;
 }) {
 	const colors = {
 		black:
-			"bg-[#121212] text-white border-black dark:bg-[#1C2142] dark:text-[#EDE8DD] dark:border-[#2E3658]",
+			"bg-[#18181b] text-white border-black dark:border-white dark:bg-card dark:text-foreground",
 		cobalt:
-			"bg-[#1E40AF] text-white border-black dark:bg-[#3B6FE8] dark:text-white dark:border-[#3B6FE8]/50",
+			"bg-[#1E40AF] text-white border-black dark:border-white dark:bg-[#2563EB] dark:text-white",
 		green:
-			"bg-[#15803D] text-white border-black dark:bg-[#10B981] dark:text-[#0B0E1E] dark:border-[#10B981]/50 font-black",
+			"bg-[#15803D] text-white border-black dark:border-white dark:bg-[#16A34A] dark:text-white font-bold",
 		neutral:
-			"bg-secondary text-foreground border-black dark:bg-[#1C2142] dark:text-[#EDE8DD] dark:border-[#2E3658]",
+			"bg-secondary text-secondary-foreground border-black dark:border-white",
+		purple:
+			"bg-[#7C3AED] text-white border-black dark:border-white dark:bg-[#8B5CF6] dark:text-white font-bold",
 		vermilion:
-			"bg-[#FF4A1C] text-white border-black dark:bg-[#F04D30] dark:text-white dark:border-[#F04D30]/50",
+			"bg-[#EA580C] text-white border-black dark:border-white dark:bg-[#EA580C] dark:text-white",
 		yellow:
-			"bg-[#FACC15] text-[#121212] border-black dark:bg-[#F59E0B] dark:text-[#0B0E1E] dark:border-[#F59E0B]/50 font-black",
+			"bg-[#FACC15] text-[#121212] border-black dark:border-white dark:bg-[#F59E0B] dark:text-[#121212] font-black",
 	};
 
 	return (
@@ -78,22 +73,22 @@ export function PopStamp({
 }) {
 	const config = {
 		APPROVED: {
-			bg: "bg-[#15803D] text-white border-black dark:bg-[#10B981] dark:text-[#0B0E1E] dark:border-[#10B981]/60 font-black",
+			bg: "bg-[#15803D] text-white border-black dark:border-white dark:bg-[#16A34A] dark:text-white font-black",
 			label: "APROVADO",
 			rotation: "rotate-[-2deg]",
 		},
 		CHANGES_REQUESTED: {
-			bg: "bg-[#DC2626] text-white border-black dark:bg-[#F04D30] dark:text-white dark:border-[#F04D30]/60",
+			bg: "bg-[#DC2626] text-white border-black dark:border-white dark:bg-[#EF4444] dark:text-white",
 			label: "AJUSTES REQUISITADOS",
 			rotation: "rotate-[2deg]",
 		},
 		IN_PROGRESS: {
-			bg: "bg-[#FACC15] text-[#121212] border-black dark:bg-[#F59E0B] dark:text-[#0B0E1E] dark:border-[#F59E0B]/60 font-black",
+			bg: "bg-[#FACC15] text-[#121212] border-black dark:border-white dark:bg-[#F59E0B] dark:text-[#121212] font-black",
 			label: "EM ANDAMENTO",
 			rotation: "rotate-0",
 		},
 		SUBMITTED: {
-			bg: "bg-[#1E40AF] text-white border-black dark:bg-[#3B6FE8] dark:text-white dark:border-[#3B6FE8]/60",
+			bg: "bg-[#1E40AF] text-white border-black dark:border-white dark:bg-[#2563EB] dark:text-white",
 			label: "SUBMETIDO",
 			rotation: "rotate-[-1deg]",
 		},
@@ -123,7 +118,7 @@ export function PopPointsBadge({
 
 	return (
 		<div
-			className={`inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FACC15] font-black text-[#121212] shadow-hard-sm dark:border-[#2E3658] dark:bg-[#F59E0B] dark:text-[#0B0E1E] ${sizeClasses}`}
+			className={`inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FACC15] font-black text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#F59E0B] dark:text-[#121212] ${sizeClasses}`}
 		>
 			<svg
 				aria-hidden="true"
@@ -168,7 +163,7 @@ export function PopWhatsAppButton({
 	return (
 		<a
 			aria-label={label}
-			className={`btn-tactile inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-[#22C55E] px-2.5 py-1.5 font-black text-[#121212] text-xs shadow-hard-sm hover:bg-[#16A34A] hover:text-white sm:px-3 dark:border-[#2E3658] dark:bg-[#10B981] dark:text-[#0B0E1E] dark:hover:bg-[#059669] ${className}`}
+			className={`btn-tactile inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-[#15803D] px-2.5 py-1.5 font-black text-white text-xs shadow-hard-sm hover:bg-[#16A34A] sm:px-3 dark:border-white dark:bg-[#16A34A] dark:text-white dark:hover:bg-[#15803D] ${className}`}
 			href={url}
 			rel="noopener noreferrer"
 			target="_blank"
@@ -200,12 +195,15 @@ export function PopTrackBadge({
 }) {
 	const map: Record<
 		string,
-		{ label: string; color: "vermilion" | "cobalt" | "yellow" | "green" }
+		{
+			label: string;
+			color: "vermilion" | "cobalt" | "yellow" | "green" | "purple";
+		}
 	> = {
 		BACK: { color: "cobalt", label: "BACKEND" },
 		DEVOPS: { color: "yellow", label: "DEVOPS" },
 		FRONT: { color: "vermilion", label: "FRONTEND" },
-		GIT: { color: "black" as unknown as "green", label: "GIT // VCS" },
+		GIT: { color: "purple", label: "GIT // VCS" },
 		PROTOTIPACAO: { color: "green", label: "PROTÓTIPO" },
 	};
 
@@ -225,9 +223,9 @@ export function BauhausSkeleton({
 }) {
 	return (
 		<div
-			className={`animate-pulse rounded-lg border-2 border-black bg-muted/40 p-4 shadow-hard dark:border-[#2E3658] ${className}`}
+			className={`animate-pulse rounded-lg border-2 border-black bg-muted/40 p-4 shadow-hard dark:border-white/20 ${className}`}
 		>
-			<div className="flex justify-between border-black/20 border-b-2 pb-3 dark:border-[#2E3658]/40">
+			<div className="flex justify-between border-black/20 border-b-2 pb-3 dark:border-white/20">
 				<div className="h-5 w-24 rounded bg-muted-foreground/30" />
 				<div className="h-5 w-16 rounded bg-muted-foreground/30" />
 			</div>
@@ -236,8 +234,8 @@ export function BauhausSkeleton({
 				<div className="h-4 w-1/2 rounded bg-muted-foreground/20" />
 			</div>
 			<div className="mt-6 flex justify-between gap-3">
-				<div className="h-10 flex-1 rounded border-2 border-black/10 bg-muted-foreground/20 dark:border-[#2E3658]/30" />
-				<div className="h-10 flex-1 rounded border-2 border-black/10 bg-muted-foreground/20 dark:border-[#2E3658]/30" />
+				<div className="h-10 flex-1 rounded border-2 border-black/10 bg-muted-foreground/20 dark:border-white/20" />
+				<div className="h-10 flex-1 rounded border-2 border-black/10 bg-muted-foreground/20 dark:border-white/20" />
 			</div>
 		</div>
 	);

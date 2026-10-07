@@ -1,7 +1,7 @@
 {
   "name": "orc//desafios",
   "short_name": "orc//desafios",
-  "description": "Desafios técnicos em duplas, suporte via WhatsApp e gamificação para a Empresa Júnior.",
+  "description": "Desafios t\u00e9cnicos em duplas, suporte via WhatsApp e gamifica\u00e7\u00e3o para a Empresa J\u00fanior.",
   "start_url": "/dashboard",
   "scope": "/",
   "id": "/dashboard",
@@ -11,26 +11,32 @@
   "theme_color": "#02571E",
   "icons": [
     {
-      "src": "/favicon/web-app-manifest-192x192.png",
+      "src": "/favicon/web-app-manifest-192x192-orc-dark.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/favicon/web-app-manifest-192x192.png",
+      "src": "/favicon/web-app-manifest-192x192-orc-dark.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/favicon/web-app-manifest-512x512.png",
+      "src": "/favicon/web-app-manifest-512x512-orc-dark.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/favicon/web-app-manifest-512x512.png",
+      "src": "/favicon/web-app-manifest-512x512-orc-dark.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon/apple-touch-icon-orc-dark.png",
+      "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     }

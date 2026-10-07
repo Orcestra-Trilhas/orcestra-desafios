@@ -145,7 +145,7 @@ export default function UserMenu() {
 						<>
 							<DropdownMenuSeparator className="my-1.5 bg-black/20 dark:bg-white/20" />
 							<DropdownMenuItem
-								className="cursor-pointer rounded-sm px-2.5 py-2 font-black font-display text-[#FF4A1C] text-xs uppercase tracking-wider transition hover:bg-[#FF4A1C] hover:text-white dark:hover:bg-[#FF4A1C] dark:hover:text-white"
+								className="cursor-pointer rounded-sm px-2.5 py-2 font-black font-display text-primary text-xs uppercase tracking-wider transition hover:bg-primary hover:text-primary-foreground"
 								onClick={handleInstallApp}
 							>
 								INSTALAR APLICATIVO
@@ -156,7 +156,7 @@ export default function UserMenu() {
 					<DropdownMenuSeparator className="my-1.5 bg-black/20 dark:bg-white/20" />
 
 					<DropdownMenuItem
-						className="cursor-pointer rounded-sm px-2.5 py-2 font-black font-display text-[#DC2626] text-xs uppercase tracking-wider transition hover:bg-[#DC2626] hover:text-white dark:hover:bg-[#DC2626] dark:hover:text-white"
+						className="cursor-pointer rounded-sm px-2.5 py-2 font-black font-display text-destructive text-xs uppercase tracking-wider transition hover:bg-destructive hover:text-destructive-foreground dark:text-red-400"
 						onClick={handleSignOut}
 					>
 						DESCONECTAR

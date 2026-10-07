@@ -88,6 +88,49 @@ export const userRouter = router({
 		return { message: "Admin inicial verificado/criado", success: true };
 	}),
 
+	getEligibleMembers: publicProcedure.query(async ({ ctx }) => {
+		const sheetMembers = getSheetMembers();
+		const registeredUsers = await ctx.db.query.user.findMany({
+			columns: {
+				name: true,
+			},
+		});
+
+		const registeredNames = new Set(
+			registeredUsers.map((u) => u.name.trim().toLowerCase())
+		);
+
+		return sheetMembers.map((m) => ({
+			displayTrack: m.displayTrack,
+			isRegistered: registeredNames.has(m.name.trim().toLowerCase()),
+			name: m.name,
+			progressPercent: m.progressPercent,
+			rawTrack: m.rawTrack,
+			satisfaction: m.satisfaction,
+			trackPreferences: m.trackPreferences,
+		}));
+	}),
+
+	getMemberTrackByName: publicProcedure
+		.input(z.object({ name: z.string() }))
+		.query(async ({ input }) => {
+			const member = findSheetMember(input.name);
+			if (member) {
+				return {
+					displayTrack: member.displayTrack,
+					name: member.name,
+					progressPercent: member.progressPercent,
+					trackPreferences: member.trackPreferences,
+				};
+			}
+			return {
+				displayTrack: "Geral (Todas as Trilhas)",
+				name: input.name,
+				progressPercent: 0,
+				trackPreferences: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"],
+			};
+		}),
+
 	getProfile: protectedProcedure
 		.input(
 			z
@@ -279,48 +322,5 @@ export const userRouter = router({
 				.where(eq(user.id, userId));
 
 			return { success: true };
-		}),
-
-	getEligibleMembers: publicProcedure.query(async ({ ctx }) => {
-		const sheetMembers = getSheetMembers();
-		const registeredUsers = await ctx.db.query.user.findMany({
-			columns: {
-				name: true,
-			},
-		});
-
-		const registeredNames = new Set(
-			registeredUsers.map((u) => u.name.trim().toLowerCase())
-		);
-
-		return sheetMembers.map((m) => ({
-			displayTrack: m.displayTrack,
-			isRegistered: registeredNames.has(m.name.trim().toLowerCase()),
-			name: m.name,
-			progressPercent: m.progressPercent,
-			rawTrack: m.rawTrack,
-			satisfaction: m.satisfaction,
-			trackPreferences: m.trackPreferences,
-		}));
-	}),
-
-	getMemberTrackByName: publicProcedure
-		.input(z.object({ name: z.string() }))
-		.query(async ({ input }) => {
-			const member = findSheetMember(input.name);
-			if (member) {
-				return {
-					displayTrack: member.displayTrack,
-					name: member.name,
-					progressPercent: member.progressPercent,
-					trackPreferences: member.trackPreferences,
-				};
-			}
-			return {
-				displayTrack: "Geral (Todas as Trilhas)",
-				name: input.name,
-				progressPercent: 0,
-				trackPreferences: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"],
-			};
 		}),
 });

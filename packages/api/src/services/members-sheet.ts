@@ -136,7 +136,10 @@ export function getSheetMembers(): SheetMember[] {
 	const csvPath = locateCsvPath();
 	if (csvPath) {
 		try {
-			const content = fs.readFileSync(/*turbopackIgnore: true*/ csvPath, "utf-8");
+			const content = fs.readFileSync(
+				/*turbopackIgnore: true*/ csvPath,
+				"utf-8"
+			);
 			cachedMembers = parseMembersCsv(content);
 			return cachedMembers;
 		} catch {

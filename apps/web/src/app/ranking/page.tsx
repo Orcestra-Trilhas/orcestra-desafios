@@ -110,7 +110,7 @@ export default function RankingPage() {
 			<div className="space-y-3 rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:p-5 dark:border-white">
 				<div className="flex items-center justify-between gap-2">
 					<div className="flex min-w-0 items-center gap-2">
-						<div className="h-3 w-3 shrink-0 rounded-full border-2 border-black bg-[#FF4A1C] dark:border-white" />
+						<div className="h-3 w-3 shrink-0 rounded-full border-2 border-black bg-primary dark:border-white" />
 						<span className="truncate font-black font-display text-xs uppercase tracking-wider">
 							TERMÔMETRO GERAL DAS MISSÕES
 						</span>
@@ -123,7 +123,7 @@ export default function RankingPage() {
 				{/* Two-tone stark Bauhaus meter */}
 				<div className="h-5 w-full overflow-hidden rounded-xs border-2 border-black bg-secondary p-0.5 dark:border-white">
 					<div
-						className="h-full border-black border-r-2 bg-[#FF4A1C] transition-all duration-500 dark:border-white"
+						className="h-full border-black border-r-2 bg-primary transition-all duration-500 dark:border-white"
 						style={{
 							width: `${Math.min(Math.max(thermometer.percentage, 3), 100)}%`,
 						}}
@@ -148,7 +148,7 @@ export default function RankingPage() {
 						<button
 							className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 								filterType === "ALL"
-									? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-sm dark:border-white"
+									? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 							onClick={() => {
@@ -163,7 +163,7 @@ export default function RankingPage() {
 						<button
 							className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 								filterType === "DEPARTMENT"
-									? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-sm dark:border-white"
+									? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 							onClick={() => {
@@ -178,7 +178,7 @@ export default function RankingPage() {
 						<button
 							className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 								filterType === "TRACK"
-									? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-sm dark:border-white"
+									? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 							onClick={() => {
@@ -196,7 +196,7 @@ export default function RankingPage() {
 						<button
 							className={`btn-tactile rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 								viewMode === "PAIRS"
-									? "border-2 border-black bg-[#121212] text-white shadow-hard-sm dark:border-white dark:bg-white dark:text-[#121212]"
+									? "border-2 border-black bg-foreground text-background shadow-hard-sm dark:border-white"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 							onClick={() => setViewMode("PAIRS")}
@@ -208,7 +208,7 @@ export default function RankingPage() {
 						<button
 							className={`btn-tactile rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 								viewMode === "MEMBERS"
-									? "border-2 border-black bg-[#121212] text-white shadow-hard-sm dark:border-white dark:bg-white dark:text-[#121212]"
+									? "border-2 border-black bg-foreground text-background shadow-hard-sm dark:border-white"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 							onClick={() => setViewMode("MEMBERS")}
@@ -226,8 +226,8 @@ export default function RankingPage() {
 							<button
 								className={`btn-tactile rounded-md border-2 px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:px-3 sm:text-xs ${
 									filterValue === dept.id
-										? "border-black bg-[#1E40AF] text-white shadow-hard-sm dark:border-white"
-										: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30"
+										? "border-black bg-[#1E40AF] text-white shadow-hard-sm dark:border-white dark:bg-[#2563EB]"
+										: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30 dark:hover:text-foreground"
 								}`}
 								key={dept.id}
 								onClick={() => setFilterValue(dept.id)}
@@ -246,8 +246,8 @@ export default function RankingPage() {
 							<button
 								className={`btn-tactile rounded-md border-2 px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:px-3 sm:text-xs ${
 									filterValue === t.id
-										? "border-black bg-[#15803D] text-white shadow-hard-sm dark:border-white"
-										: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30"
+										? "border-black bg-[#15803D] text-white shadow-hard-sm dark:border-white dark:bg-[#16A34A]"
+										: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30 dark:hover:text-foreground"
 								}`}
 								key={t.id}
 								onClick={() => setFilterValue(t.id)}
@@ -267,9 +267,9 @@ export default function RankingPage() {
 				<div className="pt-2 pb-2 sm:pt-4">
 					{/* Mobile Podium (< sm): Hero Leader Card + 2 Cards Below */}
 					<div className="block space-y-2.5 sm:hidden">
-						{/* 1st Place Hero Card */}
+						{/* 1st Place Hero Card (Ouro) */}
 						{top3[0] && (
-							<div className="rounded-md border-2 border-black bg-[#FACC15] p-3.5 text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#0B0E1E]">
+							<div className="rounded-md border-2 border-black bg-[#FACC15] p-3.5 text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#121212]">
 								<div className="mb-2 flex items-center justify-between gap-2 border-black/20 border-b-2 pb-2 dark:border-black/30">
 									<span className="font-black font-mono text-[10px] uppercase tracking-wider">
 										[LÍDER // 01 OURO]
@@ -279,7 +279,7 @@ export default function RankingPage() {
 									</span>
 								</div>
 								<div className="flex items-center gap-3">
-									<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-black font-black font-display text-2xl text-[#FACC15] shadow-hard-xs dark:bg-[#0B0E1E] dark:text-[#F59E0B]">
+									<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm border-2 border-black bg-black font-black font-display text-2xl text-[#FACC15] shadow-hard-xs dark:bg-black dark:text-[#F59E0B]">
 										01
 									</div>
 									<div className="min-w-0 flex-1">
@@ -301,7 +301,7 @@ export default function RankingPage() {
 							{top3[1] && (
 								<div className="flex flex-col justify-between rounded-md border-2 border-black bg-card p-2.5 shadow-hard-sm dark:border-white">
 									<div className="mb-1.5 flex items-center justify-between gap-1 border-black/10 border-b pb-1.5 dark:border-white/10">
-										<span className="rounded bg-[#EFECE6] px-1.5 py-0.5 font-black font-mono text-[#121212] text-[9px] uppercase dark:bg-[#1C2142] dark:text-[#EDE8DD]">
+										<span className="rounded bg-slate-200 px-1.5 py-0.5 font-black font-mono text-slate-800 text-[9px] uppercase dark:bg-slate-700 dark:text-slate-100">
 											02 PRATA
 										</span>
 										<span className="font-bold font-mono text-[11px] text-muted-foreground">
@@ -319,7 +319,7 @@ export default function RankingPage() {
 							{top3[2] && (
 								<div className="flex flex-col justify-between rounded-md border-2 border-black bg-card p-2.5 shadow-hard-sm dark:border-white">
 									<div className="mb-1.5 flex items-center justify-between gap-1 border-black/10 border-b pb-1.5 dark:border-white/10">
-										<span className="rounded bg-[#FF4A1C]/20 px-1.5 py-0.5 font-black font-mono text-[#FF4A1C] text-[9px] uppercase dark:text-[#F04D30]">
+										<span className="rounded bg-amber-700/15 px-1.5 py-0.5 font-black font-mono text-amber-800 text-[9px] uppercase dark:bg-amber-700/30 dark:text-amber-300">
 											03 BRONZE
 										</span>
 										<span className="font-bold font-mono text-[11px] text-muted-foreground">
@@ -338,7 +338,7 @@ export default function RankingPage() {
 
 					{/* Desktop Podium (sm+): 3-Column Pedestal Layout */}
 					<div className="mx-auto hidden max-w-md items-end justify-center gap-2 sm:flex sm:gap-3">
-						{/* 2nd Place */}
+						{/* 2nd Place (Prata) */}
 						{top3[1] && (
 							<div className="flex flex-1 flex-col items-center">
 								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-secondary p-3 text-center shadow-hard-sm dark:border-white">
@@ -349,7 +349,7 @@ export default function RankingPage() {
 										{"score" in top3[1] ? top3[1].score : top3[1].points} PTS
 									</span>
 								</div>
-								<div className="flex h-24 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-[#EFECE6] font-black font-display text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#1C2142] dark:text-[#EDE8DD]">
+								<div className="flex h-24 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-slate-200 font-black font-display text-slate-800 shadow-hard-sm dark:border-white dark:bg-slate-700 dark:text-slate-100">
 									<span className="text-3xl">02</span>
 									<span className="font-mono text-[9px] uppercase tracking-wider">
 										[PRATA]
@@ -358,10 +358,10 @@ export default function RankingPage() {
 							</div>
 						)}
 
-						{/* 1st Place */}
+						{/* 1st Place (Ouro) */}
 						{top3[0] && (
 							<div className="flex flex-1 flex-col items-center">
-								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-[#FACC15] p-3.5 text-center text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#0B0E1E]">
+								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-[#FACC15] p-3.5 text-center text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#121212]">
 									<span className="block truncate font-black font-display text-sm uppercase">
 										{renderMemberLinks(top3[0], true)}
 									</span>
@@ -369,7 +369,7 @@ export default function RankingPage() {
 										{"score" in top3[0] ? top3[0].score : top3[0].points} PTS
 									</span>
 								</div>
-								<div className="flex h-36 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-[#FACC15] font-black font-display text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#0B0E1E]">
+								<div className="flex h-36 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-[#FACC15] font-black font-display text-[#121212] shadow-hard dark:border-white dark:bg-[#F59E0B] dark:text-[#121212]">
 									<span className="text-5xl">01</span>
 									<span className="font-mono text-[10px] uppercase tracking-wider">
 										[LÍDER // OURO]
@@ -378,7 +378,7 @@ export default function RankingPage() {
 							</div>
 						)}
 
-						{/* 3rd Place */}
+						{/* 3rd Place (Bronze) */}
 						{top3[2] && (
 							<div className="flex flex-1 flex-col items-center">
 								<div className="mb-2 w-full rounded-t-md border-2 border-black bg-secondary p-3 text-center shadow-hard-sm dark:border-white">
@@ -389,7 +389,7 @@ export default function RankingPage() {
 										{"score" in top3[2] ? top3[2].score : top3[2].points} PTS
 									</span>
 								</div>
-								<div className="flex h-20 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-[#FF4A1C] font-black font-display text-white shadow-hard-sm dark:border-white dark:bg-[#F04D30]">
+								<div className="flex h-20 w-full flex-col items-center justify-center rounded-b-md border-2 border-black bg-[#B45309] font-black font-display text-white shadow-hard-sm dark:border-white dark:bg-[#9A3412]">
 									<span className="text-3xl">03</span>
 									<span className="font-mono text-[9px] uppercase tracking-wider">
 										[BRONZE]
@@ -426,10 +426,10 @@ export default function RankingPage() {
 									className={`flex items-center justify-between gap-3 rounded-md border-2 border-black p-3 shadow-hard-sm transition-all sm:p-3.5 dark:border-white ${
 										isTop3
 											? position === 1
-												? "bg-[#FACC15]/20"
+												? "bg-amber-400/15 dark:bg-amber-400/20"
 												: position === 2
-													? "bg-[#EFECE6]/40 dark:bg-white/5"
-													: "bg-[#FF4A1C]/15"
+													? "bg-slate-200/50 dark:bg-slate-700/25"
+													: "bg-amber-700/15 dark:bg-amber-700/20"
 											: "bg-card"
 									}`}
 									key={"id" in item ? String(item.id) : `rank-${position}`}
@@ -438,11 +438,11 @@ export default function RankingPage() {
 										<div
 											className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-black font-black font-display text-xs sm:h-8 sm:w-8 dark:border-white ${
 												position === 1
-													? "bg-[#FACC15] text-[#121212]"
+													? "bg-[#FACC15] text-[#121212] dark:bg-[#F59E0B] dark:text-[#121212]"
 													: position === 2
-														? "bg-[#EFECE6] text-[#121212]"
+														? "bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-100"
 														: position === 3
-															? "bg-[#FF4A1C] text-white"
+															? "bg-[#B45309] text-white dark:bg-[#9A3412] dark:text-white"
 															: "bg-secondary text-foreground"
 											}`}
 										>

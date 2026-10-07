@@ -23,6 +23,7 @@ export default function BottomNav() {
 			label: "DESAFIOS",
 			symbol: (
 				<svg
+					aria-hidden="true"
 					className="h-5 w-5 fill-current"
 					viewBox="0 0 24 24"
 					xmlns="http://www.w3.org/2000/svg"
@@ -37,6 +38,7 @@ export default function BottomNav() {
 			label: "RANKING",
 			symbol: (
 				<svg
+					aria-hidden="true"
 					className="h-5 w-5 fill-current"
 					viewBox="0 0 24 24"
 					xmlns="http://www.w3.org/2000/svg"
@@ -51,6 +53,7 @@ export default function BottomNav() {
 			label: "PERFIL",
 			symbol: (
 				<svg
+					aria-hidden="true"
 					className="h-5 w-5 fill-current"
 					viewBox="0 0 24 24"
 					xmlns="http://www.w3.org/2000/svg"
@@ -67,6 +70,7 @@ export default function BottomNav() {
 						label: "ADMIN",
 						symbol: (
 							<svg
+								aria-hidden="true"
 								className="h-5 w-5 fill-current"
 								viewBox="0 0 24 24"
 								xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +93,7 @@ export default function BottomNav() {
 					<Link
 						className={`btn-tactile flex flex-col items-center gap-1 rounded-md px-2.5 py-1 text-center transition-all sm:px-3 ${
 							item.active
-								? "border-2 border-black bg-[#FF4A1C] font-black text-white shadow-hard-sm dark:border-white"
+								? "border-2 border-black bg-primary font-black text-primary-foreground shadow-hard-sm dark:border-white"
 								: "font-bold text-muted-foreground hover:text-foreground"
 						}`}
 						href={item.href as Route}

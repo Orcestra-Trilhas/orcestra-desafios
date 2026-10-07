@@ -133,6 +133,23 @@ export default function ChallengeDetailPage() {
 		})
 	);
 
+	const userMe = useQuery(trpc.user.me.queryOptions());
+	const isAdmin = userMe.data?.role === "ADMIN";
+
+	const deleteChallengeMutation = useMutation(
+		trpc.admin.deleteChallenge.mutationOptions({
+			onError: (err) => {
+				toast.error(err.message || "Erro ao excluir desafio");
+			},
+			onSuccess: () => {
+				toast.success("Desafio excluído com sucesso!");
+				setIsDeleteModalOpen(false);
+				router.push("/admin");
+			},
+		})
+	);
+
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 	const [submissionType, setSubmissionType] = useState<
 		"PR" | "REPO" | "DOCUMENT" | "IMAGE" | "TEXT"
@@ -231,14 +248,27 @@ export default function ChallengeDetailPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-4 px-3 py-4 pb-28 sm:space-y-6 sm:px-4 sm:py-6 sm:pb-32">
-			{/* Back Link */}
-			<button
-				className="btn-tactile inline-flex items-center gap-2 rounded-md border-2 border-black bg-secondary px-3 py-1 font-black font-display text-xs uppercase shadow-hard-sm dark:border-white"
-				onClick={() => router.back()}
-				type="button"
-			>
-				&larr; VOLTAR AOS DESAFIOS
-			</button>
+			{/* Top Bar with Back Link & Admin Delete */}
+			<div className="flex items-center justify-between gap-2">
+				<button
+					className="btn-tactile inline-flex items-center gap-2 rounded-md border-2 border-black bg-secondary px-3 py-1 font-black font-display text-xs uppercase shadow-hard-sm dark:border-white"
+					onClick={() => router.back()}
+					type="button"
+				>
+					&larr; VOLTAR AOS DESAFIOS
+				</button>
+
+				{isAdmin ? (
+					<button
+						className="btn-tactile inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#DC2626] px-3 py-1 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#B91C1C] dark:border-white"
+						onClick={() => setIsDeleteModalOpen(true)}
+						type="button"
+					>
+						<Trash2 className="h-3.5 w-3.5" />
+						<span>EXCLUIR DESAFIO</span>
+					</button>
+				) : null}
+			</div>
 
 			{/* Header Banner */}
 			<div className="space-y-3 rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:space-y-4 sm:p-6 dark:border-white">
@@ -661,7 +691,7 @@ export default function ChallengeDetailPage() {
 
 												{/* Feedback do Assessor se houver */}
 												{sub.feedback ? (
-													<div className="rounded-md border border-[#15803D]/40 bg-[#15803D]/10 p-2.5 font-mono text-[#15803D] text-xs dark:text-[#4ADE80]">
+													<div className="rounded-md border border-emerald-600/40 bg-emerald-500/10 p-2.5 font-mono text-emerald-950 text-xs dark:text-emerald-300">
 														<strong className="block font-bold text-[10px] uppercase">
 															FEEDBACK DO ASSESSOR:
 														</strong>
@@ -718,19 +748,24 @@ export default function ChallengeDetailPage() {
 
 			{/* Submission Modal */}
 			{isSubmitModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-					<div className="relative max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-lg border-2 border-black bg-card p-6 shadow-hard-lg dark:border-white">
-						<div className="flex items-center justify-between border-black border-b-2 pb-3 dark:border-white">
-							<div>
-								<h3 className="font-black font-display text-xl uppercase">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-xs sm:p-4">
+					<form
+						className="relative flex max-h-[90dvh] w-full max-w-lg flex-col rounded-lg border-2 border-black bg-card shadow-hard-lg dark:border-white"
+						onSubmit={handleSubmitSolution}
+					>
+						{/* Modal Header */}
+						<div className="flex shrink-0 items-center justify-between border-black border-b-2 p-4 sm:p-5 dark:border-white">
+							<div className="min-w-0 pr-2">
+								<h3 className="truncate font-black font-display text-lg uppercase sm:text-xl">
 									SUBMETER SOLUÇÃO // DUPLA
 								</h3>
-								<p className="font-mono text-muted-foreground text-xs uppercase">
+								<p className="truncate font-mono text-[11px] text-muted-foreground uppercase">
 									DESAFIO: {ch.title}
 								</p>
 							</div>
 							<button
-								className="btn-tactile flex h-8 w-8 items-center justify-center rounded-md border-2 border-black bg-secondary font-black text-sm hover:bg-muted dark:border-white"
+								aria-label="Fechar modal"
+								className="btn-tactile flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-black bg-secondary font-black text-sm hover:bg-muted dark:border-white"
 								onClick={() => setIsSubmitModalOpen(false)}
 								type="button"
 							>
@@ -738,11 +773,12 @@ export default function ChallengeDetailPage() {
 							</button>
 						</div>
 
-						<form className="space-y-4" onSubmit={handleSubmitSolution}>
+						{/* Modal Scrollable Body */}
+						<div className="flex-1 space-y-4 overflow-y-auto p-4 overscroll-contain sm:p-6">
 							<div className="space-y-1.5">
-								<label className="font-black font-display text-xs uppercase tracking-wider">
+								<span className="block font-black font-display text-xs uppercase tracking-wider">
 									TIPO DE ENTREGA
-								</label>
+								</span>
 								<div className="grid grid-cols-3 gap-2">
 									{(["PR", "TEXT", "DOCUMENT"] as const).map((t) => (
 										<button
@@ -872,20 +908,99 @@ export default function ChallengeDetailPage() {
 									/>
 								</div>
 							</div>
+						</div>
+
+						{/* Modal Pinned Footer */}
+						<div className="flex shrink-0 items-center justify-end gap-2.5 border-black border-t-2 bg-muted/20 p-3 sm:p-4 dark:border-white">
+							<button
+								className="btn-tactile rounded-md border-2 border-black bg-secondary px-4 py-2.5 font-black font-display text-foreground text-xs uppercase hover:bg-muted dark:border-white"
+								onClick={() => setIsSubmitModalOpen(false)}
+								type="button"
+							>
+								CANCELAR
+							</button>
 
 							<button
-								className="btn-tactile w-full rounded-md border-2 border-black bg-[#FF4A1C] py-3 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 dark:border-white"
+								className="btn-tactile flex-1 rounded-md border-2 border-black bg-[#FF4A1C] px-5 py-2.5 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 sm:flex-initial dark:border-white"
 								disabled={submitSolutionMutation.isPending}
 								type="submit"
 							>
 								{submitSolutionMutation.isPending
-									? "ENVIANDO SOLUÇÃO..."
+									? "ENVIANDO..."
 									: "CONFIRMAR & SUBMETER SOLUÇÃO"}
 							</button>
-						</form>
-					</div>
+						</div>
+					</form>
 				</div>
 			)}
+
+			{/* Delete Challenge Confirmation Modal */}
+			{isDeleteModalOpen && ch ? (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-xs sm:p-4">
+					<div className="relative w-full max-w-md space-y-4 rounded-lg border-2 border-black bg-card p-4 shadow-hard-lg sm:p-6 dark:border-white">
+						<div className="flex items-center gap-3 border-black border-b-2 pb-3 dark:border-white">
+							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border-2 border-black bg-[#DC2626] text-white shadow-hard-sm dark:border-white">
+								<Trash2 className="h-5 w-5" />
+							</div>
+							<div>
+								<h3 className="font-black font-display text-destructive text-lg uppercase dark:text-red-400">
+									EXCLUIR DESAFIO
+								</h3>
+								<p className="font-mono text-muted-foreground text-xs uppercase">
+									AÇÃO DESTRUTIVA IRREVERSÍVEL
+								</p>
+							</div>
+						</div>
+
+						<div className="space-y-2 text-xs">
+							<p className="font-medium text-foreground">
+								Você tem certeza que deseja excluir o desafio abaixo?
+							</p>
+							<div className="rounded-md border-2 border-black/20 bg-secondary/50 p-2.5 font-bold font-display uppercase dark:border-white/20">
+								{ch.title}
+							</div>
+							<p className="font-mono text-[11px] text-muted-foreground">
+								{(ch.totalPairs ?? 0) > 0 ? (
+									<span>
+										⚠️ Isso também excluirá permanentemente as{" "}
+										<strong className="font-bold text-destructive dark:text-red-400">
+											{ch.totalPairs} duplas/trios
+										</strong>{" "}
+										e todas as suas submissões e feedbacks associados.
+									</span>
+								) : (
+									"Nenhuma dupla foi associada a este desafio ainda."
+								)}
+							</p>
+						</div>
+
+						<div className="flex items-center justify-end gap-2 border-black/10 border-t pt-3 dark:border-white/10">
+							<button
+								className="btn-tactile rounded-md border-2 border-black bg-secondary px-4 py-2 font-black font-display text-foreground text-xs uppercase hover:bg-muted dark:border-white"
+								onClick={() => setIsDeleteModalOpen(false)}
+								type="button"
+							>
+								CANCELAR
+							</button>
+							<button
+								className="btn-tactile flex items-center gap-1.5 rounded-md border-2 border-black bg-[#DC2626] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#B91C1C] disabled:opacity-50 dark:border-white"
+								disabled={deleteChallengeMutation.isPending}
+								onClick={() =>
+									deleteChallengeMutation.mutate({ id: challengeId })
+								}
+								type="button"
+							>
+								<Trash2 className="h-3.5 w-3.5" />
+								<span>
+									{deleteChallengeMutation.isPending
+										? "EXCLUINDO..."
+										: "EXCLUIR DEFINITIVAMENTE"}
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			) : null}
 		</div>
 	);
 }

@@ -2,10 +2,12 @@
 
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import mermaid from "astro-mermaid";
 
 export default defineConfig({
 	base: "/orcestra-desafios",
 	integrations: [
+		mermaid(),
 		starlight({
 			customCss: ["./src/styles/custom.css"],
 			defaultLocale: "root",

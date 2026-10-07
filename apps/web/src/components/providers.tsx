@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { queryClient } from "@/utils/trpc";
 
+import { DynamicFavicon } from "./dynamic-favicon";
 import { PwaProvider } from "./pwa-provider";
 import { ThemeProvider } from "./theme-provider";
 
@@ -18,6 +19,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 			enableSystem
 			themes={["orc-dark", "orc-light", "dark", "light"]}
 		>
+			<DynamicFavicon />
 			<QueryClientProvider client={queryClient}>
 				<PwaProvider>{children}</PwaProvider>
 				<ReactQueryDevtools />

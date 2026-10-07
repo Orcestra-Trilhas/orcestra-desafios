@@ -44,6 +44,7 @@
 	--baugasm-cobalt: #06b6d4;
 	--baugasm-yellow: #facc15;
 	--baugasm-green: #84cc16;
+	--baugasm-purple: #a855f7;
 	--baugasm-cream: #fffdfa;
 	--baugasm-black: #18181b;
 }
@@ -89,6 +90,7 @@
 	--baugasm-cobalt: #2563eb;
 	--baugasm-yellow: #eab308;
 	--baugasm-green: #16a34a;
+	--baugasm-purple: #a855f7;
 	--baugasm-cream: #f4ede0;
 	--baugasm-black: #0a0f24;
 }
@@ -114,11 +116,12 @@
 	--input: #152c13;
 	--ring: #3bc90c;
 
-	--chart-1: #3bc90c; /* Verde Claro */
-	--chart-2: #22c55e; /* Esmeralda */
-	--chart-3: #86efac; /* Menta Suave */
-	--chart-4: #f0f7ef; /* Branco Suave */
-	--chart-5: #0f1d0d; /* Verde Escuro */
+	/* Paleta de dados e trilhas diversificada em tons harmônicos */
+	--chart-1: #3bc90c; /* Orc Verde Primário */
+	--chart-2: #0ea5e9; /* Cobalto / Azure Blue */
+	--chart-3: #facc15; /* Ouro / Amarelo Solar */
+	--chart-4: #ff5722; /* Coral / Vermilion */
+	--chart-5: #a855f7; /* Violeta / Purple */
 
 	--sidebar: #0f1d0d;
 	--sidebar-foreground: #f0f7ef;
@@ -129,10 +132,11 @@
 	--sidebar-border: #1e3b1a;
 	--sidebar-ring: #3bc90c;
 
-	--baugasm-vermilion: #3bc90c;
-	--baugasm-cobalt: #22c55e;
-	--baugasm-yellow: #86efac;
-	--baugasm-green: #3bc90c;
+	--baugasm-vermilion: #ff5722;
+	--baugasm-cobalt: #0ea5e9;
+	--baugasm-yellow: #facc15;
+	--baugasm-green: #22c55e;
+	--baugasm-purple: #a855f7;
 	--baugasm-cream: #f0f7ef;
 	--baugasm-black: #080f07;
 }
@@ -158,11 +162,12 @@
 	--input: #234a1f;
 	--ring: #3bc90c;
 
-	--chart-1: #0d3309; /* Verde Escuro */
-	--chart-2: #3bc90c; /* Verde Claro */
-	--chart-3: #15803d; /* Forest Green */
-	--chart-4: #22c55e; /* Esmeralda */
-	--chart-5: #071a06; /* Preto/Verde */
+	/* Paleta de dados e trilhas diversificada em tons nítidos de alto contraste */
+	--chart-1: #15803d; /* Verde Floresta */
+	--chart-2: #0284c7; /* Azul Cobalto */
+	--chart-3: #d97706; /* Ouro Âmbar */
+	--chart-4: #ea580c; /* Vermilion Quente */
+	--chart-5: #7c3aed; /* Púrpura Real */
 
 	--sidebar: #ffffff;
 	--sidebar-foreground: #071a06;
@@ -173,10 +178,11 @@
 	--sidebar-border: #234a1f;
 	--sidebar-ring: #3bc90c;
 
-	--baugasm-vermilion: #0d3309;
-	--baugasm-cobalt: #15803d;
-	--baugasm-yellow: #3bc90c;
-	--baugasm-green: #3bc90c;
+	--baugasm-vermilion: #ea580c;
+	--baugasm-cobalt: #0284c7;
+	--baugasm-yellow: #d97706;
+	--baugasm-green: #16a34a;
+	--baugasm-purple: #7c3aed;
 	--baugasm-cream: #f9fbf9;
 	--baugasm-black: #071a06;
 }
@@ -217,6 +223,7 @@
 	--color-baugasm-cobalt: var(--baugasm-cobalt);
 	--color-baugasm-cream: var(--baugasm-cream);
 	--color-baugasm-green: var(--baugasm-green);
+	--color-baugasm-purple: var(--baugasm-purple);
 	--color-baugasm-vermilion: var(--baugasm-vermilion);
 	--color-baugasm-yellow: var(--baugasm-yellow);
 	--font-display: var(--font-display), sans-serif;
@@ -667,6 +674,28 @@
 	.btn-tactile:active {
 		box-shadow: 2px 2px 0px currentColor;
 		transform: translate(2px, 2px);
+	}
+
+	/* Orc'estra Official Logo Badge Theme Variations */
+	.orc-logo-badge {
+		background-color: #ec4899;
+		border-color: #18181b;
+		box-shadow: 2px 2px 0px #18181b;
+	}
+	:is(.dark *) .orc-logo-badge {
+		background-color: #d9381e !important;
+		border-color: #273463 !important;
+		box-shadow: 2px 2px 0px #040714 !important;
+	}
+	:is(.orc-dark *) .orc-logo-badge {
+		background-color: #02571e !important;
+		border-color: #1e3b1a !important;
+		box-shadow: 2px 2px 0px #020602 !important;
+	}
+	:is(.orc-light *) .orc-logo-badge {
+		background-color: #0d3309 !important;
+		border-color: #234a1f !important;
+		box-shadow: 2px 2px 0px #0c2609 !important;
 	}
 }
 
