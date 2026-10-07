@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../index";
+import { protectedProcedure, router } from "../trpc";
 
 export const challengeRouter = router({
 	advanceStep: protectedProcedure

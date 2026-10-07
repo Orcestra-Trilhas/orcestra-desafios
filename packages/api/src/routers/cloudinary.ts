@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { v2 as cloudinary } from "cloudinary";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../index";
+import { protectedProcedure, router } from "../trpc";
 
 function cleanEnvValue(value?: string): string | undefined {
 	if (!value) {

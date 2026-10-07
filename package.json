@@ -26,7 +26,13 @@
     "env:preview": "tsx scripts/sync-vercel-env.ts preview",
     "env:production": "tsx scripts/sync-vercel-env.ts production",
     "fix": "ultracite fix",
-    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/"
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
+    "test": "vitest run",
+    "test:all": "vitest run && playwright test",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:watch": "vitest"
   },
   "overrides": {
     "@next/env": "npm:@varlock/nextjs-integration@1.2.2"
@@ -38,12 +44,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
+    "@electric-sql/pglite": "^0.5.8",
     "@orcestra-desafios/config": "*",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^26.4.1",
+    "@vitest/coverage-v8": "^5.0.3",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3",
     "ultracite": "7.11.0",
-    "varlock": "1.18.0"
+    "varlock": "1.18.0",
+    "vitest": "^5.0.3"
   },
   "packageManager": "npm@12.1.0",
   "allowScripts": {

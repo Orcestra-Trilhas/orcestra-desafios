@@ -3,6 +3,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./routers": "./src/routers/index.ts",
+    "./routers/*": "./src/routers/*.ts",
     "./*": "./src/*.ts"
   },
   "scripts": {

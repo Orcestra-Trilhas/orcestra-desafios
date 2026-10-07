@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../index";
+import { protectedProcedure, router } from "../trpc";
 
 export const rankingRouter = router({
 	getLeaderboard: protectedProcedure

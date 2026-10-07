@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { adminProcedure, router } from "../index";
+import { adminProcedure, router } from "../trpc";
 
 export const adminRouter = router({
 	createChallenge: adminProcedure

@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../index";
+import { publicProcedure, router } from "../trpc";
 import { adminRouter } from "./admin";
 import { challengeRouter } from "./challenge";
 import { cloudinaryRouter } from "./cloudinary";
