@@ -4,7 +4,8 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-	site: "https://orcestra-trilhas.github.io/orcestra-desafios",
+	site: "https://orcestra-trilhas.github.io",
+	base: process.env.GITHUB_ACTIONS ? "/orcestra-desafios" : "/",
 	integrations: [
 		starlight({
 			customCss: ["./src/styles/custom.css"],
