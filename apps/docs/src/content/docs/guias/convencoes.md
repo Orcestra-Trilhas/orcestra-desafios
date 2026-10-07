@@ -88,3 +88,4 @@ Seguimos a convenção de **Conventional Commits** em português, com mensagens 
 - **Validação com Zod**: Todo endpoint de mutação ou query no tRPC deve ter seu input validado por schema Zod estrito.
 - **Procedimentos Autenticados**: Utilize `protectedProcedure` para qualquer operação que requeira autenticação, e `adminProcedure` para ações restritas à diretoria/administração.
 - **Tratamento de Exceções**: Lance erros semânticos usando `TRPCError` com o código HTTP correspondente (`NOT_FOUND`, `UNAUTHORIZED`, `FORBIDDEN`, `BAD_REQUEST`).
+

@@ -48,3 +48,4 @@ Principais aspectos da implementação:
 
 ### Negativas / Trade-offs & Mitigações
 - **Acoplamento a TypeScript**: A API não expõe uma interface REST genérica para clientes de linguagens terceiras. Se no futuro for necessária uma API pública aberta, pode-se adotar o plugin `@trpc/openapi` ou expor route handlers dedicados.
+

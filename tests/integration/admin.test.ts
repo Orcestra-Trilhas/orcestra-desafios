@@ -1,3 +1,5 @@
+import { user } from "@orcestra-desafios/db";
+import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
 	createTestChallenge,
@@ -99,6 +101,99 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 		});
 
 		expect(createdPairs.length).toBe(drawRes.pairsCreated);
+	});
+
+	it("deve parear membro de maior conhecimento com membro de menor conhecimento segundo a planilha e pontos (Issue #4)", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "DEVOPS",
+		});
+
+		// Configura as personas pré-existentes para outra trilha para que apenas os 4 membros de DevOps participem deste teste
+		await testDb.db
+			.update(user)
+			.set({ trackPreferences: JSON.stringify(["FRONT"]) })
+			.where(eq(user.id, adminPersona.id));
+		await testDb.db
+			.update(user)
+			.set({ trackPreferences: JSON.stringify(["FRONT"]) })
+			.where(eq(user.id, memberPersona.id));
+		await testDb.db
+			.update(user)
+			.set({ trackPreferences: JSON.stringify(["FRONT"]) })
+			.where(eq(user.id, assessorPersona.id));
+
+		// Cria 4 usuários com nomes conhecidos da planilha
+		// Eduardo L. = 90%
+		const u1 = await createTestUser(testDb.db, {
+			email: "edul@orcestra.com",
+			name: "Eduardo L.",
+			points: 10,
+			trackPreferences: JSON.stringify(["DEVOPS"]),
+		});
+
+		// Faby = 50%
+		const u2 = await createTestUser(testDb.db, {
+			email: "faby@orcestra.com",
+			name: "Faby",
+			points: 0,
+			trackPreferences: JSON.stringify(["DEVOPS"]),
+		});
+
+		// Lucas N. = 25%
+		const u3 = await createTestUser(testDb.db, {
+			email: "lucasn@orcestra.com",
+			name: "Lucas N.",
+			points: 5,
+			trackPreferences: JSON.stringify(["DEVOPS"]),
+		});
+
+		// Carlos = 0%
+		const u4 = await createTestUser(testDb.db, {
+			email: "carlos@orcestra.com",
+			name: "Carlos",
+			points: 0,
+			trackPreferences: JSON.stringify(["DEVOPS"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		const drawRes = await adminCaller.admin.drawPairs({
+			challengeId: chal.id,
+		});
+
+		expect(drawRes.success).toBe(true);
+
+		const createdPairs = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+
+		expect(createdPairs).toHaveLength(2);
+
+		// Par 1 deve ter o de maior conhecimento (Eduardo L. [score 100]) pareado com o de menor (Carlos [score 0])
+		const pairWithU1 = createdPairs.find(
+			(p) => p.member1Id === u1.id || p.member2Id === u1.id
+		);
+		expect(pairWithU1).toBeDefined();
+		const u1PartnerId =
+			pairWithU1?.member1Id === u1.id
+				? pairWithU1?.member2Id
+				: pairWithU1?.member1Id;
+		expect(u1PartnerId).toBe(u4.id); // Carlos
+
+		// Par 2 deve ter Faby (score 50) com Lucas N. (score 30)
+		const pairWithU2 = createdPairs.find(
+			(p) => p.member1Id === u2.id || p.member2Id === u2.id
+		);
+		expect(pairWithU2).toBeDefined();
+		const u2PartnerId =
+			pairWithU2?.member1Id === u2.id
+				? pairWithU2?.member2Id
+				: pairWithU2?.member1Id;
+		expect(u2PartnerId).toBe(u3.id); // Lucas N.
 	});
 
 	it("deve aprovar submissão de dupla, creditar pontos aos membros e registrar log", async () => {

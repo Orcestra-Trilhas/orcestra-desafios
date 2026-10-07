@@ -52,3 +52,4 @@ Estruturamos um sistema dinâmico de temas via variáveis CSS e classes controla
 
 ### Negativas / Trade-offs & Mitigações
 - **Curva da sintaxe Tailwind v4**: A versão 4 introduziu novas convenções para `@theme` e variantes personalizadas (`@custom-variant`). Centralizamos todos os tokens no arquivo `packages/ui/src/styles/globals.css` para manter o ponto único de verdade.
+

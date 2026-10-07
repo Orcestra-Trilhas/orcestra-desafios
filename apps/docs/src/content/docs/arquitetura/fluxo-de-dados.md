@@ -93,3 +93,4 @@ const { data, isLoading } = trpc.challenge.getById.useQuery({ id: challengeId })
 // 'data' já possui os tipos TypeScript exatos do schema Drizzle
 ```
 Se uma coluna for adicionada ou renomeada no schema do banco de dados, o TypeScript emite um erro de compilação imediato no componente da interface antes mesmo do código ser enviado para produção.
+

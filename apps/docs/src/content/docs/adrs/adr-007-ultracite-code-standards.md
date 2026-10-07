@@ -46,3 +46,4 @@ Benefícios incorporados:
 
 ### Negativas / Trade-offs & Mitigações
 - **Rigidez em certas regras**: O Biome possui regras estritas (como desestimular regex literais dentro de loops e forçar `.slice` em vez de `.substring`). A equipe adotou essas regras como diretrizes de engenharia de software de alta performance, documentadas no [Guia de Convenções](/guias/convencoes/).
+

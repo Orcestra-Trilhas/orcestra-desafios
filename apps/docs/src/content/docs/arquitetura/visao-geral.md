@@ -90,3 +90,4 @@ graph TD
 
 #### `packages/config`
 - Configurações base de compilação TypeScript compartilhadas entre todos os módulos (`tsconfig.base.json`), prevenindo divergências de tipagem no ecossistema.
+

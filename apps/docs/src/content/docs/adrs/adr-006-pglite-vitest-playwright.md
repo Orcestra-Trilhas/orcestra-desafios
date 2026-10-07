@@ -53,3 +53,4 @@ Adotar uma arquitetura de testes em duas camadas complementares:
 
 ### Negativas / Trade-offs & Mitigações
 - **Diferenças sutis do PGlite**: Embora seja o motor oficial do Postgres, certas extensões de terceiros compiladas em C não estão disponíveis por padrão no WASM. No entanto, para todas as funcionalidades relacionais do projeto, o comportamento é 100% idêntico ao Neon Postgres.
+

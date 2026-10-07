@@ -47,3 +47,4 @@ Aproveitamos:
 
 ### Negativas / Trade-offs & Mitigações
 - **Curva de aprendizado da separação Client vs Server Components**: Mitigada pela regra de isolar a diretiva `'use client'` estritamente nas folhas da árvore de componentes (como formulários interativos e botões de ação).
+

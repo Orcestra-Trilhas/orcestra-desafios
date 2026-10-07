@@ -267,4 +267,59 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 		expect(ids).toContain(memberPersona.id);
 		expect(ids).toContain(assessorPersona.id);
 	});
+
+	it("deve retornar lista de membros elegíveis da planilha e indicar se já estão cadastrados", async () => {
+		const caller = createTestCaller({
+			db: testDb.db,
+			persona: "member",
+		});
+
+		// Cadastra um usuário com o nome exato "Eduardo L."
+		await createTestUser(testDb.db, {
+			email: "edulobo@orcestra.com",
+			name: "Eduardo L.",
+		});
+
+		const eligible = await caller.user.getEligibleMembers();
+		expect(eligible.length).toBeGreaterThan(0);
+
+		// Eduardo L. deve estar marcado como cadastrado
+		const eduardo = eligible.find((m) => m.name === "Eduardo L.");
+		expect(eduardo).toBeDefined();
+		expect(eduardo?.isRegistered).toBe(true);
+		expect(eduardo?.trackPreferences).toEqual(["DEVOPS"]);
+
+		// Outro membro não cadastrado ainda
+		const artur = eligible.find((m) => m.name === "Artur");
+		expect(artur).toBeDefined();
+		expect(artur?.isRegistered).toBe(false);
+	});
+
+	it("deve retornar a trilha automática de um membro ao consultar por nome", async () => {
+		const caller = createTestCaller({
+			db: testDb.db,
+			persona: "member",
+		});
+
+		const trackCarlos = await caller.user.getMemberTrackByName({
+			name: "Carlos",
+		});
+		expect(trackCarlos.displayTrack).toBe("Back-end");
+		expect(trackCarlos.trackPreferences).toEqual(["BACK"]);
+
+		const trackFaby = await caller.user.getMemberTrackByName({ name: "Faby" });
+		expect(trackFaby.displayTrack).toBe("Design / Protótipo");
+		expect(trackFaby.trackPreferences).toEqual(["PROTOTIPACAO"]);
+
+		const trackUnknown = await caller.user.getMemberTrackByName({
+			name: "Desconhecido",
+		});
+		expect(trackUnknown.displayTrack).toBe("Geral (Todas as Trilhas)");
+		expect(trackUnknown.trackPreferences).toEqual([
+			"BACK",
+			"FRONT",
+			"PROTOTIPACAO",
+			"DEVOPS",
+		]);
+	});
 });

@@ -50,3 +50,4 @@ Principais benefícios da combinação:
 
 ### Negativas / Trade-offs & Mitigações
 - **Curva de migrações manuais**: O Drizzle exige o comando `drizzle-kit generate` e revisão dos scripts SQL gerados. Essa prática foi incorporada ao fluxo de desenvolvimento com os comandos `npm run db:generate` e `npm run db:migrate`.
+

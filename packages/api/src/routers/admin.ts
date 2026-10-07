@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
+import { calculateMemberKnowledgeScore } from "../services/members-sheet";
 import { adminProcedure, router } from "../trpc";
 
 export const adminRouter = router({
@@ -114,17 +115,16 @@ export const adminRouter = router({
 				});
 			}
 
-			// Shuffle array randomly (Fisher-Yates)
-			const pool = [...eligible];
-			for (let i = pool.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				const itemI = pool[i];
-				const itemJ = pool[j];
-				if (itemI && itemJ) {
-					pool[i] = itemJ;
-					pool[j] = itemI;
+			// Ordena os membros elegíveis por nível de conhecimento decrescente
+			// Pontuação = Progresso da Planilha de Acompanhamentos (0 a 100%) + Pontos acumulados na plataforma
+			const rankedMembers = [...eligible].sort((a, b) => {
+				const scoreA = calculateMemberKnowledgeScore(a.name, a.points);
+				const scoreB = calculateMemberKnowledgeScore(b.name, b.points);
+				if (scoreB !== scoreA) {
+					return scoreB - scoreA;
 				}
-			}
+				return a.name.localeCompare(b.name);
+			});
 
 			const pairsToInsert: Array<{
 				id: string;
@@ -136,42 +136,37 @@ export const adminRouter = router({
 				status: string;
 			}> = [];
 
-			while (pool.length > 0) {
-				if (pool.length === 3) {
-					const m1 = pool.pop();
-					const m2 = pool.pop();
-					const m3 = pool.pop();
-					if (m1 && m2 && m3) {
-						pairsToInsert.push({
-							challengeId: ch.id,
-							currentStep: 1,
-							id: crypto.randomUUID(),
-							member1Id: m1.id,
-							member2Id: m2.id,
-							member3Id: m3.id,
-							status: "IN_PROGRESS",
-						});
-					}
-				} else if (pool.length >= 2) {
-					const m1 = pool.pop();
-					const m2 = pool.pop();
-					if (m1 && m2) {
-						pairsToInsert.push({
-							challengeId: ch.id,
-							currentStep: 1,
-							id: crypto.randomUUID(),
-							member1Id: m1.id,
-							member2Id: m2.id,
-							member3Id: null,
-							status: "IN_PROGRESS",
-						});
-					}
-				} else {
-					const solo = pool.pop();
-					const lastPair = pairsToInsert.at(-1);
-					if (solo && lastPair) {
-						lastPair.member3Id = solo.id;
-					}
+			// Algoritmo de dois ponteiros: Pareia maior conhecimento com menor conhecimento
+			let left = 0;
+			let right = rankedMembers.length - 1;
+
+			while (left < right) {
+				const mHigh = rankedMembers[left];
+				const mLow = rankedMembers[right];
+
+				if (mHigh && mLow) {
+					pairsToInsert.push({
+						challengeId: ch.id,
+						currentStep: 1,
+						id: crypto.randomUUID(),
+						member1Id: mHigh.id,
+						member2Id: mLow.id,
+						member3Id: null,
+						status: "IN_PROGRESS",
+					});
+				}
+
+				left++;
+				right--;
+			}
+
+			// Se a quantidade for ímpar (ex: 3, 5, 7 membros), o membro mediano restante
+			// é acoplado na última dupla criada para formar um trio equilibrado
+			if (left === right) {
+				const medianMember = rankedMembers[left];
+				const lastPair = pairsToInsert.at(-1);
+				if (medianMember && lastPair) {
+					lastPair.member3Id = medianMember.id;
 				}
 			}
 
@@ -183,7 +178,13 @@ export const adminRouter = router({
 				action: "SORTEIO_DUPLAS",
 				actorId: ctx.session.user.id,
 				details: {
+					algorithm: "BALANCED_TWO_POINTER_KNOWLEDGE",
 					challengeId: ch.id,
+					scores: rankedMembers.map((m) => ({
+						id: m.id,
+						name: m.name,
+						score: calculateMemberKnowledgeScore(m.name, m.points),
+					})),
 					totalFormed: pairsToInsert.length,
 					totalMembers: eligible.length,
 				},

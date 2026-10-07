@@ -105,3 +105,4 @@ Isso testa simultaneamente:
 Os testes E2E validam a experiência do usuário final nos navegadores Chromium Desktop e Mobile:
 - **Fluxos Críticos**: Acesso autenticado, proteção contra spoiler em soluções de desafios, formulários reativos e navegação por teclado.
 - **Configuração**: `playwright.config.ts` integrado ao servidor local da aplicação Next.js.
+

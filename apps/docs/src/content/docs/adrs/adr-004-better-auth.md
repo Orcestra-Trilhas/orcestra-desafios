@@ -47,3 +47,4 @@ A integração é realizada de forma centralizada:
 
 ### Negativas / Trade-offs & Mitigações
 - **Biblioteca mais recente no ecossistema**: O Better Auth é relativamente novo quando comparado ao NextAuth clássico, mas possui documentação exemplar, código-fonte aberto de alta qualidade e suporte nativo a TypeScript de primeira classe.
+
