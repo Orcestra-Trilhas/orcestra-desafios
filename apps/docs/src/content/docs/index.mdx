@@ -1,0 +1,58 @@
+---
+title: Orc'estra Desafios - Documentação Técnica
+description: Hub central de documentação arquitetural, registros de decisões de arquitetura (ADRs) e guias da plataforma Orc'estra Desafios.
+template: splash
+hero:
+  tagline: Plataforma gamificada de capacitação técnica, desafios de código e trilhas de desenvolvimento da Orc'estra Gamificação.
+  image:
+    file: ../../assets/logo.png
+  actions:
+    - text: Visão Geral de Arquitetura
+      link: /arquitetura/visao-geral/
+      icon: right-arrow
+      variant: primary
+    - text: Registros de Decisão (ADRs)
+      link: /adrs/adr-001-nextjs-16-app-router/
+      icon: open-book
+      variant: secondary
+    - text: Guia de Onboarding
+      link: /guias/onboarding/
+      icon: seti:shell
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Pilares da Plataforma
+
+<CardGrid stagger>
+  <Card title="Next.js 16 & React 19" icon="rocket">
+    Aplicação web moderna utilizando App Router, Server Components nativos, Server Actions e compilador React 19 para máxima performance e streaming.
+  </Card>
+  <Card title="tRPC v11 Type-Safety" icon="approve-check">
+    Comunicação cliente-servidor 100% tipada de ponta a ponta sem etapas de geração manual de código ou contratos dessincronizados.
+  </Card>
+  <Card title="Neon Postgres & Drizzle ORM" icon="puzzle">
+    Banco relacional serverless com suporte a branching de dados, schemas declarativos no Drizzle ORM e migrações tipadas em TypeScript.
+  </Card>
+  <Card title="Better Auth & Segurança" icon="laptop">
+    Autenticação modular robusta com controle estrito de sessões, papéis de usuário (admin/user) e cookies seguros com proteção CSRF.
+  </Card>
+  <Card title="Tailwind CSS v4 & Theming" icon="star">
+    Motor de estilização atômico com temas personalizados: Orc'estra Dark/Light (identidade visual) e temas inspirados em movimentos artísticos (Pop Art e Fauvismo).
+  </Card>
+  <Card title="Testes SOTA com PGlite & Playwright" icon="document">
+    Suíte completa de testes caixa-cinza e integração com PostgreSQL WASM in-memory isolado (`@electric-sql/pglite`) e testes E2E com Playwright.
+  </Card>
+</CardGrid>
+
+---
+
+## Estrutura da Documentação
+
+- **[Onboarding & Setup](/guias/onboarding/)**: Pré-requisitos, inicialização do ambiente com Varlock e execução dos scripts de desenvolvimento.
+- **[Convenções de Código](/guias/convencoes/)**: Padrões estritos de qualidade governados pelo **Ultracite (Biome)** e diretrizes de tipagem TypeScript.
+- **[Arquitetura do Monorepo](/arquitetura/visao-geral/)**: Divisão de responsabilidade entre os apps (`web`, `docs`) e pacotes compartilhados (`api`, `auth`, `db`, `ui`, `config`).
+- **[Fluxo de Dados & Tipagem](/arquitetura/fluxo-de-dados/)**: Como o tRPC orquestra a comunicação entre banco, backend e frontend.
+- **[Estratégia de Testes SOTA](/arquitetura/estrategia-de-testes/)**: Metodologia de testes sem mocks frágeis, executando migrações reais no PGlite.
+- **[Architecture Decision Records (ADRs)](/adrs/adr-001-nextjs-16-app-router/)**: Justificativa detalhada de cada escolha tecnológica adotada no projeto.

@@ -9,6 +9,7 @@
   "scripts": {
     "auth:generate": "cd apps/web && npm run auth:generate",
     "build": "npm run build --workspaces --if-present",
+    "build:docs": "npm run build --workspace docs",
     "check": "ultracite check",
     "check-types": "npm run check-types --workspaces --if-present",
     "db:generate": "npm run db:generate --workspace @orcestra-desafios/db --",
@@ -20,6 +21,7 @@
     "deploy:prod": "npx --yes vercel deploy --prod",
     "deploy:setup": "npx --yes vercel link",
     "dev": "npm run dev --workspaces --if-present",
+    "dev:docs": "npm run dev --workspace docs -- --port 3002",
     "dev:vercel": "npx --yes vercel dev -L",
     "dev:web": "npm run dev --workspace web --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
@@ -35,7 +37,8 @@
     "test:watch": "vitest"
   },
   "overrides": {
-    "@next/env": "npm:@varlock/nextjs-integration@1.2.2"
+    "@next/env": "npm:@varlock/nextjs-integration@1.2.2",
+    "cookie": "^2.0.1"
   },
   "dependencies": {
     "@neon/config": "^1.8.3",

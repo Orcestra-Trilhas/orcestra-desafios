@@ -44,7 +44,7 @@ export function PwaInstallBanner() {
 							APP NATIVO {"//"} PWA
 						</span>
 					</div>
-					<h3 className="font-black font-display text-xs text-foreground uppercase tracking-wide sm:text-sm">
+					<h3 className="font-black font-display text-foreground text-xs uppercase tracking-wide sm:text-sm">
 						Instale o orc{"//"}desafios no seu dispositivo
 					</h3>
 					<p className="max-w-xl font-medium text-muted-foreground text-xs leading-snug">

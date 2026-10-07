@@ -1,0 +1,22 @@
+{
+  "name": "docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "check-types": "astro check",
+    "dev": "astro dev --port 3002",
+    "preview": "astro preview --port 3002",
+    "start": "astro dev --port 3002"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.5",
+    "astro": "^7.3.6",
+    "cookie": "^2.0.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^6.0.3"
+  }
+}

@@ -6,7 +6,10 @@ const rootDir = import.meta.dirname;
 export default defineConfig({
 	resolve: {
 		alias: [
-			{ find: /^@\/(.*)/, replacement: path.resolve(rootDir, "apps/web/src/$1") },
+			{
+				find: /^@\/(.*)/,
+				replacement: path.resolve(rootDir, "apps/web/src/$1"),
+			},
 			{ find: "@tests", replacement: path.resolve(rootDir, "tests") },
 		],
 	},
@@ -24,6 +27,6 @@ export default defineConfig({
 		environment: "node",
 		globals: true,
 		include: ["tests/integration/**/*.test.ts"],
-		testTimeout: 20000,
+		testTimeout: 20_000,
 	},
 });

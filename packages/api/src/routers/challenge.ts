@@ -119,7 +119,7 @@ export const challengeRouter = router({
 									gifUrl: p.member1.gifUrl,
 									id: p.member1.id,
 									name: p.member1.name,
-							  }
+								}
 							: null,
 						member2: p.member2
 							? {
@@ -127,7 +127,7 @@ export const challengeRouter = router({
 									gifUrl: p.member2.gifUrl,
 									id: p.member2.id,
 									name: p.member2.name,
-							  }
+								}
 							: null,
 						member3: p.member3
 							? {
@@ -135,7 +135,7 @@ export const challengeRouter = router({
 									gifUrl: p.member3.gifUrl,
 									id: p.member3.id,
 									name: p.member3.name,
-							  }
+								}
 							: null,
 						prUrl: isUnlocked ? p.prUrl : null,
 						repoUrl: isUnlocked ? p.repoUrl : null,

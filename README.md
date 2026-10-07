@@ -1,140 +1,151 @@
-# orcestra-desafios
+# Orc'estra Desafios 🎮⚡
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Self, TRPC, and more.
+> Plataforma gamificada de capacitação técnica, desafios de código e trilhas de desenvolvimento da **Orc'estra Gamificação**.
 
-## Features
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19.2-20232A?style=for-the-badge&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![tRPC v11](https://img.shields.io/badge/tRPC-v11-2596BE?style=for-the-badge&logo=trpc)](https://trpc.io/)
+[![Neon Postgres](https://img.shields.io/badge/Neon-PostgreSQL-00E599?style=for-the-badge&logo=postgresql)](https://neon.tech/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=for-the-badge)](https://orm.drizzle.team/)
+[![Better Auth](https://img.shields.io/badge/Better_Auth-1.7-blue?style=for-the-badge)](https://better-auth.com/)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-5.0-6E9F18?style=for-the-badge&logo=vitest)](https://vitest.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-1.63-2EAD33?style=for-the-badge&logo=playwright)](https://playwright.dev/)
+[![Ultracite](https://img.shields.io/badge/Ultracite-Biome-FF6B6B?style=for-the-badge)](https://biomejs.dev/)
 
-- **TypeScript** - For type safety and improved developer experience
-- **Next.js** - Full-stack React framework
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **tRPC** - End-to-end type-safe APIs
-- **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Biome** - Linting and formatting
-- **PWA** - Progressive Web App support
+---
 
-## Getting Started
+## 📚 Documentação Técnica Interativa
 
-First, install the dependencies:
+A documentação completa do projeto é servida via **Astro + Starlight** em `apps/docs`.
 
-```bash
-npm install
-```
-
-## Database Setup
-
-This project uses PostgreSQL with Drizzle ORM.
-
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/web/.env` file with your PostgreSQL connection details.
-
-3. Apply the schema to your database:
+Para iniciar o portal de documentação localmente na porta `3002`:
 
 ```bash
-npm run db:push
+npm run dev:docs
 ```
 
-Then, run the development server:
+Nele você encontrará:
+- **[Onboarding & Setup](apps/docs/src/content/docs/guias/onboarding.md)**: Como configurar o ambiente e variáveis do zero.
+- **[Convenções de Código & Qualidade](apps/docs/src/content/docs/guias/convencoes.md)**: Padrões de código governados por Ultracite/Biome.
+- **[Arquitetura do Monorepo](apps/docs/src/content/docs/arquitetura/visao-geral.md)**: Relação entre pacotes e fluxos de dados.
+- **[Estratégia de Testes SOTA](apps/docs/src/content/docs/arquitetura/estrategia-de-testes.md)**: Testes de integração WASM com PGlite e E2E com Playwright.
+- **[Architecture Decision Records (ADRs)](apps/docs/src/content/docs/adrs/)**:
+  - `ADR-001`: Next.js 16 com App Router e React 19
+  - `ADR-002`: tRPC v11 para Comunicação Cliente-Servidor Type-Safe
+  - `ADR-003`: Neon Serverless Postgres e Drizzle ORM
+  - `ADR-004`: Better Auth para Gestão de Identidade e Sessões
+  - `ADR-005`: Tailwind CSS v4 e Design System Temático (Pop Art, Fauvismo e Orc'estra Dark)
+  - `ADR-006`: PGlite WASM, Vitest e Playwright para Testes SOTA
+  - `ADR-007`: Ultracite e Biome para Governança e Qualidade de Código
 
-```bash
-npm run dev
-```
+---
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the fullstack application.
-
-## UI Customization
-
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
-```
-
-Import shared components like this:
-
-```tsx
-import { Button } from "@orcestra-desafios/ui/components/button";
-```
-
-### Add app-specific blocks
-
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
-
-## Environment Configuration
-
-Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `npm run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
-
-Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
-
-Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
-
-Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
-
-## Deployment
-
-### Vercel Services
-
-- Target: web + server
-- Config: `vercel.json`
-- Link the project first: npm run deploy:setup
-- Local Vercel dev: npm run dev:vercel
-- Sync preview env: npm run env:preview
-- Sync production env: npm run env:production
-- Dry-run check (no upload): npm run deploy:check
-- Preview deploy: npm run deploy
-- Production deploy: npm run deploy:prod
-  Vercel Services share project environment variables, but deploys do not upload local `.env` files automatically. Link the project with `vercel link`, then run the env sync command before your first deploy (otherwise the deployment starts with no env vars), or pass one-off envs with `vercel deploy -e KEY=value`.
-  Pass Vercel CLI flags to the env sync command directly, for example: `npm run env:production --scope your-team`.
-
-For more details, see the guide on [Deploying to Vercel](https://www.better-t-stack.dev/docs/guides/vercel).
-
-## Git Hooks and Formatting
-
-- Run checks: `npm run check`
-
-## Project Structure
+## 🏛️ Estrutura do Monorepo
 
 ```
 orcestra-desafios/
 ├── apps/
-│   └── web/         # Fullstack application (Next.js)
+│   ├── web/         # Aplicação principal Next.js 16 (App Router, PWA, UI, tRPC client)
+│   └── docs/        # Portal de documentação técnica com Astro e Starlight
 ├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+│   ├── api/         # Roteadores tRPC (admin, auth, challenge, ranking, user, cloudinary)
+│   ├── auth/        # Configuração centralizada do Better Auth e sessões
+│   ├── db/          # Schemas do Drizzle ORM, migrações SQL e cliente Neon Postgres
+│   ├── ui/          # Componentes base (shadcn/Radix) e design system temático
+│   └── config/      # Configurações TypeScript base compartilhadas
+└── tests/           # Suíte de testes SOTA
+    ├── integration/ # Testes de integração e caixa-cinza isolados via PGlite WASM
+    ├── e2e/         # Testes ponta a ponta com Playwright (Desktop & Mobile)
+    └── helpers/     # Factories, personas e mocks determinísticos
 ```
 
-## Available Scripts
+---
 
-- `npm run dev`: Start all applications in development mode
-- `npm run build`: Build all applications
-- `npm run dev:web`: Start only the web application
-- `npm run check-types`: Check TypeScript types across all apps
-- `npm run db:push`: Push schema changes to database
-- `npm run db:generate`: Generate database client/types
-- `npm run db:migrate`: Run database migrations
-- `npm run db:studio`: Open database studio UI
-- `npm run check`: Run Biome formatting and linting
-- `cd apps/web && npm run generate-pwa-assets`: Generate PWA assets
-- `npm run deploy:setup`: Link this repo to a Vercel project (first-time setup)
-- `npm run dev:vercel`: Run the Vercel Services dev environment locally
-- `npm run env:preview`: Sync local env files to the Vercel preview environment
-- `npm run env:production`: Sync local env files to the Vercel production environment
-- `npm run deploy`: Create a Vercel preview deployment
-- `npm run deploy:prod`: Deploy to Vercel production
-- `npm run deploy:check`: Dry-run a deploy to preview framework detection and included files without uploading
+## 🚀 Inicialização Rápida
 
-## Better Auth Schema Generation
+### 1. Pré-requisitos
+- **Node.js**: `>= 22.0.0`
+- **npm**: `>= 10.0.0`
 
-After changing auth plugins or schema options, run `npm run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+### 2. Instalação
+```bash
+# Clone o repositório
+git clone https://github.com/Orcestra-Trilhas/orcestra-desafios.git
+cd orcestra-desafios
+
+# Instale as dependências de todos os workspaces
+npm install
+```
+
+### 3. Executando os Serviços
+```bash
+# Iniciar a aplicação web (porta 3001)
+npm run dev:web
+
+# Iniciar o portal de documentação (porta 3002)
+npm run dev:docs
+
+# Iniciar todos os apps simultaneamente
+npm run dev
+```
+
+---
+
+## 🧪 Suíte de Testes SOTA
+
+Nossa infraestrutura de testes adota **PGlite** (PostgreSQL 16 compilado para WebAssembly), executando as migrações SQL reais do Drizzle em memória com isolamento total em menos de 5 segundos, sem dependência de Docker.
+
+```bash
+# Executar todos os testes de integração (37 testes)
+npm run test
+
+# Executar testes em modo watch
+npm run test:watch
+
+# Gerar relatório de cobertura de código
+npm run test:coverage
+
+# Executar testes End-to-End com Playwright (Chromium Desktop e Mobile)
+npm run test:e2e
+
+# Executar toda a suíte (Integração + E2E)
+npm run test:all
+```
+
+---
+
+## 🎨 Design System e Temas
+
+A plataforma conta com quatro esquemas de cores completos:
+
+1. **Orc'estra Dark (Padrão)**: Fundo carvão suave florestal (`#080f07`), cards verde escuro aveludados (`#0f1d0d`) e realces em verde claro vibrante (`#3bc90c`) com contraste AAA.
+2. **Orc'estra Light**: Branco linho limpo (`#f9fbf9`), tipografia floresta profunda (`#071a06`) e acentos de menta.
+3. **Fauvismo**: Vanguarda noturna inspirada em Henri Matisse (*"La Danse"*), com vermilion terracota ardente (`#d9381e`), azul cobalto mediterrâneo e amarelo solar.
+4. **Pop Art**: Vanguarda inspirada na serigrafia de Andy Warhol (*The Factory*), com magenta Marilyn (`#ec4899`), ciano elétrico e amarelo banana.
+
+---
+
+## 🛠️ Scripts Principais
+
+| Script | Descrição |
+| :--- | :--- |
+| `npm run dev:web` | Inicia o app Next.js na porta 3001 |
+| `npm run dev:docs` | Inicia a documentação Starlight na porta 3002 |
+| `npm run build` | Compila todos os pacotes e aplicações |
+| `npm run build:docs` | Compila o site estático da documentação |
+| `npm run test` | Roda testes de integração no Vitest com PGlite |
+| `npm run test:e2e` | Roda testes ponta a ponta no Playwright |
+| `npm run check` | Valida formatação e linting com Ultracite (Biome) |
+| `npm run fix` | Corrige automaticamente problemas de estilo e lint |
+| `npm run check-types` | Valida tipos TypeScript em todo o monorepo |
+| `npm run db:generate` | Gera novas migrações SQL no Drizzle |
+| `npm run db:migrate` | Executa migrações pendentes no banco |
+| `npm run db:studio` | Abre o Drizzle Studio para visualização gráfica |
+
+---
+
+## ⚖️ Licença
+
+Desenvolvido com 💚 pela equipe da **Orc'estra Gamificação**.

@@ -63,4 +63,3 @@ test.describe("Dashboard & Missões (E2E)", () => {
 		await expect(emptyState).toBeVisible();
 	});
 });
-

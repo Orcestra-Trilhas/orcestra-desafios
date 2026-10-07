@@ -268,4 +268,3 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 		expect(metrics.approvalRate).toBe(50); // 1 aprovado / 2 submetidos = 50%
 	});
 });
-

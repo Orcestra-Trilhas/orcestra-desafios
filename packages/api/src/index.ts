@@ -1,3 +1,4 @@
+export { type AppRouter, appRouter } from "./routers/index";
 export {
 	adminProcedure,
 	createCallerFactory,
@@ -6,5 +7,3 @@ export {
 	router,
 	t,
 } from "./trpc";
-
-export { appRouter, type AppRouter } from "./routers/index";

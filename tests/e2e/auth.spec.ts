@@ -108,4 +108,3 @@ test.describe("Autenticação e Controle de Acesso (E2E)", () => {
 		await expect(page).toHaveURL(DASHBOARD_URL_REGEX, { timeout: 15_000 });
 	});
 });
-

@@ -25,7 +25,7 @@ import { trpc } from "@/utils/trpc";
 function extractEvidenceUrls(
 	notes: string
 ): { alt: string; raw: string; url: string }[] {
-	const regex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g;
+	const regex = /!\[(.*?)\]\((https?:\/\/[^\s)]+)\)/g;
 	const matches: { alt: string; raw: string; url: string }[] = [];
 	let match = regex.exec(notes);
 	while (match !== null) {
@@ -40,7 +40,7 @@ function extractEvidenceUrls(
 }
 
 function renderSubmissionNotes(notes: string) {
-	const imgRegex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g;
+	const imgRegex = /!\[(.*?)\]\((https?:\/\/[^\s)]+)\)/g;
 	const parts: React.ReactNode[] = [];
 	let lastIndex = 0;
 	let match = imgRegex.exec(notes);
@@ -594,7 +594,7 @@ export default function ChallengeDetailPage() {
 																[ CONTEÚDO BLOQUEADO {"//"} ANTI-SPOILER ]
 															</span>
 														</div>
-														<h4 className="font-black font-display text-xs text-white uppercase sm:text-sm">
+														<h4 className="font-black font-display text-white text-xs uppercase sm:text-sm">
 															RESPOSTAS E ARQUIVOS OCULTOS
 														</h4>
 														<p className="max-w-md font-medium text-white/70 text-xs">

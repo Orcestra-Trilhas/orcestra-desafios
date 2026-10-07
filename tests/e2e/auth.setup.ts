@@ -9,4 +9,3 @@ setup("setup dev environment and test accounts", async ({ request }) => {
 		type: "readiness",
 	});
 });
-

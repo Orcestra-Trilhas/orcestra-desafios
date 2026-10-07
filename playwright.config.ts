@@ -41,4 +41,3 @@ export default defineConfig({
 	},
 	workers: process.env.CI ? 1 : undefined,
 });
-
