@@ -504,29 +504,29 @@
 		border-color: #1e3b1a !important;
 	}
 	:is(.orc-dark *) .bg-\[\#1E40AF\] {
-		color: #f0f7ef !important;
-		background-color: #152c13 !important;
-		border-color: #1e3b1a !important;
+		color: #ffffff !important;
+		background-color: #0ea5e9 !important;
+		border-color: #0284c7 !important;
 	}
 	:is(.orc-dark *) .bg-\[\#FACC15\] {
 		color: #040d03 !important;
-		background-color: #3bc90c !important;
+		background-color: #facc15 !important;
 	}
 	:is(.orc-dark *) .bg-\[\#15803D\] {
-		color: #040d03 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #16a34a !important;
 	}
 	:is(.orc-dark *) .text-\[\#FF4A1C\] {
-		color: #3bc90c !important;
+		color: #ff5722 !important;
 	}
 	:is(.orc-dark *) .text-\[\#1E40AF\] {
-		color: #88b384 !important;
+		color: #38bdf8 !important;
 	}
 	:is(.orc-dark *) .text-\[\#FACC15\] {
-		color: #3bc90c !important;
+		color: #facc15 !important;
 	}
 	:is(.orc-dark *) .text-\[\#15803D\] {
-		color: #3bc90c !important;
+		color: #4ade80 !important;
 	}
 	:is(.orc-dark *) .hover\:bg-\[\#E03A10\]:hover {
 		color: #040d03 !important;
@@ -549,20 +549,20 @@
 		color: #f0f7ef !important;
 	}
 	:is(.orc-dark *) .dark\:bg-\[\#F04D30\] {
-		color: #040d03 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #ff5722 !important;
 	}
 	:is(.orc-dark *) .dark\:bg-\[\#3B6FE8\] {
-		color: #f0f7ef !important;
-		background-color: #152c13 !important;
+		color: #ffffff !important;
+		background-color: #2563eb !important;
 	}
 	:is(.orc-dark *) .dark\:bg-\[\#10B981\] {
-		color: #040d03 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #10b981 !important;
 	}
 	:is(.orc-dark *) .dark\:bg-\[\#F59E0B\] {
 		color: #040d03 !important;
-		background-color: #3bc90c !important;
+		background-color: #f59e0b !important;
 	}
 	:is(.orc-dark *) .dark\:text-\[\#0B0E1E\] {
 		color: #040d03 !important;
@@ -593,27 +593,27 @@
 	}
 	:is(.orc-light *) .bg-\[\#1E40AF\] {
 		color: #ffffff !important;
-		background-color: #152c13 !important;
+		background-color: #0284c7 !important;
 	}
 	:is(.orc-light *) .bg-\[\#FACC15\] {
-		color: #071a06 !important;
-		background-color: #3bc90c !important;
+		color: #121212 !important;
+		background-color: #facc15 !important;
 	}
 	:is(.orc-light *) .bg-\[\#15803D\] {
-		color: #071a06 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #15803d !important;
 	}
 	:is(.orc-light *) .text-\[\#FF4A1C\] {
-		color: #0d3309 !important;
+		color: #ea580c !important;
 	}
 	:is(.orc-light *) .text-\[\#1E40AF\] {
-		color: #0d3309 !important;
+		color: #0284c7 !important;
 	}
 	:is(.orc-light *) .text-\[\#FACC15\] {
-		color: #071a06 !important;
+		color: #d97706 !important;
 	}
 	:is(.orc-light *) .text-\[\#15803D\] {
-		color: #071a06 !important;
+		color: #15803d !important;
 	}
 	:is(.orc-light *) .hover\:bg-\[\#E03A10\]:hover {
 		color: #ffffff !important;
@@ -637,19 +637,19 @@
 	}
 	:is(.orc-light *) .dark\:bg-\[\#F04D30\] {
 		color: #ffffff !important;
-		background-color: #0d3309 !important;
+		background-color: #ea580c !important;
 	}
 	:is(.orc-light *) .dark\:bg-\[\#3B6FE8\] {
 		color: #ffffff !important;
-		background-color: #152c13 !important;
+		background-color: #0284c7 !important;
 	}
 	:is(.orc-light *) .dark\:bg-\[\#10B981\] {
-		color: #071a06 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #15803d !important;
 	}
 	:is(.orc-light *) .dark\:bg-\[\#F59E0B\] {
-		color: #071a06 !important;
-		background-color: #3bc90c !important;
+		color: #ffffff !important;
+		background-color: #d97706 !important;
 	}
 	:is(.orc-light *) .dark\:text-\[\#0B0E1E\] {
 		color: #071a06 !important;
@@ -696,6 +696,112 @@
 		background-color: #0d3309 !important;
 		border-color: #234a1f !important;
 		box-shadow: 2px 2px 0px #0c2609 !important;
+	}
+
+	/* Explicit Track Badges & Filters (Universal Contrast) */
+	.badge-track-front {
+		color: #ffffff !important;
+		background-color: #ea580c !important;
+		border-color: #18181b !important;
+	}
+	:is(.dark *) .badge-track-front {
+		color: #ffffff !important;
+		background-color: #ea580c !important;
+		border-color: #273463 !important;
+	}
+	:is(.orc-dark *) .badge-track-front {
+		color: #ffffff !important;
+		background-color: #ff5722 !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-light *) .badge-track-front {
+		color: #ffffff !important;
+		background-color: #ea580c !important;
+		border-color: #234a1f !important;
+	}
+
+	.badge-track-back {
+		color: #ffffff !important;
+		background-color: #1e40af !important;
+		border-color: #18181b !important;
+	}
+	:is(.dark *) .badge-track-back {
+		color: #ffffff !important;
+		background-color: #2563eb !important;
+		border-color: #273463 !important;
+	}
+	:is(.orc-dark *) .badge-track-back {
+		color: #ffffff !important;
+		background-color: #0ea5e9 !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-light *) .badge-track-back {
+		color: #ffffff !important;
+		background-color: #0284c7 !important;
+		border-color: #234a1f !important;
+	}
+
+	.badge-track-proto {
+		color: #ffffff !important;
+		background-color: #15803d !important;
+		border-color: #18181b !important;
+	}
+	:is(.dark *) .badge-track-proto {
+		color: #ffffff !important;
+		background-color: #16a34a !important;
+		border-color: #273463 !important;
+	}
+	:is(.orc-dark *) .badge-track-proto {
+		color: #ffffff !important;
+		background-color: #16a34a !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-light *) .badge-track-proto {
+		color: #ffffff !important;
+		background-color: #15803d !important;
+		border-color: #234a1f !important;
+	}
+
+	.badge-track-devops {
+		color: #121212 !important;
+		background-color: #facc15 !important;
+		border-color: #18181b !important;
+	}
+	:is(.dark *) .badge-track-devops {
+		color: #121212 !important;
+		background-color: #f59e0b !important;
+		border-color: #273463 !important;
+	}
+	:is(.orc-dark *) .badge-track-devops {
+		color: #121212 !important;
+		background-color: #facc15 !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-light *) .badge-track-devops {
+		color: #ffffff !important;
+		background-color: #d97706 !important;
+		border-color: #234a1f !important;
+	}
+
+	.badge-track-git {
+		color: #ffffff !important;
+		background-color: #7c3aed !important;
+		border-color: #18181b !important;
+	}
+	:is(.dark *) .badge-track-git {
+		color: #ffffff !important;
+		background-color: #8b5cf6 !important;
+		border-color: #273463 !important;
+	}
+	:is(.orc-dark *) .badge-track-git {
+		color: #ffffff !important;
+		background-color: #a855f7 !important;
+		border-color: #1e3b1a !important;
+	}
+	:is(.orc-light *) .badge-track-git {
+		color: #ffffff !important;
+		background-color: #7c3aed !important;
+		border-color: #234a1f !important;
 	}
 }
 

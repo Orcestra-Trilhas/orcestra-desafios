@@ -196,21 +196,72 @@ export function PopTrackBadge({
 	const map: Record<
 		string,
 		{
-			label: string;
+			badgeClass: string;
 			color: "vermilion" | "cobalt" | "yellow" | "green" | "purple";
+			label: string;
 		}
 	> = {
-		BACK: { color: "cobalt", label: "BACKEND" },
-		DEVOPS: { color: "yellow", label: "DEVOPS" },
-		FRONT: { color: "vermilion", label: "FRONTEND" },
-		GIT: { color: "purple", label: "GIT // VCS" },
-		PROTOTIPACAO: { color: "green", label: "PROTÓTIPO" },
+		BACK: {
+			badgeClass: "badge-track-back",
+			color: "cobalt",
+			label: "BACKEND",
+		},
+		BACKEND: {
+			badgeClass: "badge-track-back",
+			color: "cobalt",
+			label: "BACKEND",
+		},
+		DEVOPS: {
+			badgeClass: "badge-track-devops",
+			color: "yellow",
+			label: "DEVOPS",
+		},
+		FRONT: {
+			badgeClass: "badge-track-front",
+			color: "vermilion",
+			label: "FRONTEND",
+		},
+		FRONTEND: {
+			badgeClass: "badge-track-front",
+			color: "vermilion",
+			label: "FRONTEND",
+		},
+		GIT: {
+			badgeClass: "badge-track-git",
+			color: "purple",
+			label: "GIT // VCS",
+		},
+		PROTOTIPACAO: {
+			badgeClass: "badge-track-proto",
+			color: "green",
+			label: "PROTÓTIPO",
+		},
+		PROTOTIPO: {
+			badgeClass: "badge-track-proto",
+			color: "green",
+			label: "PROTÓTIPO",
+		},
+		PROTÓTIPO: {
+			badgeClass: "badge-track-proto",
+			color: "green",
+			label: "PROTÓTIPO",
+		},
+		VCS: {
+			badgeClass: "badge-track-git",
+			color: "purple",
+			label: "GIT // VCS",
+		},
 	};
 
-	const conf = map[track] ?? { color: "vermilion", label: track };
+	const cleanKey = (track || "").trim().toUpperCase();
+	const conf = map[cleanKey] ?? {
+		badgeClass: "badge-track-front",
+		color: "vermilion" as const,
+		label: track || "GERAL",
+	};
 
 	return (
-		<PopBadge className={className} color={conf.color}>
+		<PopBadge className={`${conf.badgeClass} ${className}`} color={conf.color}>
 			{conf.label}
 		</PopBadge>
 	);

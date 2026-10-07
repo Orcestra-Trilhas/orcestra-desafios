@@ -774,7 +774,7 @@ export default function ChallengeDetailPage() {
 						</div>
 
 						{/* Modal Scrollable Body */}
-						<div className="flex-1 space-y-4 overflow-y-auto p-4 overscroll-contain sm:p-6">
+						<div className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-4 sm:p-6">
 							<div className="space-y-1.5">
 								<span className="block font-black font-display text-xs uppercase tracking-wider">
 									TIPO DE ENTREGA

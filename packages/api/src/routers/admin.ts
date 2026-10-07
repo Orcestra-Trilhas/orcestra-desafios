@@ -58,6 +58,45 @@ export const adminRouter = router({
 			return { id, success: true };
 		}),
 
+	deleteChallenge: adminProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const ch = await ctx.db.query.challenge.findFirst({
+				where: { id: input.id },
+				with: {
+					pairs: true,
+				},
+			});
+
+			if (!ch) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Desafio não encontrado",
+				});
+			}
+
+			// Deleta duplas associadas
+			await ctx.db.delete(pair).where(eq(pair.challengeId, input.id));
+
+			// Deleta o desafio
+			await ctx.db.delete(challenge).where(eq(challenge.id, input.id));
+
+			// Registra o log administrativo
+			await ctx.db.insert(adminLog).values({
+				action: "DELETOU_DESAFIO",
+				actorId: ctx.session.user.id,
+				details: {
+					challengeId: input.id,
+					pairsCount: ch.pairs.length,
+					title: ch.title,
+					track: ch.trackTheme,
+				},
+				id: crypto.randomUUID(),
+			});
+
+			return { success: true };
+		}),
+
 	drawPairs: adminProcedure
 		.input(z.object({ challengeId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -397,45 +436,6 @@ export const adminRouter = router({
 				action: input.active ? "ATIVOU_DESAFIO" : "DESATIVOU_DESAFIO",
 				actorId: ctx.session.user.id,
 				details: { challengeId: input.id },
-				id: crypto.randomUUID(),
-			});
-
-			return { success: true };
-		}),
-
-	deleteChallenge: adminProcedure
-		.input(z.object({ id: z.string() }))
-		.mutation(async ({ ctx, input }) => {
-			const ch = await ctx.db.query.challenge.findFirst({
-				where: { id: input.id },
-				with: {
-					pairs: true,
-				},
-			});
-
-			if (!ch) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Desafio não encontrado",
-				});
-			}
-
-			// Deleta duplas associadas
-			await ctx.db.delete(pair).where(eq(pair.challengeId, input.id));
-
-			// Deleta o desafio
-			await ctx.db.delete(challenge).where(eq(challenge.id, input.id));
-
-			// Registra o log administrativo
-			await ctx.db.insert(adminLog).values({
-				action: "DELETOU_DESAFIO",
-				actorId: ctx.session.user.id,
-				details: {
-					challengeId: input.id,
-					pairsCount: ch.pairs.length,
-					title: ch.title,
-					track: ch.trackTheme,
-				},
 				id: crypto.randomUUID(),
 			});
 

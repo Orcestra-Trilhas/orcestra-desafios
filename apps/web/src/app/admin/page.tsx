@@ -18,7 +18,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import {
 	BauhausSkeleton,
-	PopBadge,
 	PopStamp,
 	PopTrackBadge,
 	PopWhatsAppButton,
@@ -269,10 +268,6 @@ export default function AdminPage() {
 			{/* Poster Header */}
 			<div className="flex flex-col justify-between gap-4 border-black border-b-2 pb-4 sm:flex-row sm:items-center dark:border-white">
 				<div className="space-y-1">
-					<div className="flex items-center gap-2">
-						<PopBadge color="vermilion">GESTÃO // TOPS</PopBadge>
-						<PopBadge color="black">ASSESSORIA TÉCNICA</PopBadge>
-					</div>
 					<h1 className="font-black font-display text-2xl uppercase tracking-tight sm:text-3xl">
 						PAINEL DO ADMINISTRADOR
 					</h1>
@@ -768,13 +763,13 @@ export default function AdminPage() {
 									</div>
 								) : null}
 
-								{!selectedSubmission.submissionNotes &&
-								!selectedSubmission.prUrl &&
-								!selectedSubmission.repoUrl ? (
+								{selectedSubmission.submissionNotes ||
+								selectedSubmission.prUrl ||
+								selectedSubmission.repoUrl ? null : (
 									<div className="rounded-md border-2 border-black/10 border-dashed p-4 text-center font-mono text-muted-foreground text-xs">
 										Nenhuma anotação ou link anexado nesta entrega.
 									</div>
-								) : null}
+								)}
 							</div>
 
 							{/* Challenge Rules & Context Accordion */}
@@ -1013,7 +1008,7 @@ export default function AdminPage() {
 						</div>
 
 						{/* Modal Scrollable Body */}
-						<div className="flex-1 space-y-3 overflow-y-auto p-4 overscroll-contain sm:p-6">
+						<div className="flex-1 space-y-3 overflow-y-auto overscroll-contain p-4 sm:p-6">
 							<div className="space-y-1">
 								<label
 									className="font-bold font-display text-xs uppercase tracking-wider"

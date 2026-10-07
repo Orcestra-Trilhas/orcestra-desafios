@@ -3,11 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
-import {
-	BauhausSkeleton,
-	PopBadge,
-	PopPointsBadge,
-} from "@/components/pop-elements";
+import { BauhausSkeleton, PopPointsBadge } from "@/components/pop-elements";
 import { trpc } from "@/utils/trpc";
 
 const DEPARTMENTS = [
@@ -23,6 +19,16 @@ const TRACKS = [
 	{ id: "PROTOTIPACAO", label: "PROTÓTIPO" },
 	{ id: "DEVOPS", label: "DEVOPS" },
 ] as const;
+
+const TRACK_ACTIVE_STYLES: Record<string, string> = {
+	BACK: "border-black bg-[#1E40AF] text-white shadow-hard-sm dark:border-white dark:bg-[#2563EB]",
+	DEVOPS:
+		"border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#F59E0B]",
+	FRONT:
+		"border-black bg-[#EA580C] text-white shadow-hard-sm dark:border-white dark:bg-[#EA580C]",
+	PROTOTIPACAO:
+		"border-black bg-[#15803D] text-white shadow-hard-sm dark:border-white dark:bg-[#16A34A]",
+};
 
 type LeaderboardItem = {
 	id?: string;
@@ -94,11 +100,7 @@ export default function RankingPage() {
 		<div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
 			{/* Poster Header */}
 			<div className="space-y-1 text-center">
-				<div className="flex items-center justify-center gap-2">
-					<PopBadge color="yellow">RODADA EM CURSO</PopBadge>
-					<PopBadge color="black">GAMIFICAÇÃO EJ</PopBadge>
-				</div>
-				<h1 className="mt-2 font-black font-display text-3xl uppercase tracking-tight sm:text-4xl">
+				<h1 className="font-black font-display text-3xl uppercase tracking-tight sm:text-4xl">
 					RANKING {"//"} MISSÕES
 				</h1>
 				<p className="font-medium text-muted-foreground text-xs">
@@ -246,7 +248,8 @@ export default function RankingPage() {
 							<button
 								className={`btn-tactile rounded-md border-2 px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:px-3 sm:text-xs ${
 									filterValue === t.id
-										? "border-black bg-[#15803D] text-white shadow-hard-sm dark:border-white dark:bg-[#16A34A]"
+										? (TRACK_ACTIVE_STYLES[t.id] ??
+											"border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white")
 										: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30 dark:hover:text-foreground"
 								}`}
 								key={t.id}
@@ -301,7 +304,7 @@ export default function RankingPage() {
 							{top3[1] && (
 								<div className="flex flex-col justify-between rounded-md border-2 border-black bg-card p-2.5 shadow-hard-sm dark:border-white">
 									<div className="mb-1.5 flex items-center justify-between gap-1 border-black/10 border-b pb-1.5 dark:border-white/10">
-										<span className="rounded bg-slate-200 px-1.5 py-0.5 font-black font-mono text-slate-800 text-[9px] uppercase dark:bg-slate-700 dark:text-slate-100">
+										<span className="rounded bg-slate-200 px-1.5 py-0.5 font-black font-mono text-[9px] text-slate-800 uppercase dark:bg-slate-700 dark:text-slate-100">
 											02 PRATA
 										</span>
 										<span className="font-bold font-mono text-[11px] text-muted-foreground">
@@ -319,7 +322,7 @@ export default function RankingPage() {
 							{top3[2] && (
 								<div className="flex flex-col justify-between rounded-md border-2 border-black bg-card p-2.5 shadow-hard-sm dark:border-white">
 									<div className="mb-1.5 flex items-center justify-between gap-1 border-black/10 border-b pb-1.5 dark:border-white/10">
-										<span className="rounded bg-amber-700/15 px-1.5 py-0.5 font-black font-mono text-amber-800 text-[9px] uppercase dark:bg-amber-700/30 dark:text-amber-300">
+										<span className="rounded bg-amber-700/15 px-1.5 py-0.5 font-black font-mono text-[9px] text-amber-800 uppercase dark:bg-amber-700/30 dark:text-amber-300">
 											03 BRONZE
 										</span>
 										<span className="font-bold font-mono text-[11px] text-muted-foreground">
