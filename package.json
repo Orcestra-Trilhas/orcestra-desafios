@@ -18,6 +18,7 @@
     "db:studio": "npm run db:studio --workspace @orcestra-desafios/db --",
     "deploy": "npx --yes vercel deploy",
     "deploy:check": "npx --yes vercel deploy --dry",
+    "deploy:docs": "npm run build:docs && touch apps/docs/dist/.nojekyll && npx gh-pages -d apps/docs/dist -b gh-pages --dotfiles --nojekyll",
     "deploy:prod": "npx --yes vercel deploy --prod",
     "deploy:setup": "npx --yes vercel link",
     "dev": "npm run dev --workspaces --if-present",

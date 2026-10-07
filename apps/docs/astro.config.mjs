@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 
 export default defineConfig({
 	site: "https://orcestra-trilhas.github.io",
-	base: process.env.GITHUB_ACTIONS ? "/orcestra-desafios" : "/",
+	base: "/orcestra-desafios",
 	integrations: [
 		starlight({
 			customCss: ["./src/styles/custom.css"],
