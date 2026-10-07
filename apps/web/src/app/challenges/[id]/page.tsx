@@ -1,7 +1,13 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ExternalLink, GitPullRequest, Lock, Unlock } from "lucide-react";
+import {
+	ExternalLink,
+	GitPullRequest,
+	Lock,
+	Trash2,
+	Unlock,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -15,6 +21,23 @@ import {
 	PopTrackBadge,
 } from "@/components/pop-elements";
 import { trpc } from "@/utils/trpc";
+
+function extractEvidenceUrls(
+	notes: string
+): { alt: string; raw: string; url: string }[] {
+	const regex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g;
+	const matches: { alt: string; raw: string; url: string }[] = [];
+	let match = regex.exec(notes);
+	while (match !== null) {
+		matches.push({
+			alt: match[1] || "Evidência",
+			raw: match[0],
+			url: match[2],
+		});
+		match = regex.exec(notes);
+	}
+	return matches;
+}
 
 function renderSubmissionNotes(notes: string) {
 	const imgRegex = /!\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g;
@@ -118,6 +141,30 @@ export default function ChallengeDetailPage() {
 	const [repoUrl, setRepoUrl] = useState("");
 	const [submissionNotes, setSubmissionNotes] = useState("");
 
+	const attachedEvidences = extractEvidenceUrls(submissionNotes);
+
+	const handleRemoveEvidence = useCallback((rawMatch: string) => {
+		setSubmissionNotes((prev) =>
+			prev
+				.replace(rawMatch, "")
+				.replace(/\n\s*\n\s*\n/g, "\n\n")
+				.trim()
+		);
+		toast.success("Evidência removida das notas!");
+	}, []);
+
+	const ch = challengeQuery.data;
+	const myPair = ch?.myPair;
+	const currentStep = myPair ? myPair.currentStep : 1;
+	const pairStatus = myPair ? myPair.status : "IN_PROGRESS";
+
+	const handleOpenSubmit = useCallback(() => {
+		if (myPair && currentStep === 1) {
+			advanceStepMutation.mutate({ pairId: myPair.id });
+		}
+		setIsSubmitModalOpen(true);
+	}, [advanceStepMutation, currentStep, myPair]);
+
 	if (challengeQuery.isLoading) {
 		return (
 			<div className="mx-auto max-w-3xl space-y-4 p-6">
@@ -126,7 +173,6 @@ export default function ChallengeDetailPage() {
 		);
 	}
 
-	const ch = challengeQuery.data;
 	if (!ch) {
 		return (
 			<div className="mx-auto max-w-md space-y-4 rounded-lg border-2 border-black bg-card p-8 text-center shadow-hard dark:border-white">
@@ -146,14 +192,10 @@ export default function ChallengeDetailPage() {
 		);
 	}
 
-	const myPair = ch.myPair;
 	const totalPairs = ch.totalPairs;
 	const submittedCount = ch.submittedPairs;
 	const thermometerPercent =
 		totalPairs > 0 ? Math.round((submittedCount / totalPairs) * 100) : 0;
-
-	const currentStep = myPair ? myPair.currentStep : 1;
-	const pairStatus = myPair ? myPair.status : "IN_PROGRESS";
 
 	const handleAdvanceStep1 = () => {
 		if (!myPair) {
@@ -161,13 +203,6 @@ export default function ChallengeDetailPage() {
 		}
 		advanceStepMutation.mutate({ pairId: myPair.id });
 	};
-
-	const handleOpenSubmit = useCallback(() => {
-		if (myPair && currentStep === 1) {
-			advanceStepMutation.mutate({ pairId: myPair.id });
-		}
-		setIsSubmitModalOpen(true);
-	}, [advanceStepMutation, currentStep, myPair]);
 
 	const handleSubmitSolution = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -522,9 +557,7 @@ export default function ChallengeDetailPage() {
 
 											<div className="flex flex-wrap items-center gap-1.5">
 												<span className="font-black font-display text-xs uppercase">
-													{members
-														.map((m) => m.name.split(" ")[0])
-														.join(" & ")}
+													{members.map((m) => m.name.split(" ")[0]).join(" & ")}
 												</span>
 												{sub.isMyOwnPair ? (
 													<PopBadge color="neutral">SUA DUPLA</PopBadge>
@@ -565,7 +598,9 @@ export default function ChallengeDetailPage() {
 															RESPOSTAS E ARQUIVOS OCULTOS
 														</h4>
 														<p className="max-w-md font-medium text-white/70 text-xs">
-															O código, link de PR e anotações desta entrega foram tarjados de preto para evitar spoilers. Envie a solução da sua dupla para desbloquear.
+															O código, link de PR e anotações desta entrega
+															foram tarjados de preto para evitar spoilers.
+															Envie a solução da sua dupla para desbloquear.
 														</p>
 													</div>
 
@@ -605,7 +640,9 @@ export default function ChallengeDetailPage() {
 															target="_blank"
 														>
 															<ExternalLink className="h-3 w-3" />
-															<span className="max-w-xs truncate">{sub.repoUrl}</span>
+															<span className="max-w-xs truncate">
+																{sub.repoUrl}
+															</span>
 														</a>
 													) : null}
 												</div>
@@ -644,7 +681,8 @@ export default function ChallengeDetailPage() {
 							[ NENHUMA DUPLA SUBMETEU AINDA ]
 						</span>
 						<p className="mt-1 font-sans text-muted-foreground text-xs">
-							Assim que a primeira entrega for enviada pelos membros, ela aparecerá aqui.
+							Assim que a primeira entrega for enviada pelos membros, ela
+							aparecerá aqui.
 						</p>
 					</div>
 				)}
@@ -781,21 +819,56 @@ export default function ChallengeDetailPage() {
 									rows={4}
 									value={submissionNotes}
 								/>
-								<div className="flex items-center justify-between pt-1">
-									<span className="font-mono text-[10px] text-muted-foreground uppercase">
-										Anexe print ou arquivo via Cloudinary:
-									</span>
+								{/* Attached evidences gallery */}
+								{attachedEvidences.length > 0 && (
+									<div className="space-y-1.5 rounded-md border-2 border-black bg-secondary/30 p-2.5 dark:border-white">
+										<span className="block font-bold font-mono text-[10px] text-muted-foreground uppercase">
+											Evidências Anexadas ({attachedEvidences.length}):
+										</span>
+										<div className="flex flex-wrap gap-2">
+											{attachedEvidences.map((ev, idx) => (
+												<div
+													className="group relative flex items-center gap-2 rounded-md border border-black bg-background p-1.5 shadow-hard-xs dark:border-white"
+													key={ev.url + String(idx)}
+												>
+													<img
+														alt={ev.alt}
+														className="h-10 w-10 rounded border border-black/20 object-cover dark:border-white/20"
+														height={40}
+														src={ev.url}
+														width={40}
+													/>
+													<span className="max-w-[120px] truncate font-mono text-[10px]">
+														{ev.alt || `Evidência #${idx + 1}`}
+													</span>
+													<button
+														className="cursor-pointer p-1 text-muted-foreground hover:text-destructive"
+														onClick={() => handleRemoveEvidence(ev.raw)}
+														title="Remover anexo"
+														type="button"
+													>
+														<Trash2 className="h-3.5 w-3.5" />
+													</button>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
+								{/* Dropzone Uploader */}
+								<div className="space-y-1">
 									<CloudinaryUploadButton
 										folder="orcestra-submissoes"
-										label="Anexar Imagem"
+										label="Arraste print/evidência ou clique para anexar"
 										onUploadSuccess={(url) => {
 											setSubmissionNotes((prev) =>
 												prev
 													? `${prev}\n\n![Evidência do Desafio](${url})`
 													: `![Evidência do Desafio](${url})`
 											);
-											toast.success("Print anexado à descrição!");
+											toast.success("Evidência anexada com sucesso!");
 										}}
+										variant="dropzone"
 									/>
 								</div>
 							</div>

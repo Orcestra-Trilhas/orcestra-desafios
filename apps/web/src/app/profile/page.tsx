@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Camera, Image as ImageIcon, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
@@ -136,8 +137,14 @@ function ProfileContent() {
 
 	// Gift Form state
 	const [showGiftForm, setShowGiftForm] = useState(false);
+	const [giftSource, setGiftSource] = useState<"preset" | "upload" | "url">(
+		"preset"
+	);
 	const [giftMediaUrl, setGiftMediaUrl] = useState("");
 	const [giftMessage, setGiftMessage] = useState("");
+
+	// Edit Profile manual URL toggle
+	const [showManualUrl, setShowManualUrl] = useState(false);
 
 	const profile = profileQuery.data;
 	const isOwner = profile?.isOwner ?? false;
@@ -168,6 +175,33 @@ function ProfileContent() {
 		},
 		[isOwner]
 	);
+
+	const handleAvatarUploaded = useCallback(
+		(url: string) => {
+			setGifUrl(url);
+			updateProfileMutation.mutate({
+				department,
+				gifUrl: url,
+				name,
+				trackPreferences: tracks,
+				whatsapp: whatsapp || null,
+			});
+			toast.success("Foto de perfil atualizada!");
+		},
+		[department, name, tracks, updateProfileMutation, whatsapp]
+	);
+
+	const handleRemoveAvatar = useCallback(() => {
+		setGifUrl("");
+		updateProfileMutation.mutate({
+			department,
+			gifUrl: null,
+			name,
+			trackPreferences: tracks,
+			whatsapp: whatsapp || null,
+		});
+		toast.success("Foto removida. Avatar padrão restaurado!");
+	}, [department, name, tracks, updateProfileMutation, whatsapp]);
 
 	const handleSave = useCallback(
 		(e: React.FormEvent) => {
@@ -285,25 +319,64 @@ function ProfileContent() {
 
 				<div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-5 sm:text-left">
 					{/* Avatar or Custom GIF */}
-					<div className="relative">
-						{profile.gifUrl ? (
-							<img
-								alt="Avatar Membro"
-								className="h-20 w-20 rounded-md border-2 border-black object-cover shadow-hard-sm sm:h-24 sm:w-24 dark:border-white"
-								height={96}
-								src={profile.gifUrl}
-								width={96}
-							/>
-						) : (
-							<div className="flex h-20 w-20 items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] font-black font-display text-3xl text-white shadow-hard-sm sm:h-24 sm:w-24 sm:text-4xl dark:border-white">
-								{profile.name ? profile.name.charAt(0).toUpperCase() : "M"}
+					<div className="flex flex-col items-center gap-2">
+						<div className="group relative">
+							{profile.gifUrl ? (
+								<img
+									alt="Avatar Membro"
+									className="h-20 w-20 rounded-md border-2 border-black object-cover shadow-hard-sm sm:h-24 sm:w-24 dark:border-white"
+									height={96}
+									src={profile.gifUrl}
+									width={96}
+								/>
+							) : (
+								<div className="flex h-20 w-20 items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] font-black font-display text-3xl text-white shadow-hard-sm sm:h-24 sm:w-24 sm:text-4xl dark:border-white">
+									{profile.name ? profile.name.charAt(0).toUpperCase() : "M"}
+								</div>
+							)}
+
+							{/* Desktop hover quick change overlay for Owner */}
+							{isOwner ? (
+								<div className="absolute inset-0 hidden items-center justify-center rounded-md bg-black/60 p-1 opacity-0 backdrop-blur-xs transition group-hover:flex group-hover:opacity-100">
+									<CloudinaryUploadButton
+										className="w-full justify-center px-1 py-1 text-[9px]"
+										folder="orcestra-avatars"
+										label="Mudar"
+										onUploadSuccess={handleAvatarUploaded}
+										variant="avatar"
+									/>
+								</div>
+							) : null}
+
+							<div className="absolute -right-2 -bottom-2">
+								<PopBadge color={profile.role === "ADMIN" ? "yellow" : "black"}>
+									{profile.role === "ADMIN" ? "ADMIN" : "MEMBRO"}
+								</PopBadge>
 							</div>
-						)}
-						<div className="absolute -right-2 -bottom-2">
-							<PopBadge color={profile.role === "ADMIN" ? "yellow" : "black"}>
-								{profile.role === "ADMIN" ? "ADMIN" : "MEMBRO"}
-							</PopBadge>
 						</div>
+
+						{/* Quick direct buttons for profile owner */}
+						{isOwner ? (
+							<div className="flex flex-wrap items-center justify-center gap-1.5 pt-0.5">
+								<CloudinaryUploadButton
+									className="px-2 py-1 text-[10px]"
+									folder="orcestra-avatars"
+									label="Trocar Foto"
+									onUploadSuccess={handleAvatarUploaded}
+								/>
+								{profile.gifUrl ? (
+									<button
+										className="btn-tactile inline-flex cursor-pointer items-center gap-1 rounded-md border-2 border-black bg-destructive/10 px-2 py-1 font-mono text-[10px] text-destructive uppercase hover:bg-destructive/20 dark:border-white"
+										onClick={handleRemoveAvatar}
+										title="Remover foto e voltar ao avatar com iniciais"
+										type="button"
+									>
+										<Trash2 className="h-3 w-3" />
+										<span>Remover</span>
+									</button>
+								) : null}
+							</div>
+						) : null}
 					</div>
 
 					<div className="min-w-0 flex-1 space-y-1.5">
@@ -442,75 +515,125 @@ function ProfileContent() {
 							</span>
 						</div>
 
-						{/* Quick GIF Presets */}
+						{/* Source Selector Tabs */}
 						<div className="space-y-1.5">
-							<label
-								className="font-bold font-display text-[11px] uppercase tracking-wider"
-								htmlFor="preset-buttons"
-								id="preset-label"
-							>
-								Escolha Rápida de GIF Reação:
-							</label>
-							<div
-								aria-labelledby="preset-label"
-								className="flex flex-wrap gap-1.5"
-								id="preset-buttons"
-							>
-								{GIF_PRESETS.map((preset) => (
-									<button
-										className={`btn-tactile rounded border-2 px-2 py-1 font-black font-display text-[10px] uppercase transition ${
-											giftMediaUrl === preset.url
-												? "border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white"
-												: "border-black/30 bg-background text-muted-foreground hover:border-black dark:border-white/30"
-										}`}
-										key={preset.label}
-										onClick={() => setGiftMediaUrl(preset.url)}
-										type="button"
-									>
-										{preset.label}
-									</button>
-								))}
+							<span className="block font-bold font-display text-xs uppercase tracking-wider">
+								Tipo de Mídia / Imagem:
+							</span>
+							<div className="grid grid-cols-3 gap-1.5 rounded-md border-2 border-black bg-secondary/40 p-1 dark:border-white">
+								<button
+									className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
+										giftSource === "preset"
+											? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+											: "border-transparent text-muted-foreground hover:text-foreground"
+									}`}
+									onClick={() => setGiftSource("preset")}
+									type="button"
+								>
+									Sugeridos
+								</button>
+								<button
+									className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
+										giftSource === "upload"
+											? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+											: "border-transparent text-muted-foreground hover:text-foreground"
+									}`}
+									onClick={() => setGiftSource("upload")}
+									type="button"
+								>
+									Enviar Foto
+								</button>
+								<button
+									className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
+										giftSource === "url"
+											? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+											: "border-transparent text-muted-foreground hover:text-foreground"
+									}`}
+									onClick={() => setGiftSource("url")}
+									type="button"
+								>
+									Link / URL
+								</button>
 							</div>
 						</div>
 
-						{/* Direct URL Input */}
-						<div className="space-y-1.5">
-							<label
-								className="font-bold font-display text-xs uppercase tracking-wider"
-								htmlFor="giftMediaUrl"
-							>
-								URL do GIF ou Imagem
-							</label>
-							<input
-								className="h-10 w-full rounded-md border-2 border-black bg-background px-3 font-mono text-xs transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
-								id="giftMediaUrl"
-								onChange={(e) => setGiftMediaUrl(e.target.value)}
-								placeholder="https://media.giphy.com/... ou cole qualquer link de imagem"
-								required
-								type="url"
-								value={giftMediaUrl}
-							/>
-							<div className="flex flex-col justify-between gap-1.5 pt-1 sm:flex-row sm:items-center">
-								<span className="font-mono text-[10px] text-muted-foreground uppercase">
-									Ou envie uma foto/GIF do seu computador:
-								</span>
+						{/* Content by Source */}
+						{giftSource === "preset" ? (
+							<div className="space-y-1.5">
+								<label
+									className="font-bold font-display text-[11px] uppercase tracking-wider"
+									htmlFor="preset-buttons"
+									id="preset-label"
+								>
+									Escolha Rápida de GIF Reação:
+								</label>
+								<div
+									aria-labelledby="preset-label"
+									className="flex flex-wrap gap-1.5"
+									id="preset-buttons"
+								>
+									{GIF_PRESETS.map((preset) => (
+										<button
+											className={`btn-tactile rounded border-2 px-2 py-1 font-black font-display text-[10px] uppercase transition ${
+												giftMediaUrl === preset.url
+													? "border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white"
+													: "border-black/30 bg-background text-muted-foreground hover:border-black dark:border-white/30"
+											}`}
+											key={preset.label}
+											onClick={() => setGiftMediaUrl(preset.url)}
+											type="button"
+										>
+											{preset.label}
+										</button>
+									))}
+								</div>
+							</div>
+						) : giftSource === "upload" ? (
+							<div className="space-y-1.5">
 								<CloudinaryUploadButton
 									folder="orcestra-gifts"
-									label="Upload Imagem / GIF"
+									label="Arraste uma foto/GIF ou clique para selecionar"
 									onUploadSuccess={(url) => {
 										setGiftMediaUrl(url);
-										toast.success("Imagem carregada!");
 									}}
+									variant="dropzone"
 								/>
 							</div>
-						</div>
+						) : (
+							<div className="space-y-1.5">
+								<label
+									className="font-bold font-display text-xs uppercase tracking-wider"
+									htmlFor="giftMediaUrl"
+								>
+									URL do GIF ou Imagem
+								</label>
+								<input
+									className="h-10 w-full rounded-md border-2 border-black bg-background px-3 font-mono text-xs transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
+									id="giftMediaUrl"
+									onChange={(e) => setGiftMediaUrl(e.target.value)}
+									placeholder="https://media.giphy.com/... ou cole qualquer link de imagem"
+									required
+									type="url"
+									value={giftMediaUrl}
+								/>
+							</div>
+						)}
 
 						{/* Live Preview */}
 						{giftMediaUrl ? (
-							<div className="relative overflow-hidden rounded-md border-2 border-black bg-background p-2 text-center dark:border-white">
-								<span className="mb-1 block font-bold font-mono text-[10px] text-muted-foreground uppercase">
-									Prévia do Presente:
-								</span>
+							<div className="relative overflow-hidden rounded-md border-2 border-black bg-background p-3 text-center shadow-hard-xs dark:border-white">
+								<div className="flex items-center justify-between pb-2">
+									<span className="font-bold font-mono text-[10px] text-muted-foreground uppercase">
+										Prévia do Presente:
+									</span>
+									<button
+										className="font-mono text-[10px] text-destructive uppercase hover:underline"
+										onClick={() => setGiftMediaUrl("")}
+										type="button"
+									>
+										[Limpar Imagem]
+									</button>
+								</div>
 								<img
 									alt="Prévia do Presente"
 									className="mx-auto max-h-48 rounded border border-black/20 object-contain shadow-xs dark:border-white/20"
@@ -827,33 +950,80 @@ function ProfileContent() {
 						</div>
 
 						{/* Custom Avatar / GIF via Cloudinary */}
-						<div className="space-y-1.5">
-							<label
-								className="font-bold font-display text-xs uppercase tracking-wider"
-								htmlFor="gifUrl"
-							>
-								Avatar Personalizado / GIF
-							</label>
-							<input
-								className="h-10 w-full rounded-md border-2 border-black bg-background px-3 font-mono text-xs transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
-								id="gifUrl"
-								onChange={(e) => setGifUrl(e.target.value)}
-								placeholder="https://res.cloudinary.com/... ou URL de imagem"
-								type="url"
-								value={gifUrl}
-							/>
-							<div className="flex flex-col justify-between gap-1.5 pt-1 sm:flex-row sm:items-center">
-								<span className="font-mono text-[10px] text-muted-foreground uppercase">
-									Faça upload direto de avatar/GIF:
-								</span>
-								<CloudinaryUploadButton
-									folder="orcestra-avatars"
-									label="Enviar Imagem"
-									onUploadSuccess={(url) => {
-										setGifUrl(url);
-										toast.success("Imagem carregada via Cloudinary!");
-									}}
-								/>
+						<div className="space-y-2 rounded-md border-2 border-black bg-secondary/30 p-3 dark:border-white">
+							<div className="flex items-center justify-between">
+								<label
+									className="font-bold font-display text-xs uppercase tracking-wider"
+									htmlFor="gifUrl"
+								>
+									Foto de Perfil / GIF
+								</label>
+								{gifUrl ? (
+									<button
+										className="font-mono text-[10px] text-destructive uppercase hover:underline"
+										onClick={() => setGifUrl("")}
+										type="button"
+									>
+										[Restaurar Padrão]
+									</button>
+								) : null}
+							</div>
+
+							<div className="flex items-center gap-3">
+								{gifUrl ? (
+									<img
+										alt="Prévia Avatar"
+										className="h-16 w-16 rounded-md border-2 border-black object-cover shadow-hard-xs dark:border-white"
+										height={64}
+										src={gifUrl}
+										width={64}
+									/>
+								) : (
+									<div className="flex h-16 w-16 items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] font-black font-display text-2xl text-white shadow-hard-xs dark:border-white">
+										{name ? name.charAt(0).toUpperCase() : "M"}
+									</div>
+								)}
+
+								<div className="flex-1 space-y-1">
+									<CloudinaryUploadButton
+										folder="orcestra-avatars"
+										label="Enviar Nova Foto"
+										onUploadSuccess={(url) => {
+											setGifUrl(url);
+											toast.success(
+												"Foto carregada! Clique em Salvar Alterações para confirmar."
+											);
+										}}
+									/>
+									<p className="font-mono text-[10px] text-muted-foreground">
+										PNG, JPG, GIF ou WEBP (máx. 10MB)
+									</p>
+								</div>
+							</div>
+
+							{/* Advanced: Manual URL */}
+							<div className="pt-1">
+								<button
+									className="font-mono text-[10px] text-muted-foreground uppercase underline hover:text-foreground"
+									onClick={() => setShowManualUrl((prev) => !prev)}
+									type="button"
+								>
+									{showManualUrl
+										? "▲ Ocultar link manual de imagem"
+										: "▼ Inserir link de imagem/GIF diretamente"}
+								</button>
+								{showManualUrl ? (
+									<div className="pt-2">
+										<input
+											className="h-10 w-full rounded-md border-2 border-black bg-background px-3 font-mono text-xs transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
+											id="gifUrl"
+											onChange={(e) => setGifUrl(e.target.value)}
+											placeholder="https://res.cloudinary.com/... ou URL de imagem"
+											type="url"
+											value={gifUrl}
+										/>
+									</div>
+								) : null}
 							</div>
 						</div>
 
