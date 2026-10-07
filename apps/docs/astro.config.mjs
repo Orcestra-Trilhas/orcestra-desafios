@@ -4,7 +4,6 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-	site: "https://orcestra-trilhas.github.io",
 	base: "/orcestra-desafios",
 	integrations: [
 		starlight({
@@ -66,4 +65,43 @@ export default defineConfig({
 			title: "Orc'estra Desafios",
 		}),
 	],
+	server: {
+		port: 3002,
+	},
+	site: "https://orcestra-trilhas.github.io",
+	vite: {
+		plugins: [
+			{
+				configureServer(server) {
+					return () => {
+						server.middlewares.stack.unshift({
+							/**
+							 * @param {import("node:http").IncomingMessage} req
+							 * @param {import("node:http").ServerResponse} res
+							 * @param {() => void} next
+							 */
+							handle(req, res, next) {
+								const url = req.url ?? "/";
+								const pathname = url.split("?")[0] ?? "/";
+								if (pathname === "/" || pathname === "") {
+									const search = url.includes("?")
+										? url.slice(url.indexOf("?"))
+										: "";
+									res.writeHead(302, {
+										Location: `/orcestra-desafios/${search}`,
+									});
+									res.end();
+									return;
+								}
+								next();
+							},
+							route: "",
+						});
+					};
+				},
+				enforce: "post",
+				name: "dev-redirect-root-to-base",
+			},
+		],
+	},
 });

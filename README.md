@@ -20,7 +20,8 @@
 
 A documentação completa do projeto é servida via **Astro + Starlight** em `apps/docs`.
 
-Para iniciar o portal de documentação localmente na porta `3002`:
+- **Online (GitHub Pages)**: [orcestra-trilhas.github.io/orcestra-desafios](https://orcestra-trilhas.github.io/orcestra-desafios/)
+- **Localmente** (porta `3002`):
 
 ```bash
 npm run dev:docs

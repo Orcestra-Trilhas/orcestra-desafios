@@ -22,7 +22,7 @@
     "deploy:prod": "npx --yes vercel deploy --prod",
     "deploy:setup": "npx --yes vercel link",
     "dev": "npm run dev --workspaces --if-present",
-    "dev:docs": "npm run dev --workspace docs -- --port 3002",
+    "dev:docs": "npm run dev --workspace docs",
     "dev:vercel": "npx --yes vercel dev -L",
     "dev:web": "npm run dev --workspace web --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",

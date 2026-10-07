@@ -144,5 +144,5 @@ npm run fix
 
 ## 7. Próximos Passos
 
-- Leia as [Convenções de Código & Qualidade](/guias/convencoes/) para entender os padrões estritos de desenvolvimento.
-- Conheça a [Arquitetura do Monorepo](/arquitetura/visao-geral/) e a [Estratégia de Testes SOTA](/arquitetura/estrategia-de-testes/).
+- Leia as [Convenções de Código & Qualidade](/orcestra-desafios/guias/convencoes/) para entender os padrões estritos de desenvolvimento.
+- Conheça a [Arquitetura do Monorepo](/orcestra-desafios/arquitetura/visao-geral/) e a [Estratégia de Testes SOTA](/orcestra-desafios/arquitetura/estrategia-de-testes/).
