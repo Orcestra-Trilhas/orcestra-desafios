@@ -1,63 +1,62 @@
 ---
 title: Onboarding & Setup Local
-description: Guia passo a passo para configurar o ambiente de desenvolvimento local e executar a plataforma Orc'estra Desafios.
+description: Guia prático para clonar, configurar variáveis de ambiente e rodar o projeto localmente.
 ---
 
-Este guia detalha o processo de inicialização e desenvolvimento local para novos colaboradores da plataforma **Orc'estra Desafios**.
+Este guia orienta o setup inicial do monorepo **Orc'estra Desafios** para desenvolvimento local.
+
+---
 
 ## 1. Pré-requisitos
 
-Antes de iniciar, certifique-se de ter instalado em sua máquina:
-
-- **Node.js**: Versão `>= 22.0.0` (recomendado Node 22 LTS ou superior).
-- **npm**: Versão `>= 10.0.0` (gerenciador oficial configurado no monorepo).
-- **Git**: Para versionamento de código e clone do repositório.
-- **Conta no Neon Postgres**: Caso necessite de uma branch própria do banco em nuvem (para desenvolvimento local de testes, a suíte utiliza `@electric-sql/pglite` isolado em memória automaticamente).
+Certifique-se de ter instalado em sua máquina:
+- **Node.js**: Versão 22 LTS ou superior (`node -v`).
+- **npm**: Versão 10 ou superior (`npm -v`).
+- **Git**: Para versionamento e envio de branches.
 
 ---
 
-## 2. Clonando o Repositório e Instalando Dependências
-
-Clone o repositório e instale as dependências de todos os workspaces do monorepo:
+## 2. Clonagem e Instalação
 
 ```bash
-# Clonar o repositório
+# Clone o repositório
 git clone https://github.com/Orcestra-Trilhas/orcestra-desafios.git
 cd orcestra-desafios
 
-# Instalar dependências em todos os workspaces
+# Instale as dependências de todos os workspaces
 npm install
 ```
 
-O comando `npm install` executa automaticamente o hook `postinstall`:
-```bash
-varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/
-```
-Isso garante que os esquemas e tipos tipados do Varlock sejam sincronizados para suas variáveis de ambiente.
+O comando `npm install` executa automaticamente o hook `postinstall` do **Varlock**, sincronizando a tipagem das variáveis de ambiente em `apps/web/src/env.ts` e `packages/db/src/env.ts`.
 
 ---
 
 ## 3. Configuração de Variáveis de Ambiente
 
-O projeto utiliza **Varlock** para validação tipada e segura de variáveis de ambiente.
+Crie o arquivo `.env` dentro de `apps/web/` (ou copie a partir do esquema):
 
-1. Crie o arquivo `.env.local` na raiz e nos apps conforme necessário, ou utilize as variáveis padrão de desenvolvimento:
+```bash
+# apps/web/.env
+NODE_ENV=development
 
-```sh
-# Banco de Dados (Neon Postgres)
+# Conexão com o banco de dados (Neon Postgres)
 DATABASE_URL="postgresql://user:password@ep-sample-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
 
-# Autenticação (Better Auth)
-BETTER_AUTH_SECRET="uma-chave-secreta-forte-com-no-minimo-32-caracteres"
+# Segredo de criptografia de sessão (mínimo 32 caracteres)
+BETTER_AUTH_SECRET="uma-chave-secreta-com-no-minimo-32-caracteres"
 BETTER_AUTH_URL="http://localhost:3001"
 
-# Uploads de Mídia (Cloudinary - Opcional para desenvolvimento sem upload)
+# Upload de imagens de demonstração (opcional para desenvolvimento básico)
 CLOUDINARY_CLOUD_NAME="demo"
 CLOUDINARY_API_KEY="123456789"
 CLOUDINARY_API_SECRET="secret"
 ```
 
-2. Gere os tipos do Varlock sempre que alterar o `.env.schema`:
+:::tip
+Para a suíte de testes de integração (`npm run test`), você não precisa de banco em nuvem nem de credenciais externas: os testes utilizam automaticamente o motor **PGlite** (PostgreSQL WASM) em memória.
+:::
+
+Sempre que você alterar ou adicionar variáveis em um arquivo `.env.schema`, gere novamente os tipos TypeScript:
 
 ```bash
 npm run env:generate
@@ -67,82 +66,66 @@ npm run env:generate
 
 ## 4. Banco de Dados e Migrações (Drizzle ORM)
 
-O projeto armazena o schema em `packages/db/src/schema/`. Para gerenciar o banco de dados:
+O schema relacional reside em `packages/db/src/schema/`. Os comandos principais são executados a partir da raiz:
 
-- **Criar nova migração SQL** após modificar o schema:
-  ```bash
-  npm run db:generate
-  ```
-- **Aplicar migrações pendentes** no banco de dados configurado no `DATABASE_URL`:
-  ```bash
-  npm run db:migrate
-  ```
-- **Sincronizar schema diretamente** (útil em branches efêmeras de desenvolvimento):
-  ```bash
-  npm run db:push
-  ```
-- **Abrir Drizzle Studio** para inspecionar e editar dados via interface gráfica:
-  ```bash
-  npm run db:studio
-  ```
+```bash
+# Cria um novo arquivo de migração SQL após você editar o schema
+npm run db:generate
+
+# Aplica as migrações SQL pendentes no banco configurado no DATABASE_URL
+npm run db:migrate
+
+# Sincroniza o schema diretamente sem gerar arquivo de migração (útil em branches de rascunho)
+npm run db:push
+
+# Abre a interface gráfica do Drizzle Studio no navegador
+npm run db:studio
+```
 
 ---
 
-## 5. Executando os Serviços em Desenvolvimento
+## 5. Executando os Serviços Locais
 
-A plataforma é composta por múltiplos apps que rodam em portas dedicadas:
-
-| Serviço | Comando | Porta | Descrição |
+| Aplicação | Comando | Endereço | Descrição |
 | :--- | :--- | :--- | :--- |
-| **Aplicação Web Principal** | `npm run dev:web` | `http://localhost:3001` | Next.js 16 (App Router, tRPC, UI) |
-| **Documentação Técnica** | `npm run dev:docs` | `http://localhost:3002` | Astro + Starlight |
-| **Todos os Serviços** | `npm run dev` | Várias | Inicia todos os apps em paralelo |
+| **Aplicação Web** | `npm run dev:web` | `http://localhost:3001` | Next.js 16 (App Router, tRPC, UI) |
+| **Documentação** | `npm run dev:docs` | `http://localhost:3002` | Astro + Starlight |
+| **Monorepo Completo** | `npm run dev` | Ambas | Roda web e docs em paralelo |
 
-Para iniciar o desenvolvimento diário da interface:
+Para iniciar o desenvolvimento da aplicação web:
+
 ```bash
 npm run dev:web
 ```
 
-Para visualizar a documentação interativa:
-```bash
-npm run dev:docs
-```
-
 ---
 
-## 6. Scripts e Comandos Mais Utilizados
-
-O monorepo disponibiliza atalhos no `package.json` raiz:
+## 6. Fluxo Diário de Comandos
 
 ```bash
-# Executa a suíte de testes de integração com PGlite (rápida, isolada)
-npm run test
-
-# Executa testes em modo watch (ótimo para TDD)
-npm run test:watch
-
-# Gera relatório de cobertura de código
-npm run test:coverage
-
-# Executa os testes End-to-End com Playwright
-npm run test:e2e
-
-# Executa todos os testes (Integração + E2E)
-npm run test:all
-
-# Valida tipos TypeScript em todos os workspaces
-npm run check-types
-
-# Verifica problemas de linting e formatação com Ultracite (Biome)
+# Verifica regras de linting e formatação com Ultracite (Biome)
 npm run check
 
-# Corrige automaticamente formatação e regras de linting
+# Corrige automaticamente problemas de formatação e linting
 npm run fix
+
+# Checa erros de tipagem em todo o monorepo via TypeScript
+npm run check-types
+
+# Roda os testes de integração com PGlite (ultra-rápido)
+npm run test
+
+# Roda os testes de integração em modo contínuo (TDD)
+npm run test:watch
+
+# Roda os testes de ponta a ponta com Playwright
+npm run test:e2e
 ```
 
 ---
 
-## 7. Próximos Passos
+## 7. Próximas Leituras
 
-- Leia as [Convenções de Código & Qualidade](/orcestra-desafios/guias/convencoes/) para entender os padrões estritos de desenvolvimento.
-- Conheça a [Arquitetura do Monorepo](/orcestra-desafios/arquitetura/visao-geral/) e a [Estratégia de Testes SOTA](/orcestra-desafios/arquitetura/estrategia-de-testes/).
+- [Convenções de Código & Qualidade](/orcestra-desafios/guias/convencoes/): Regras do Biome, padrão de commits e convenções TypeScript.
+- [Arquitetura do Monorepo](/orcestra-desafios/arquitetura/visao-geral/): Entenda a separação entre apps e packages.
+- [Fluxo de Dados & Type Safety](/orcestra-desafios/arquitetura/fluxo-de-dados/): Como o tRPC conecta o banco ao frontend sem geração manual de tipos.

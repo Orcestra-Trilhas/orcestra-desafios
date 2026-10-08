@@ -1,58 +1,76 @@
 ---
-title: Orc'estra Desafios - Documentação Técnica
-description: Hub central de documentação arquitetural, registros de decisões de arquitetura (ADRs) e guias da plataforma Orc'estra Desafios.
+title: Orc'estra Desafios
+description: Documentação técnica oficial da plataforma de capacitação e desafios de programação da Orc'estra Gamificação.
 template: splash
 hero:
-  tagline: Plataforma gamificada de capacitação técnica, desafios de código e trilhas de desenvolvimento da Orc'estra Gamificação.
+  tagline: Plataforma de desafios de código em duplas, trilhas de formação técnica e ranking gamificado para a Empresa Júnior.
   image:
     file: ../../assets/logo.png
   actions:
-    - text: Visão Geral de Arquitetura
-      link: /orcestra-desafios/arquitetura/visao-geral/
+    - text: Começar Setup Local
+      link: /orcestra-desafios/guias/onboarding/
       icon: right-arrow
       variant: primary
-    - text: Registros de Decisão (ADRs)
-      link: /orcestra-desafios/adrs/adr-001-nextjs-16-app-router/
+    - text: Arquitetura do Sistema
+      link: /orcestra-desafios/arquitetura/visao-geral/
       icon: open-book
       variant: secondary
-    - text: Guia de Onboarding
-      link: /orcestra-desafios/guias/onboarding/
-      icon: seti:shell
+    - text: Registros de Decisão (ADRs)
+      link: /orcestra-desafios/adrs/adr-001-nextjs-16-app-router/
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Pilares da Plataforma
+## Trilhas de Formação Técnica
+
+A plataforma organiza a capacitação contínua dos membros em trilhas práticas de desenvolvimento:
+
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+  <span class="badge-track-front">Frontend</span>
+  <span class="badge-track-back">Backend</span>
+  <span class="badge-track-proto">Prototipação</span>
+  <span class="badge-track-git">Git & GitHub</span>
+  <span class="badge-track-devops">DevOps & Cloud</span>
+</div>
+
+---
+
+## Módulos do Sistema
 
 <CardGrid stagger>
-  <Card title="Next.js 16 & React 19" icon="rocket">
-    Aplicação web moderna utilizando App Router, Server Components nativos, Server Actions e compilador React 19 para máxima performance e streaming.
+  <Card title="Desafios Semanais & Gamificação" icon="star">
+    Membros resolvem problemas práticos em duplas com verificação de requisitos. Inclui visualizador com proteção contra spoilers, submissões de código e ranking com critérios automáticos de desempate por envio.
   </Card>
-  <Card title="tRPC v11 Type-Safety" icon="approve-check">
-    Comunicação cliente-servidor 100% tipada de ponta a ponta sem etapas de geração manual de código ou contratos dessincronizados.
+
+  <Card title="Interface & PWA (Next.js 16 + React 19)" icon="laptop">
+    Construído sobre o Next.js 16 App Router e React 19 Compiler. Opera como Progressive Web App (PWA) instalável, com suporte a cache offline e alternância entre quatro temas de design.
   </Card>
-  <Card title="Neon Postgres & Drizzle ORM" icon="puzzle">
-    Banco relacional serverless com suporte a branching de dados, schemas declarativos no Drizzle ORM e migrações tipadas em TypeScript.
+
+  <Card title="Contratos Tipados de Ponta a Ponta (tRPC v11)" icon="approve-check">
+    Comunicação cliente-servidor orientada a procedimentos no `packages/api`. Validação rígida com Zod e inferência estrita de tipos TypeScript sem necessidade de ferramentas externas de codegen.
   </Card>
-  <Card title="Better Auth & Segurança" icon="laptop">
-    Autenticação modular robusta com controle estrito de sessões, papéis de usuário (admin/user) e cookies seguros com proteção CSRF.
+
+  <Card title="Persistência Relacional (Neon + Drizzle ORM)" icon="seti:db">
+    Modelagem relacional em `packages/db`. Migrações SQL versionadas executadas contra o Neon Serverless Postgres em produção e instâncias efêmeras PGlite em testes locais.
   </Card>
-  <Card title="Tailwind CSS v4 & Theming" icon="star">
-    Motor de estilização atômico com temas personalizados: Orc'estra Dark/Light (identidade visual) e temas inspirados em movimentos artísticos (Pop Art e Fauvismo).
+
+  <Card title="Autenticação & Controle de Acesso (Better Auth)" icon="seti:lock">
+    Gerenciamento de credenciais, sessões em banco de dados e controle de acesso baseado em papéis (membros e administradores) com cookies seguros HTTP-only.
   </Card>
-  <Card title="Testes SOTA com PGlite & Playwright" icon="document">
-    Suíte completa de testes caixa-cinza e integração com PostgreSQL WASM in-memory isolado (`@electric-sql/pglite`) e testes E2E com Playwright.
+
+  <Card title="Testes Ágeis sem Mocks Frágeis (PGlite + Playwright)" icon="seti:test-ts">
+    Testes de integração que rodam o Postgres real em WebAssembly (`@electric-sql/pglite`) executando migrações reais em milissegundos, complementados por testes E2E com Playwright.
   </Card>
 </CardGrid>
 
 ---
 
-## Estrutura da Documentação
+## Roteiro de Documentação
 
-- **[Onboarding & Setup](/orcestra-desafios/guias/onboarding/)**: Pré-requisitos, inicialização do ambiente com Varlock e execução dos scripts de desenvolvimento.
-- **[Convenções de Código](/orcestra-desafios/guias/convencoes/)**: Padrões estritos de qualidade governados pelo **Ultracite (Biome)** e diretrizes de tipagem TypeScript.
-- **[Arquitetura do Monorepo](/orcestra-desafios/arquitetura/visao-geral/)**: Divisão de responsabilidade entre os apps (`web`, `docs`) e pacotes compartilhados (`api`, `auth`, `db`, `ui`, `config`).
-- **[Fluxo de Dados & Tipagem](/orcestra-desafios/arquitetura/fluxo-de-dados/)**: Como o tRPC orquestra a comunicação entre banco, backend e frontend.
-- **[Estratégia de Testes SOTA](/orcestra-desafios/arquitetura/estrategia-de-testes/)**: Metodologia de testes sem mocks frágeis, executando migrações reais no PGlite.
-- **[Architecture Decision Records (ADRs)](/orcestra-desafios/adrs/adr-001-nextjs-16-app-router/)**: Justificativa detalhada de cada escolha tecnológica adotada no projeto.
+- **[Setup & Onboarding](/orcestra-desafios/guias/onboarding/)**: Clonagem, instalação de dependências, variáveis de ambiente e comandos de inicialização.
+- **[Convenções de Código](/orcestra-desafios/guias/convencoes/)**: Padrões de código governados pelo Ultracite/Biome, convenções de commits e regras de tipagem.
+- **[Arquitetura do Monorepo](/orcestra-desafios/arquitetura/visao-geral/)**: Divisão de responsabilidades entre aplicações (`apps/web`, `apps/docs`) e pacotes compartilhados (`packages/api`, `packages/auth`, `packages/db`, `packages/ui`, `packages/config`).
+- **[Fluxo de Dados](/orcestra-desafios/arquitetura/fluxo-de-dados/)**: Ciclo de vida das requisições, resolução de contexto tRPC e sincronização de dados no cliente.
+- **[Estratégia de Testes](/orcestra-desafios/arquitetura/estrategia-de-testes/)**: Metodologia de testes de integração com PGlite e cobertura end-to-end com Playwright.
+- **[Architecture Decision Records (ADRs)](/orcestra-desafios/adrs/adr-001-nextjs-16-app-router/)**: Justificativas arquiteturais e trade-offs técnicos documentados para cada tecnologia adotada.

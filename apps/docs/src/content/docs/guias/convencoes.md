@@ -1,91 +1,96 @@
 ---
 title: Convenções de Código & Qualidade
-description: Diretrizes de desenvolvimento, regras de linting, padrões TypeScript e fluxo de commits adotados no repositório.
+description: Regras de linting do Ultracite/Biome, convenções de commits, padrões TypeScript e boas práticas de React 19.
 ---
 
-O projeto Orc'estra Desafios segue uma política rigorosa de qualidade técnica com foco em **acessibilidade, performance, type safety e manutenibilidade**.
-
----
-
-## 1. Ultracite & Biome (Motor de Qualidade)
-
-Utilizamos o **Ultracite** (construído sobre o Biome) como solução unificada de linting e formatação.
-
-### Comandos Rápidos
-- **Formatar e corrigir automaticamente**: `npm run fix` (ou `npm exec -- ultracite fix`)
-- **Verificar pendências sem alterar arquivos**: `npm run check` (ou `npm exec -- ultracite check`)
-
-### Principais Regras de Código
-- **Sem `any`**: Tipos não definidos devem usar `unknown` e passar por type narrowing estrito.
-- **Top-Level Regular Expressions**: Nunca crie literais de expressões regulares dentro de loops ou funções repetitivas. Declare-as como constantes de escopo superior com nomes semânticos.
-- **Performance de Loops**: Evite operações assíncronas sequenciais com `await` dentro de laços (`for...of`) quando puderem ser executadas em lote ou paralelizadas com `Promise.all()`.
-- **Manipulação de Strings**: Utilize `.slice()` em vez de `.substring()` ou `.substr()`.
-- **Ausência de Logs em Produção**: Remova `console.log`, `debugger` e instruções de depuração antes de abrir PRs ou commitar.
+Este documento consolida os padrões de engenharia adotados no repositório **Orc'estra Desafios** para manter a base de código limpa, acessível e fácil de manter.
 
 ---
 
-## 2. Tipagem Estrita em TypeScript
+## 1. Ultracite & Biome (Linting e Formatação)
 
-O repositório opera sob `strict: true` e `noUncheckedIndexedAccess: true`.
+Utilizamos o **Ultracite**, que roda o motor de linting e formatação do **Biome** (escrito em Rust). Ele substitui o conjunto tradicional ESLint + Prettier com velocidade de execução quase instantânea.
 
-### Boas Práticas:
-1. **Inferência com Type Narrowing**:
-   Prefira verificar propriedades usando operadores como `in`, `typeof` ou type guards dedicados ao invés de usar coerção forçada (`as Tipo`).
-2. **Const Assertions (`as const`)**:
-   Use para literais imutáveis, listas de opções fixas e mapeamentos de configuração.
-3. **Nomes Descritivos & Constantes**:
-   Evite números e strings mágicas no código. Extraia para constantes com nomes autoexplicativos.
+### Comandos
+- **Checar conformidade**: `npm run check`
+- **Corrigir automaticamente**: `npm run fix`
+
+### Regras Principais
+- **Sem `any`**: Tipos desconhecidos devem usar `unknown` e passar por type narrowing estrito.
+- **Regex no Top-Level**: Nunca instancie expressões regulares literais dentro de loops ou funções repetidas; declare-as no escopo do arquivo como constantes nomeadas.
+- **Strings com `.slice()`**: Utilize `.slice()` para extrair trechos de strings em vez dos legados `.substr()` ou `.substring()`.
+- **Sem Logs em Produção**: Remova `console.log`, `debugger` ou chamadas de debug antes de abrir pull requests.
+- **Acessibilidade Obrigatória**: Elementos clicáveis devem ser tags semânticas (`<button>`, `<a>`, `<input>`) com labels descritivos e foco por teclado.
+
+---
+
+## 2. Padrões de Tipagem em TypeScript
+
+O repositório é configurado com `strict: true` e `noUncheckedIndexedAccess: true` no `packages/config/tsconfig.base.json`.
+
+### Práticas Recomendadas
 
 ```typescript
-// ✅ Recomendado
-const MAX_CHALLENGE_TITLE_LENGTH = 100 as const;
+// 1. Const Assertions para listas e mapeamentos imutáveis
+export const TRACK_ROLES = ["frontend", "backend", "proto", "git", "devops"] as const;
+export type TrackRole = (typeof TRACK_ROLES)[number];
 
-function isSolvedStatus(status: unknown): status is "SOLVED" {
-  return typeof status === "string" && status === "SOLVED";
+// 2. Type Narrowing com predicados de tipo em vez de casting forçado
+function isValidSubmissionStatus(status: unknown): status is "PENDING" | "APPROVED" | "REJECTED" {
+  return typeof status === "string" && ["PENDING", "APPROVED", "REJECTED"].includes(status);
 }
 
-// ❌ Evitar
-function check(s: any) {
-  return s === "SOLVED"; // Perde type-safety e gera warning no Ultracite
-}
+// 3. Extrair constantes semânticas em vez de números mágicos
+const MAX_SOLUTION_CODE_LENGTH = 10_000 as const;
 ```
+
+Evite usar coerção forçada com `as SomeType` a menos que seja estritamente necessário (como em chamadas a bibliotecas externas sem tipagem adequada).
 
 ---
 
 ## 3. Padrão de Commits
 
-Seguimos a convenção de **Conventional Commits** em português, com mensagens claras e objetivas no formato minúsculo:
+Adotamos a convenção **Conventional Commits** em português, com mensagens concisas em letras minúsculas:
 
-| Prefixo | Descrição | Exemplo |
+| Prefixo | Finalidade | Exemplo Real |
 | :--- | :--- | :--- |
-| `feat:` | Nova funcionalidade para o usuário | `feat: adiciona secao de solucoes com protecao anti-spoiler` |
-| `fix:` | Correção de bug ou falha | `fix: corrige upload no cloudinary e melhora intuitividade dos campos` |
-| `test:` | Adição ou refatoração de testes | `test: adiciona suite completa de testes de integracao e e2e sota` |
-| `docs:` | Atualizações em documentação | `docs: cria portal starlight e registra adrs de arquitetura` |
-| `refactor:` | Refatoração de código sem alteração funcional | `refactor: desacopla instanciacao do trpc e unifica helpers` |
-| `style:` | Ajustes visuais, CSS e temas | `feat: adiciona esquemas de cores da orc'estra e atualiza temas` |
-| `chore:` | Tarefas de manutenção e dependências | `chore: atualiza dependencias e scripts de desenvolvimento` |
+| `feat:` | Nova funcionalidade para o usuário | `feat: adiciona seletor com os 4 temas do design system` |
+| `fix:` | Correção de defeito ou bug | `fix: corrige validacao de spoiler em desafios de codigo` |
+| `test:` | Inclusão ou refatoração de testes | `test: adiciona testes de integracao para o ranking no pglite` |
+| `docs:` | Atualizações em documentação | `docs: reestrutura arquitetura e remove emojis de diagramas` |
+| `refactor:`| Mudança interna sem alteração de comportamento | `refactor: unifica resolucao de sessao no context do trpc` |
+| `style:` | Ajustes visuais, CSS e temas | `style: ajusta contraste do tema fauvismo para conformidade aaa` |
+| `chore:` | Dependências, build e scripts | `chore: atualiza pacotes do monorepo e scripts de teste` |
 
 ---
 
-## 4. Práticas em React 19 & Next.js 16
+## 4. Diretrizes para React 19 & Next.js 16
 
 1. **Server Components por Padrão**:
-   Todas as páginas e componentes no App Router devem ser Server Components, a menos que precisem de interatividade direta com o usuário (event handlers, hooks de estado ou contexto).
-2. **Diretiva `'use client'` Consciente**:
-   Isole componentes de cliente nas folhas da árvore de componentes (ex.: formulários, botões de ação com feedback instantâneo).
-3. **Hooks de Top-Level**:
-   Nunca invoque React Hooks condicionalmente ou dentro de laços.
-4. **Acessibilidade e Semântica**:
-   - Utilize elementos HTML semânticos (`<button>`, `<nav>`, `<main>`, `<article>`) em vez de divs com `onClick`.
-   - Garanta atributos ARIA apropriados e suporte completo a navegação por teclado (`Tab`, `Enter`, `Escape`).
-   - Forneça textos alternativos (`alt`) descritivos em imagens.
+   Todas as rotas sob `apps/web/src/app` são Server Components nativos. Apenas componentes folha que demandam interatividade direta (como modais, botões táteis e formulários com estado local) devem conter a diretiva `'use client'`.
+2. **React 19 Refs**:
+   Utilize `ref` diretamente como prop nos componentes. Não utilize `React.forwardRef`, que foi descontinuado na versão 19.
+3. **Imagens Otimizadas**:
+   Utilize o componente `next/image` (`<Image />`) com dimensões explícitas e texto alternativo (`alt`) em todas as imagens.
+4. **Links Externos Seguros**:
+   Links com `target="_blank"` devem sempre incluir `rel="noopener noreferrer"`.
 
 ---
 
-## 5. Arquitetura de Comunicação com tRPC
+## 5. Roteadores e Procedimentos tRPC (`packages/api`)
 
-- **Validação com Zod**: Todo endpoint de mutação ou query no tRPC deve ter seu input validado por schema Zod estrito.
-- **Procedimentos Autenticados**: Utilize `protectedProcedure` para qualquer operação que requeira autenticação, e `adminProcedure` para ações restritas à diretoria/administração.
-- **Tratamento de Exceções**: Lance erros semânticos usando `TRPCError` com o código HTTP correspondente (`NOT_FOUND`, `UNAUTHORIZED`, `FORBIDDEN`, `BAD_REQUEST`).
+- **Validação com Zod**: Todo procedimento que receba parâmetros (`.input(...)`) deve validar o payload com um schema Zod explícito.
+- **Procedimentos Seguros**:
+  - `publicProcedure`: Apenas para rotas abertas (como checagem de status ou metadados públicos).
+  - `protectedProcedure`: Para operações autenticadas de membros.
+  - `adminProcedure`: Para operações administrativas (criação de desafios, aprovação/rejeição de submissões).
+- **Tratamento de Exceções**: Lance exceções semânticas utilizando a classe `TRPCError` fornecida pelo pacote `@trpc/server`:
 
+```typescript
+if (!challenge) {
+  throw new TRPCError({
+    code: "NOT_FOUND",
+    message: "O desafio solicitado não foi encontrado.",
+  });
+}
+```

@@ -9,6 +9,10 @@ export default defineConfig({
 	integrations: [
 		mermaid(),
 		starlight({
+			components: {
+				ThemeProvider: "./src/components/theme-provider.astro",
+				ThemeSelect: "./src/components/theme-select.astro",
+			},
 			customCss: ["./src/styles/custom.css"],
 			defaultLocale: "root",
 			description:
@@ -33,7 +37,7 @@ export default defineConfig({
 							slug: "guias/convencoes",
 						},
 					],
-					label: "Visão Geral & Começando",
+					label: "Guias & Primeiros Passos",
 				},
 				{
 					items: [
@@ -46,7 +50,7 @@ export default defineConfig({
 							slug: "arquitetura/fluxo-de-dados",
 						},
 						{
-							label: "Estratégia de Testes SOTA",
+							label: "Estratégia de Testes Automatizados",
 							slug: "arquitetura/estrategia-de-testes",
 						},
 					],

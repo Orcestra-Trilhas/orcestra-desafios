@@ -1,6 +1,6 @@
 ---
-title: "ADR-006: PGlite WASM, Vitest e Playwright para Testes SOTA"
-description: Registro de decisão arquitetural sobre a infraestrutura de testes automatizados com PGlite, Vitest e Playwright.
+title: "ADR-006: PGlite WASM, Vitest e Playwright para Testes Automatizados"
+description: Registro de decisão arquitetural sobre a infraestrutura de testes de integração com PGlite em memória e testes E2E com Playwright.
 ---
 
 ## Status
@@ -9,26 +9,27 @@ description: Registro de decisão arquitetural sobre a infraestrutura de testes 
 ---
 
 ## Contexto & Desafio
-A confiabilidade da plataforma depende de testes que validem regras de negócio complexas:
-- Cálculo e desempate de pontuação no ranking.
-- Submissão com proteção anti-spoiler em soluções.
-- Permissões de moderação administrativa.
-- Fluxos de autenticação e expiração de sessão.
+A plataforma possui regras de negócio sensíveis que requerem validação contínua:
+- Regras de desempate e acumulação de pontos no ranking.
+- Trava de proteção contra spoiler em submissões de código.
+- Moderação administrativa e permissões baseadas em papéis (RBAC).
+- Autenticação e ciclo de vida de sessões.
 
-O desafio central residia em como testar o banco de dados PostgreSQL sem cair em armadilhas de performance (testes lentos que desestimulam execução frequente) ou fragilidade (mocks que não testam o SQL de verdade).
+A equipe precisava de uma suíte de testes que não dependesse de mocks frágeis de banco de dados nem introduzisse a lentidão de subir contêineres Docker a cada execução.
 
 ---
 
 ## Decisão Arquitetural
-Adotar uma arquitetura de testes em duas camadas complementares:
+Adotar uma estratégia de testes em duas camadas:
 
-1. **Camada de Integração & Caixa-Cinza**:
-   - **Vitest**: Executor ultrarrápido nativo para ESM e TypeScript.
-   - **`@electric-sql/pglite`**: Motor do PostgreSQL 16 compilado em WebAssembly. Cada arquivo de teste recebe uma instância isolada em memória onde as migrações SQL reais do Drizzle são aplicadas em menos de 100 milissegundos.
-   - **`tRPC createCaller`**: Invocação direta dos procedimentos de API com contexto injetado, exercitando Zod, middlewares, ORM e banco de forma unificada.
+1. **Testes de Integração em Memória com Vitest & PGlite**:
+   - O `@electric-sql/pglite` roda o PostgreSQL 16 oficial compilado em WebAssembly diretamente no processo do Node.js.
+   - Cada teste cria uma base efêmera e executa todas as migrações SQL reais da pasta `packages/db/src/migrations/` em dezenas de milissegundos.
+   - O `createCaller` do tRPC executa os procedimentos de backend diretamente com contexto injetado, exercitando Zod, middlewares, queries Drizzle e o PostgreSQL em uma única chamada.
 
-2. **Camada End-to-End (E2E)**:
-   - **Playwright**: Execução de testes de ponta a ponta simulando a experiência do usuário nos navegadores Desktop Chromium e Mobile Chromium.
+2. **Testes End-to-End com Playwright**:
+   - Validação dos fluxos completos da interface em navegadores Chromium Desktop e Mobile.
+   - Verificação de interações reais, acessibilidade por teclado e proteção contra spoilers.
 
 ---
 
@@ -36,21 +37,20 @@ Adotar uma arquitetura de testes em duas camadas complementares:
 
 | Alternativa | Motivo de Não Adoção |
 | :--- | :--- |
-| **Jest** | Configuração pesada para ESM moderno e monorepos TypeScript; execução consideravelmente mais lenta do que o Vitest. |
-| **Testcontainers / Docker PostgreSQL** | Excelente fidelidade, mas exige instalação e execução do Docker daemon na máquina do desenvolvedor; adiciona 20 a 40 segundos a cada bateria de testes, quebrando o feedback loop rápido. |
-| **SQLite em memória (`better-sqlite3`)** | O Drizzle precisaria de schemas duplicados ou adaptados; incompatível com tipos PostgreSQL específicos como enums nativos, `timestamp with time zone` e operadores relacionais do Postgres. |
-| **Cypress (para E2E)** | Arquitetura mais lenta de controle de browser em comparação com a automação multiprocesso nativa via Chrome DevTools Protocol do Playwright. |
+| **Mocks do Drizzle / ORM** | Frágeis e propensos a falso-positivos; não testam queries SQL reais, constraints de chave estrangeira nem funções do PostgreSQL. |
+| **Testcontainers / Docker local** | Fidelidade excelente, mas adiciona overhead de 20 a 40 segundos por execução e exige o daemon do Docker ativo no ambiente do desenvolvedor. |
+| **SQLite em memória (`better-sqlite3`)** | Dialeto SQL incompatível com tipos e recursos do PostgreSQL (sem suporte a enums nativos, timestamps com fuso horário e operadores JSONB). |
+| **Jest** | Setup mais lento e verboso para monorepos modernos com ECMAScript Modules (ESM) e TypeScript em comparação ao Vitest. |
 
 ---
 
 ## Consequências
 
 ### Positivas
-- Bateria completa de 37 testes de integração executada em menos de 5 segundos.
-- Zero dependência de Docker para rodar testes completos localmente ou no GitHub Actions.
-- Segurança máxima de que qualquer migração quebrada ou query inválida falhará imediatamente nos testes.
-- Cobertura de cenários mobile e desktop em testes E2E.
+- Bateria completa de testes de integração executada em menos de 5 segundos.
+- Zero dependência de serviços externos ou Docker para rodar testes na máquina do desenvolvedor ou no CI.
+- Migrações quebradas ou consultas inválidas falham imediatamente nos testes antes de chegarem a produção.
+- Testes E2E asseguram estabilidade dos fluxos principais nos navegadores.
 
-### Negativas / Trade-offs & Mitigações
-- **Diferenças sutis do PGlite**: Embora seja o motor oficial do Postgres, certas extensões de terceiros compiladas em C não estão disponíveis por padrão no WASM. No entanto, para todas as funcionalidades relacionais do projeto, o comportamento é 100% idêntico ao Neon Postgres.
-
+### Trade-offs & Mitigações
+- **Limitações de extensões C no WASM**: Embora o PGlite seja o motor oficial do Postgres, certas extensões de terceiros compiladas em C não rodam em WASM. Para as funcionalidades relacionais padrão do projeto, o comportamento é 100% idêntico ao Neon Postgres.

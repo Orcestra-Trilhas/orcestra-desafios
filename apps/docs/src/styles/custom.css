@@ -1,48 +1,559 @@
-/* Customização de Tema do Starlight para Orc'estra Gamificação */
+/* ==========================================================================
+   Orc'estra Desafios - Design System & Custom Themes para Astro Starlight
+   Incorpora os 4 temas oficiais do projeto:
+     1. Orc'estra Dark (Padrão Oficial - Carvão Floresta / Verde Neon)
+     2. Orc'estra Light (Clean & Refinado - Branco Linho / Verde Floresta)
+     3. Fauvismo Dark (Matisse / André Derain - Azul Índigo / Vermilion Ardente)
+     4. Pop Art Light (Andy Warhol Factory - Marfim / Marilyn Pink / Preto Gráfico)
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 :root {
-	--sl-color-accent-low: #152c13;
-	--sl-color-accent: #3bc90c;
-	--sl-color-accent-high: #86efac;
-	--sl-font:
-		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, sans-serif;
-}
+	--font-display: "Syne", sans-serif;
+	--font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-:root[data-theme="dark"],
-.dark {
+	--sl-font: var(--font-sans);
+	--sl-font-mono: var(--font-mono);
+
+	/* Padrão Inicial: Orc'estra Dark */
+	--theme-shadow: 4px 4px 0px #020602;
+	--theme-shadow-sm: 2px 2px 0px #020602;
+	--theme-border-color: #1e3b1a;
+	--theme-card-bg: #0f1d0d;
+	--theme-text-color: #f0f7ef;
+	--theme-accent-color: #3bc90c;
+	--theme-accent-contrast: #040d03;
+
 	--sl-color-accent-low: #152c13;
 	--sl-color-accent: #3bc90c;
 	--sl-color-accent-high: #86efac;
 	--sl-color-white: #f0f7ef;
-	--sl-color-gray-1: #d2e4d0;
-	--sl-color-gray-2: #88b384;
-	--sl-color-gray-3: #4d6e4a;
-	--sl-color-gray-4: #2d452a;
+	--sl-color-gray-1: #e1efe0;
+	--sl-color-gray-2: #a3c9a0;
+	--sl-color-gray-3: #6e9a6b;
+	--sl-color-gray-4: #2d4f29;
 	--sl-color-gray-5: #1e3b1a;
 	--sl-color-gray-6: #0f1d0d;
 	--sl-color-black: #080f07;
+
+	--sl-color-bg: #080f07;
+	--sl-color-bg-nav: #0f1d0d;
+	--sl-color-bg-sidebar: #0b170a;
+	--sl-color-bg-inline-code: #152c13;
+	--sl-color-text: #f0f7ef;
+	--sl-color-text-accent: #3bc90c;
+	--sl-color-text-invert: #040d03;
+	--sl-color-hairline: #1e3b1a;
+	--sl-color-hairline-light: #2a5225;
+	--sl-color-hairline-shade: #020602;
 }
 
-:root[data-theme="light"] {
+/* --------------------------------------------------------------------------
+   1. TEMA: ORC'ESTRA DARK (Identidade Visual Dark & Clean Sofisticado)
+   -------------------------------------------------------------------------- */
+:root[data-palette="orc-dark"],
+.orc-dark {
+	--theme-shadow: 4px 4px 0px #020602;
+	--theme-shadow-sm: 2px 2px 0px #020602;
+	--theme-border-color: #1e3b1a;
+	--theme-card-bg: #0f1d0d;
+	--theme-text-color: #f0f7ef;
+	--theme-accent-color: #3bc90c;
+	--theme-accent-contrast: #040d03;
+
+	--sl-color-accent-low: #152c13;
+	--sl-color-accent: #3bc90c;
+	--sl-color-accent-high: #86efac;
+	--sl-color-white: #f0f7ef;
+	--sl-color-gray-1: #e1efe0;
+	--sl-color-gray-2: #a3c9a0;
+	--sl-color-gray-3: #6e9a6b;
+	--sl-color-gray-4: #2d4f29;
+	--sl-color-gray-5: #1e3b1a;
+	--sl-color-gray-6: #0f1d0d;
+	--sl-color-black: #080f07;
+
+	--sl-color-bg: #080f07;
+	--sl-color-bg-nav: #0f1d0d;
+	--sl-color-bg-sidebar: #0b170a;
+	--sl-color-bg-inline-code: #152c13;
+	--sl-color-text: #f0f7ef;
+	--sl-color-text-accent: #3bc90c;
+	--sl-color-text-invert: #040d03;
+	--sl-color-hairline: #1e3b1a;
+	--sl-color-hairline-light: #2a5225;
+}
+
+/* --------------------------------------------------------------------------
+   2. TEMA: ORC'ESTRA LIGHT (Clean & Refinado - Branco Linho / Verde Floresta)
+   -------------------------------------------------------------------------- */
+:root[data-palette="orc-light"],
+.orc-light {
+	--theme-shadow: 4px 4px 0px #0c2609;
+	--theme-shadow-sm: 2px 2px 0px #0c2609;
+	--theme-border-color: #234a1f;
+	--theme-card-bg: #ffffff;
+	--theme-text-color: #071a06;
+	--theme-accent-color: #0d3309;
+	--theme-accent-contrast: #ffffff;
+
 	--sl-color-accent-low: #ebf5ea;
 	--sl-color-accent: #0d3309;
-	--sl-color-accent-high: #3bc90c;
-	--sl-color-black: #ffffff;
-	--sl-color-gray-6: #f9fbf9;
-	--sl-color-gray-5: #f0f7ef;
-	--sl-color-gray-4: #cce0cb;
-	--sl-color-gray-2: #41633e;
-	--sl-color-gray-1: #071a06;
+	--sl-color-accent-high: #1b5614;
 	--sl-color-white: #071a06;
+	--sl-color-gray-1: #071a06;
+	--sl-color-gray-2: #234a1f;
+	--sl-color-gray-3: #41633e;
+	--sl-color-gray-4: #8fad8c;
+	--sl-color-gray-5: #234a1f;
+	--sl-color-gray-6: #ffffff;
+	--sl-color-black: #f9fbf9;
+
+	--sl-color-bg: #f9fbf9;
+	--sl-color-bg-nav: #ffffff;
+	--sl-color-bg-sidebar: #f2f7f2;
+	--sl-color-bg-inline-code: #ebf5ea;
+	--sl-color-text: #071a06;
+	--sl-color-text-accent: #0d3309;
+	--sl-color-text-invert: #ffffff;
+	--sl-color-hairline: #234a1f;
+	--sl-color-hairline-light: #234a1f;
 }
 
-/* Badge estilizada de trilhas e status */
-.badge-trilha {
-	display: inline-block;
-	padding: 0.2rem 0.6rem;
-	font-size: 0.75rem;
-	font-weight: 600;
-	border: 1px solid var(--sl-color-gray-5);
+/* --------------------------------------------------------------------------
+   3. TEMA: FAUVISMO DARK (Henri Matisse "La Danse" / Azul Índigo & Vermilion)
+   -------------------------------------------------------------------------- */
+:root[data-palette="dark"],
+.dark:not(.orc-dark) {
+	--theme-shadow: 4px 4px 0px #040714;
+	--theme-shadow-sm: 2px 2px 0px #040714;
+	--theme-border-color: #273463;
+	--theme-card-bg: #12193b;
+	--theme-text-color: #f4ede0;
+	--theme-accent-color: #d9381e;
+	--theme-accent-contrast: #ffffff;
+
+	--sl-color-accent-low: #1a234f;
+	--sl-color-accent: #d9381e;
+	--sl-color-accent-high: #ff6b50;
+	--sl-color-white: #f4ede0;
+	--sl-color-gray-1: #f4ede0;
+	--sl-color-gray-2: #c4cced;
+	--sl-color-gray-3: #9ba5cf;
+	--sl-color-gray-4: #3d4f8a;
+	--sl-color-gray-5: #273463;
+	--sl-color-gray-6: #12193b;
+	--sl-color-black: #0a0f24;
+
+	--sl-color-bg: #0a0f24;
+	--sl-color-bg-nav: #12193b;
+	--sl-color-bg-sidebar: #0e1432;
+	--sl-color-bg-inline-code: #1a234f;
+	--sl-color-text: #f4ede0;
+	--sl-color-text-accent: #d9381e;
+	--sl-color-text-invert: #ffffff;
+	--sl-color-hairline: #273463;
+	--sl-color-hairline-light: #374885;
+}
+
+/* --------------------------------------------------------------------------
+   4. TEMA: POP ART LIGHT (Andy Warhol The Factory / Silkscreen & Marilyn Pink)
+   -------------------------------------------------------------------------- */
+:root[data-palette="light"],
+.light:not(.orc-light) {
+	--theme-shadow: 4px 4px 0px #18181b;
+	--theme-shadow-sm: 2px 2px 0px #18181b;
+	--theme-border-color: #18181b;
+	--theme-card-bg: #ffffff;
+	--theme-text-color: #18181b;
+	--theme-accent-color: #ec4899;
+	--theme-accent-contrast: #ffffff;
+
+	--sl-color-accent-low: #fdf2f8;
+	--sl-color-accent: #ec4899;
+	--sl-color-accent-high: #db2777;
+	--sl-color-white: #18181b;
+	--sl-color-gray-1: #18181b;
+	--sl-color-gray-2: #3f3f46;
+	--sl-color-gray-3: #71717a;
+	--sl-color-gray-4: #a1a1aa;
+	--sl-color-gray-5: #18181b;
+	--sl-color-gray-6: #ffffff;
+	--sl-color-black: #fffdfa;
+
+	--sl-color-bg: #fffdfa;
+	--sl-color-bg-nav: #ffffff;
+	--sl-color-bg-sidebar: #fdfaf4;
+	--sl-color-bg-inline-code: #fdf2f8;
+	--sl-color-text: #18181b;
+	--sl-color-text-accent: #ec4899;
+	--sl-color-text-invert: #ffffff;
+	--sl-color-hairline: #18181b;
+	--sl-color-hairline-light: #18181b;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA & ESTILIZAÇÃO NEO-BRUTALISTA TÁTIL
+   ========================================================================== */
+
+/* Cabeçalhos & Títulos com Fonte Display (Syne) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.site-title {
+	font-family: var(--font-display) !important;
+	font-weight: 800;
+	color: var(--sl-color-white) !important;
+	letter-spacing: -0.02em;
+}
+
+h1 {
+	font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+	line-height: 1.15;
+}
+
+h2 {
+	padding-bottom: 0.5rem;
+	margin-top: 2.25rem !important;
+	font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+	line-height: 1.25;
+	border-bottom: 2px solid var(--theme-border-color);
+}
+
+h3 {
+	margin-top: 1.75rem !important;
+	font-size: 1.2rem;
+	line-height: 1.35;
+}
+
+/* Navbar & Header */
+header.header {
+	background-color: var(--sl-color-bg-nav) !important;
+	border-bottom: 2px solid var(--theme-border-color) !important;
+	box-shadow: 0 2px 0 var(--theme-border-color) !important;
+}
+
+.site-title {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	font-size: 1.15rem !important;
+	text-transform: uppercase;
+	letter-spacing: 0.05em !important;
+}
+
+/* Sidebar */
+nav.sidebar {
+	background-color: var(--sl-color-bg-sidebar) !important;
+	border-right: 2px solid var(--theme-border-color) !important;
+}
+
+.sidebar-content a[aria-current="page"] {
+	font-weight: 700 !important;
+	color: var(--sl-color-white) !important;
+	background-color: var(--sl-color-accent-low) !important;
+	border: 1px solid var(--theme-border-color) !important;
+	border-radius: 0.375rem !important;
+}
+
+/* Hero Section na Página Inicial */
+.hero {
+	padding-block: 2.5rem 1.5rem !important;
+}
+
+.hero h1 {
+	font-family: var(--font-display) !important;
+	font-size: clamp(2.2rem, 5vw, 3.25rem) !important;
+	font-weight: 800 !important;
+	line-height: 1.05 !important;
+	text-transform: uppercase;
+	letter-spacing: -0.02em;
+}
+
+.hero .tagline {
+	max-width: 48ch;
+	font-family: var(--font-sans) !important;
+	font-size: 1.125rem !important;
+	line-height: 1.6 !important;
+	color: var(--sl-color-gray-2) !important;
+}
+
+.hero .actions {
+	gap: 0.75rem !important;
+	margin-top: 1.5rem !important;
+}
+
+/* Botões de Ação Táteis do Hero */
+.hero .actions a {
+	display: inline-flex !important;
+	gap: 0.5rem !important;
+	align-items: center !important;
+	padding: 0.625rem 1.125rem !important;
+	font-family: var(--font-display) !important;
+	font-size: 0.8125rem !important;
+	font-weight: 800 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.06em !important;
+	text-decoration: none !important;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.375rem !important;
+	box-shadow: var(--theme-shadow-sm) !important;
+	transition:
+		transform 0.1s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.1s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.hero .actions a:hover {
+	box-shadow: var(--theme-shadow) !important;
+	transform: translate(-1px, -1px);
+}
+
+.hero .actions a:active {
+	box-shadow: 1px 1px 0 var(--theme-border-color) !important;
+	transform: translate(2px, 2px);
+}
+
+.hero .actions a.primary {
+	color: var(--theme-accent-contrast) !important;
+	background-color: var(--sl-color-accent) !important;
+}
+
+.hero .actions a.secondary {
+	color: var(--sl-color-white) !important;
+	background-color: var(--sl-color-bg-nav) !important;
+}
+
+.hero .actions a.minimal {
+	color: var(--sl-color-text) !important;
+	background-color: transparent !important;
+}
+
+/* Cards & CardGrid */
+article.card,
+.sl-link-card {
+	background-color: var(--theme-card-bg) !important;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.5rem !important;
+	box-shadow: var(--theme-shadow) !important;
+	transition:
+		transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+		box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+article.card:hover,
+.sl-link-card:hover {
+	box-shadow: 6px 6px 0px var(--theme-border-color) !important;
+	transform: translate(-2px, -2px);
+}
+
+article.card .title {
+	font-family: var(--font-display) !important;
+	font-size: 1.05rem !important;
+	font-weight: 800 !important;
+	color: var(--sl-color-white) !important;
+}
+
+/* Callouts / Asides */
+aside.starlight-aside {
+	background-color: var(--sl-color-bg-nav) !important;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.5rem !important;
+	box-shadow: var(--theme-shadow-sm) !important;
+}
+
+aside.starlight-aside--note {
+	border-left: 6px solid var(--sl-color-accent) !important;
+}
+
+aside.starlight-aside--tip {
+	border-left: 6px solid #16a34a !important;
+}
+
+aside.starlight-aside--caution {
+	border-left: 6px solid #eab308 !important;
+}
+
+aside.starlight-aside--danger {
+	border-left: 6px solid #ef4444 !important;
+}
+
+/* Blocos de Código (Expressive Code) */
+figure.expressive-code {
+	margin: 1.5rem 0 !important;
+	overflow: hidden;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.5rem !important;
+	box-shadow: var(--theme-shadow-sm) !important;
+}
+
+/* Tabelas */
+table {
+	margin: 1.5rem 0 !important;
+	overflow: hidden;
+	border-spacing: 0 !important;
+	border-collapse: separate !important;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.375rem !important;
+	box-shadow: var(--theme-shadow-sm) !important;
+}
+
+th {
+	padding: 0.625rem 0.875rem !important;
+	font-family: var(--font-display) !important;
+	font-size: 0.75rem !important;
+	font-weight: 800 !important;
+	color: var(--sl-color-white) !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
+	background-color: var(--sl-color-accent-low) !important;
+	border-bottom: 2px solid var(--theme-border-color) !important;
+}
+
+td {
+	padding: 0.625rem 0.875rem !important;
+	border-bottom: 1px solid var(--theme-border-color) !important;
+}
+
+/* Badges de Trilhas (Padrão Orc'estra) */
+.badge-trilha,
+.badge-track-front,
+.badge-track-back,
+.badge-track-proto,
+.badge-track-devops,
+.badge-track-git {
+	display: inline-flex;
+	gap: 0.35rem;
+	align-items: center;
+	padding: 0.15rem 0.55rem;
+	font-family: var(--font-display);
+	font-size: 0.7rem;
+	font-weight: 800;
+	line-height: 1.2;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border: 1px solid var(--theme-border-color);
 	border-radius: 9999px;
+}
+
+.badge-track-front {
+	color: #ffffff;
+	background-color: #ea580c;
+}
+
+.badge-track-back {
+	color: #ffffff;
+	background-color: #1e40af;
+}
+
+.badge-track-proto {
+	color: #ffffff;
+	background-color: #15803d;
+}
+
+.badge-track-devops {
+	color: #121212;
+	background-color: #facc15;
+}
+
+.badge-track-git {
+	color: #ffffff;
+	background-color: #7c3aed;
+}
+
+/* ==========================================================================
+   DIAGRAMAS MERMAID - FORMATAÇÃO LIMPA, NÍTIDA E SEM ARTEFATOS
+   ========================================================================== */
+
+pre.mermaid {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 1.75rem 1.25rem !important;
+	margin: 2rem 0 !important;
+	overflow-x: auto !important;
+	background-color: var(--theme-card-bg) !important;
+	border: 2px solid var(--theme-border-color) !important;
+	border-radius: 0.5rem !important;
+	box-shadow: var(--theme-shadow) !important;
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease !important;
+}
+
+pre.mermaid svg {
+	max-width: 100% !important;
+	height: auto !important;
+	font-family: var(--font-sans) !important;
+}
+
+/* Nós e Caixas de Diagrama */
+pre.mermaid .node rect,
+pre.mermaid .node polygon,
+pre.mermaid .node circle,
+pre.mermaid .actor {
+	fill: var(--sl-color-bg-nav) !important;
+	stroke: var(--theme-border-color) !important;
+	stroke-width: 2px !important;
+	rx: 4px !important;
+	ry: 4px !important;
+}
+
+/* Subgrafos / Clusters */
+pre.mermaid .cluster rect {
+	fill: var(--sl-color-accent-low) !important;
+	stroke: var(--theme-border-color) !important;
+	stroke-width: 1.5px !important;
+	stroke-dasharray: 4, 4 !important;
+	rx: 6px !important;
+}
+
+/* Textos e Rótulos */
+pre.mermaid text,
+pre.mermaid .nodeLabel,
+pre.mermaid .edgeLabel,
+pre.mermaid .actor,
+pre.mermaid .messageText {
+	font-family: var(--font-sans) !important;
+	font-size: 0.8125rem !important;
+	font-weight: 600 !important;
+	color: var(--sl-color-white) !important;
+	fill: var(--sl-color-white) !important;
+}
+
+pre.mermaid .cluster text {
+	font-family: var(--font-display) !important;
+	font-size: 0.75rem !important;
+	font-weight: 800 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
+	fill: var(--sl-color-accent-high) !important;
+}
+
+/* Conexões e Setas */
+pre.mermaid .edgePath .path,
+pre.mermaid .messageLine0,
+pre.mermaid .messageLine1 {
+	stroke: var(--theme-accent-color) !important;
+	stroke-width: 2px !important;
+}
+
+pre.mermaid marker path {
+	fill: var(--theme-accent-color) !important;
+	stroke: var(--theme-accent-color) !important;
+}
+
+pre.mermaid .note {
+	fill: var(--sl-color-bg-inline-code) !important;
+	stroke: var(--theme-border-color) !important;
+	stroke-width: 1.5px !important;
+}
+
+pre.mermaid .noteText {
+	font-size: 0.75rem !important;
+	fill: var(--sl-color-text) !important;
 }

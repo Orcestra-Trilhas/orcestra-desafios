@@ -1,0 +1,336 @@
+---
+export type Props = Record<string, never>;
+---
+
+<div class="orc-theme-select" data-orc-theme-container>
+	<button
+		type="button"
+		class="orc-theme-btn"
+		aria-label="Alternar esquema de cores"
+		aria-haspopup="true"
+		aria-expanded="false"
+		id="orc-theme-trigger"
+	>
+		<svg
+			aria-hidden="true"
+			class="theme-icon"
+			viewBox="0 0 24 24"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<title>Alternar tema</title>
+			<circle
+				cx="12"
+				cy="12"
+				fill="none"
+				r="9"
+				stroke="currentColor"
+				stroke-width="2"
+			></circle>
+			<path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"></path>
+		</svg>
+		<span class="sr-only">Alternar tema</span>
+	</button>
+
+	<div
+		class="orc-theme-dropdown"
+		role="menu"
+		aria-labelledby="orc-theme-trigger"
+		hidden
+	>
+		<button
+			type="button"
+			role="menuitem"
+			class="orc-theme-item"
+			data-theme-value="orc-dark"
+		>
+			<div class="item-label">
+				<span class="dot dot-orc-dark" aria-hidden="true"></span>
+				<span class="label-text">DARK // ORC'ESTRA</span>
+			</div>
+			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polyline points="20 6 9 17 4 12"></polyline>
+			</svg>
+		</button>
+
+		<button
+			type="button"
+			role="menuitem"
+			class="orc-theme-item"
+			data-theme-value="orc-light"
+		>
+			<div class="item-label">
+				<span class="dot dot-orc-light" aria-hidden="true"></span>
+				<span class="label-text">LIGHT // ORC'ESTRA</span>
+			</div>
+			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polyline points="20 6 9 17 4 12"></polyline>
+			</svg>
+		</button>
+
+		<button
+			type="button"
+			role="menuitem"
+			class="orc-theme-item"
+			data-theme-value="dark"
+		>
+			<div class="item-label">
+				<span class="dot dot-fauvism" aria-hidden="true"></span>
+				<span class="label-text">DARK // FAUVISM</span>
+			</div>
+			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polyline points="20 6 9 17 4 12"></polyline>
+			</svg>
+		</button>
+
+		<button
+			type="button"
+			role="menuitem"
+			class="orc-theme-item"
+			data-theme-value="light"
+		>
+			<div class="item-label">
+				<span class="dot dot-popart" aria-hidden="true"></span>
+				<span class="label-text">LIGHT // POP ART</span>
+			</div>
+			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polyline points="20 6 9 17 4 12"></polyline>
+			</svg>
+		</button>
+
+		<button
+			type="button"
+			role="menuitem"
+			class="orc-theme-item"
+			data-theme-value="system"
+		>
+			<div class="item-label">
+				<span class="dot dot-system" aria-hidden="true"></span>
+				<span class="label-text">SYSTEM // AUTO</span>
+			</div>
+			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<polyline points="20 6 9 17 4 12"></polyline>
+			</svg>
+		</button>
+	</div>
+</div>
+
+<style>
+	.orc-theme-select {
+		position: relative;
+		display: inline-block;
+	}
+
+	.orc-theme-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 0.375rem;
+		border: 2px solid var(--theme-border-color, #1e3b1a);
+		background-color: var(--sl-color-bg-nav, #0f1d0d);
+		color: var(--sl-color-white, #f0f7ef);
+		box-shadow: var(--theme-shadow-sm, 2px 2px 0px #020602);
+		cursor: pointer;
+		transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+		padding: 0;
+	}
+
+	.orc-theme-btn:hover {
+		background-color: var(--sl-color-accent-low, #152c13);
+	}
+
+	.orc-theme-btn:active {
+		box-shadow: 1px 1px 0px var(--theme-border-color, #1e3b1a);
+		transform: translate(2px, 2px);
+	}
+
+	.theme-icon {
+		width: 1rem;
+		height: 1rem;
+		fill: currentColor;
+	}
+
+	.orc-theme-dropdown {
+		position: absolute;
+		top: calc(100% + 0.5rem);
+		right: 0;
+		width: 14.5rem;
+		background-color: var(--sl-color-bg-nav, #0f1d0d);
+		border: 2px solid var(--theme-border-color, #1e3b1a);
+		box-shadow: var(--theme-shadow, 4px 4px 0px #020602);
+		border-radius: 0.375rem;
+		padding: 0.375rem;
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.orc-theme-dropdown[hidden] {
+		display: none;
+	}
+
+	.orc-theme-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0.5rem 0.625rem;
+		border: 1px solid transparent;
+		background: transparent;
+		color: var(--sl-color-text, #f0f7ef);
+		cursor: pointer;
+		font-family: var(--font-display, "Syne", sans-serif);
+		font-weight: 800;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		border-radius: 0.25rem;
+		text-align: left;
+		transition: background-color 0.1s ease, color 0.1s ease;
+	}
+
+	.orc-theme-item:hover,
+	.orc-theme-item:focus-visible {
+		background-color: var(--sl-color-accent-low, #152c13);
+		color: var(--sl-color-white, #f0f7ef);
+		outline: none;
+	}
+
+	.orc-theme-item.active {
+		background-color: var(--sl-color-accent-low, #152c13);
+		border-color: var(--theme-border-color, #1e3b1a);
+	}
+
+	.item-label {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.dot {
+		display: inline-block;
+		width: 0.75rem;
+		height: 0.75rem;
+		border-radius: 9999px;
+		flex-shrink: 0;
+	}
+
+	.dot-orc-dark {
+		background-color: #3bc90c;
+		border: 1px solid #1e3b1a;
+	}
+
+	.dot-orc-light {
+		background-color: #0d3309;
+		border: 1px solid #234a1f;
+	}
+
+	.dot-fauvism {
+		background-color: #d9381e;
+		border: 1px solid #273463;
+	}
+
+	.dot-popart {
+		background-color: #ec4899;
+		border: 1px solid #18181b;
+	}
+
+	.dot-system {
+		background: linear-gradient(135deg, #71717a 0%, #3bc90c 100%);
+		border: 1px solid var(--theme-border-color, #1e3b1a);
+	}
+
+	.check-icon {
+		width: 0.875rem;
+		height: 0.875rem;
+		flex-shrink: 0;
+		display: none;
+		color: var(--sl-color-accent, #3bc90c);
+	}
+
+	.orc-theme-item.active .check-icon {
+		display: block;
+	}
+</style>
+
+<script>
+	function setupThemePickers() {
+		document.querySelectorAll("[data-orc-theme-container]").forEach((container) => {
+			if ((container as any).__initialized) return;
+			(container as any).__initialized = true;
+
+			const trigger = container.querySelector(".orc-theme-btn") as HTMLButtonElement | null;
+			const dropdown = container.querySelector(".orc-theme-dropdown") as HTMLDivElement | null;
+			const items = container.querySelectorAll(".orc-theme-item") as NodeListOf<HTMLButtonElement>;
+
+			if (!trigger || !dropdown) return;
+
+			const updateUI = (activeVal: string) => {
+				items.forEach((item) => {
+					const val = item.getAttribute("data-theme-value");
+					if (val === activeVal) {
+						item.classList.add("active");
+						item.setAttribute("aria-selected", "true");
+					} else {
+						item.classList.remove("active");
+						item.removeAttribute("aria-selected");
+					}
+				});
+			};
+
+			(container as any).__updateThemeUI = updateUI;
+
+			const getActive = () => {
+				return (window as any).OrcTheme ? (window as any).OrcTheme.get() : "orc-dark";
+			};
+
+			updateUI(getActive());
+
+			const toggle = (show?: boolean) => {
+				const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+				const next = typeof show === "boolean" ? show : !isExpanded;
+				trigger.setAttribute("aria-expanded", String(next));
+				if (next) {
+					dropdown.removeAttribute("hidden");
+				} else {
+					dropdown.setAttribute("hidden", "");
+				}
+			};
+
+			trigger.addEventListener("click", (e) => {
+				e.stopPropagation();
+				toggle();
+			});
+
+			items.forEach((item) => {
+				item.addEventListener("click", (e) => {
+					e.stopPropagation();
+					const val = item.getAttribute("data-theme-value") || "orc-dark";
+					if ((window as any).OrcTheme) {
+						(window as any).OrcTheme.set(val);
+					}
+					toggle(false);
+				});
+			});
+
+			document.addEventListener("click", (e) => {
+				if (!container.contains(e.target as Node)) {
+					toggle(false);
+				}
+			});
+
+			document.addEventListener("keydown", (e) => {
+				if (e.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") {
+					toggle(false);
+					trigger.focus();
+				}
+			});
+		});
+	}
+
+	setupThemePickers();
+	document.addEventListener("astro:page-load", setupThemePickers);
+	document.addEventListener("astro:after-swap", setupThemePickers);
+</script>

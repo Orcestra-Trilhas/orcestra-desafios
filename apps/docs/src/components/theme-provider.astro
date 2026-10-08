@@ -1,0 +1,108 @@
+---
+export type Props = Record<string, never>;
+---
+
+<script is:inline>
+	(function () {
+		const STORAGE_KEY = "orc-docs-theme";
+		const WEB_KEY = "theme";
+		const STARLIGHT_KEY = "starlight-theme";
+
+		function resolvePalette(choice) {
+			if (
+				choice === "orc-dark" ||
+				choice === "orc-light" ||
+				choice === "dark" ||
+				choice === "light"
+			) {
+				return choice;
+			}
+			const prefersDark =
+				window.matchMedia &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches;
+			return prefersDark ? "orc-dark" : "orc-light";
+		}
+
+		function apply(choice) {
+			const palette = resolvePalette(choice);
+			const isDark = palette === "orc-dark" || palette === "dark";
+			const root = document.documentElement;
+
+			// Set Starlight and astro-mermaid expected theme
+			root.setAttribute("data-theme", isDark ? "dark" : "light");
+			root.dataset.theme = isDark ? "dark" : "light";
+
+			// Set Orc'estra active palette
+			root.setAttribute("data-palette", palette);
+			root.dataset.palette = palette;
+
+			// Update CSS classes for style selectors
+			root.classList.remove("orc-dark", "orc-light", "dark", "light");
+			root.classList.add(palette);
+			if (isDark) {
+				root.classList.add("dark");
+			} else {
+				root.classList.remove("dark");
+			}
+		}
+
+		const initial =
+			(typeof localStorage !== "undefined" &&
+				(localStorage.getItem(STORAGE_KEY) ||
+					localStorage.getItem(WEB_KEY) ||
+					localStorage.getItem(STARLIGHT_KEY))) ||
+			"orc-dark";
+
+		apply(initial);
+
+		window.OrcTheme = {
+			get: function () {
+				return (
+					(typeof localStorage !== "undefined" &&
+						(localStorage.getItem(STORAGE_KEY) ||
+							localStorage.getItem(WEB_KEY))) ||
+					"orc-dark"
+				);
+			},
+			set: function (val) {
+				if (typeof localStorage !== "undefined") {
+					localStorage.setItem(STORAGE_KEY, val);
+					localStorage.setItem(WEB_KEY, val);
+					const palette = resolvePalette(val);
+					const isDark = palette === "orc-dark" || palette === "dark";
+					localStorage.setItem(STARLIGHT_KEY, isDark ? "dark" : "light");
+				}
+				apply(val);
+				window.OrcTheme.updatePickers(val);
+			},
+			updatePickers: function (val) {
+				const current = val || window.OrcTheme.get();
+				document
+					.querySelectorAll("[data-orc-theme-container]")
+					.forEach(function (container) {
+						if (typeof container.__updateThemeUI === "function") {
+							container.__updateThemeUI(current);
+						}
+					});
+			},
+		};
+
+		// Starlight compatibility shim
+		window.StarlightThemeProvider = {
+			updatePickers: function (theme) {
+				window.OrcTheme.updatePickers(theme || window.OrcTheme.get());
+			},
+		};
+
+		if (window.matchMedia) {
+			window
+				.matchMedia("(prefers-color-scheme: dark)")
+				.addEventListener("change", function () {
+					const cur = window.OrcTheme.get();
+					if (cur === "system" || cur === "auto") {
+						apply("system");
+					}
+				});
+		}
+	})();
+</script>

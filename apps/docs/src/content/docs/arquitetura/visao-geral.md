@@ -1,93 +1,104 @@
 ---
-title: Visão Geral do Monorepo
-description: Arquitetura de workspaces, separação de responsabilidades e árvore de dependências da plataforma Orc'estra Desafios.
+title: Arquitetura do Monorepo
+description: Estrutura de workspaces, árvore de dependências e divisão de responsabilidades da plataforma Orc'estra Desafios.
 ---
 
-A plataforma **Orc'estra Desafios** é estruturada como um **monorepo npm workspaces**, permitindo o isolamento modular de domínio com compartilhamento nativo de tipos TypeScript e utilitários.
+O projeto é estruturado como um monorepo gerenciado por **npm workspaces**. Cada módulo possui fronteiras bem delimitadas de domínio, compartilhando definições de tipos TypeScript sem duplicação de contratos ou etapas manuais de build.
 
 ---
 
-## 1. Topologia de Aplicações & Pacotes
+## Árvore de Dependências entre Módulos
 
 ```mermaid
-graph TD
-    subgraph Apps ["📁 apps/"]
-        Web["🌐 web (Next.js 16)<br/>App Router, PWA, UI"]
-        Docs["📚 docs (Astro / Starlight)<br/>Documentação Técnica"]
+flowchart TB
+    subgraph Apps ["Aplicações (apps/)"]
+        direction LR
+        Web["apps/web\nNext.js 16 | React 19 | PWA"]
+        Docs["apps/docs\nAstro | Starlight | Docs"]
     end
 
-    subgraph Packages ["📦 packages/"]
-        API["⚡ @orcestra-desafios/api<br/>tRPC Routers, Zod Schemas"]
-        Auth["🔐 @orcestra-desafios/auth<br/>Better Auth Core, Sessões"]
-        DB["🗄️ @orcestra-desafios/db<br/>Drizzle ORM, Schemas, Migrações"]
-        UI["🎨 @orcestra-desafios/ui<br/>Radix, shadcn, Temas CSS"]
-        Config["⚙️ @orcestra-desafios/config<br/>TypeScript Base Configurations"]
+    subgraph API_Layer ["Domínio & Autenticação"]
+        direction LR
+        API["packages/api\ntRPC v11 Routers | Zod"]
+        Auth["packages/auth\nBetter Auth | Sessões & RBAC"]
+    end
+
+    subgraph Data_Layer ["Camada de Dados"]
+        DB["packages/db\nDrizzle ORM | Migrações SQL | Neon"]
+    end
+
+    subgraph Shared_Layer ["Componentes & Configurações"]
+        direction LR
+        UI["packages/ui\nTailwind v4 | Radix | Temas"]
+        Config["packages/config\nTypeScript Base Configuration"]
     end
 
     Web --> API
+    Web --> UI
     Web --> Auth
     Web --> DB
-    Web --> UI
     API --> Auth
     API --> DB
     Auth --> DB
     Web -.-> Config
     Docs -.-> Config
+    API -.-> Config
+    DB -.-> Config
+    UI -.-> Config
 ```
 
 ---
 
-## 2. Detalhamento dos Componentes
+## Responsabilidades dos Workspaces
 
-### 📁 Aplicações (`apps/`)
+### Aplicações (`apps/`)
 
 #### `apps/web`
-- **Tecnologias**: Next.js 16 (Turbopack, App Router), React 19, TanStack Query v5, Tailwind CSS v4.
-- **Responsabilidades**:
-  - Renderização das páginas da plataforma (Home, Desafios, Ranking, Perfil, Administração).
-  - PWA offline-first com service worker dedicado e suporte a instalação em dispositivos móveis.
-  - Camada de autenticação visual (telas de login e registro via Better Auth).
-  - Consumo tipado da API via `@trpc/react-query`.
+- **Stack**: Next.js 16 (Turbopack, App Router), React 19 Compiler, TanStack Query v5, Tailwind CSS v4.
+- **Papel no Sistema**:
+  - Servir as interfaces interativas da plataforma (lista de desafios por semana/trilha, submissões com proteção contra spoiler, ranking dinâmico de pontuação e painel administrativo).
+  - Progressive Web App (PWA) instalável em dispositivos móveis com cache de recursos estáticos via service worker.
+  - Implementar o Route Handler do tRPC sob `/api/trpc` para despachar chamadas de backend a partir do mesmo domínio.
+  - Alternância instantânea entre quatro temas gráficos (Orc'estra Dark, Orc'estra Light, Fauvismo e Pop Art).
 
 #### `apps/docs`
-- **Tecnologias**: Astro, Starlight, Markdown/MDX.
-- **Responsabilidades**:
-  - Portal de documentação técnica interna e externa.
-  - Histórico de decisões arquiteturais (ADRs).
-  - Guias de onboarding e especificações de design system.
+- **Stack**: Astro 7, Starlight, astro-mermaid, Pagefind.
+- **Papel no Sistema**:
+  - Hub de documentação técnica, onboarding de novos membros, padrões de engenharia e histórico de decisões de arquitetura (ADRs).
+  - Tema sincronizado com a identidade visual da plataforma, incluindo seletor de paletas e suporte a diagramas técnicos.
 
 ---
 
-### 📦 Pacotes Compartilhados (`packages/`)
+### Pacotes Compartilhados (`packages/`)
 
 #### `packages/api`
-- Define a instância do **tRPC v11** (`packages/api/src/trpc.ts`).
-- Contém os roteadores de domínio:
-  - `auth`: Autenticação e informações de sessão do usuário ativo.
-  - `user`: Perfil do membro, trilha associada, alteração de dados e listagens.
-  - `challenge`: Listagem de desafios por trilha/semana, visualização com proteção contra spoiler, submissão de respostas e histórico.
-  - `ranking`: Algoritmo de classificação geral e por trilha com cálculo de pontuação acumulada.
-  - `admin`: Gerenciamento de usuários, aprovação/rejeição de submissões, criação de desafios e auditoria.
-  - `cloudinary`: Geração de assinaturas seguras para uploads diretos de mídia.
-- Exporta o tipo `AppRouter`, base da segurança ponta a ponta.
+- Define a instância raiz do **tRPC v11** (`packages/api/src/trpc.ts`).
+- Contém a lógica de negócio organizada em procedimentos tipados com esquemas de entrada Zod:
+  - `auth`: Dados da sessão atual e perfil do usuário logado.
+  - `user`: Consulta e atualização de perfil do membro, trilha escolhida e listagens gerais.
+  - `challenge`: Consulta de desafios filtrados por trilha/semana, visualização controlada com trava anti-spoiler e registro de submissões.
+  - `ranking`: Agregação de pontos acumulados com critérios automatizados de desempate por horário de envio.
+  - `admin`: Gerenciamento de permissões, moderação de submissões pendentes e criação de desafios semanais.
+  - `cloudinary`: Assinatura segura de tokens para upload direto de mídias de demonstração.
+- Exporta o tipo `AppRouter`, base para inferência direta nos componentes do frontend.
 
 #### `packages/auth`
-- Configuração do **Better Auth** com o adapter relacional do Drizzle ORM.
-- Suporte a cookies seguros HTTP-only, proteção CSRF e gerenciamento de sessões no banco de dados.
+- Configuração do **Better Auth** integrado ao Drizzle ORM.
+- Persistência e auditoria de sessões em banco de dados (`users`, `sessions`, `accounts`, `verifications`).
+- Segurança via cookies HTTP-only com flags `SameSite` e proteção CSRF nativa.
+- Controle de acesso baseado em papéis (`USER` e `ADMIN`).
 
 #### `packages/db`
-- Definição tipada de todas as tabelas e relacionamentos via **Drizzle ORM**.
-- Exporta os schemas relacionais (`users`, `sessions`, `accounts`, `verifications`, `challenges`, `submissions`).
-- Contém scripts de migração (`drizzle-kit generate`, `migrate`, `push`).
+- Esquema relacional declarado em TypeScript via **Drizzle ORM** (`packages/db/src/schema/`).
+- Gestão de migrações SQL puras versionadas em `packages/db/src/migrations/`.
+- Conexão configurável:
+  - Neon Serverless Postgres (via pooling HTTP / WebSocket em produção).
+  - `@electric-sql/pglite` (instâncias efêmeras isoladas em memória para a suíte de testes de integração).
 
 #### `packages/ui`
-- Biblioteca de componentes acessíveis inspirada no shadcn/ui e Radix Primitives.
-- Tokens de design temáticos e esquemas de cores:
-  - **Orc'estra Dark**: Tema oficial focado em ergonomia visual e contraste refinado.
-  - **Orc'estra Light**: Variante limpa com tons suaves de verde e linho.
-  - **Fauvismo**: Inspirado na vanguarda artística de Henri Matisse (tons terrosos, vermilion ardente, azuis noturnos).
-  - **Pop Art**: Inspirado na serigrafia de Andy Warhol (magenta Marilyn, ciano elétrico e amarelo solar).
+- Biblioteca de componentes acessíveis baseada nas primitivas do Radix UI e diretrizes do shadcn/ui.
+- Folha de estilos unificada (`packages/ui/src/styles/globals.css`) com suporte ao Tailwind CSS v4 via `@import "tailwindcss";`.
+- Tokens de cor, sombras táteis rígidas (`box-shadow: 4px 4px 0px ...`) e classes de apoio para as 5 trilhas técnicas do projeto.
 
 #### `packages/config`
-- Configurações base de compilação TypeScript compartilhadas entre todos os módulos (`tsconfig.base.json`), prevenindo divergências de tipagem no ecossistema.
-
+- Configuração TypeScript canônica (`tsconfig.base.json`) estendida por todos os workspaces, garantindo compilação uniforme com `strict: true` e `noUncheckedIndexedAccess: true`.
