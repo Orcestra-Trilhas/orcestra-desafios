@@ -12,23 +12,34 @@ A comunicação entre interface e persistência é 100% tipada sem geração int
 O diagrama abaixo ilustra o percurso completo de uma requisição típica, como a submissão de uma solução de código para validação:
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor Membro as Membro
-    participant Web as Frontend (Next.js / React 19)
-    participant API as tRPC API (/api/trpc)
-    participant DB as Drizzle ORM
-    participant Postgres as Neon Postgres
+flowchart TD
+    Membro(["Membro / Navegador\nSubmete solução de código"])
 
-    Membro->>Web: Submete solucao do desafio
-    Web->>API: POST challenge.submit (payload JSON + cookie de sessao)
-    Note over API: 1. Valida sessao com Better Auth<br/>2. Valida payload com Zod Schema
-    API->>DB: db.insert(submissions).values(...)
-    DB->>Postgres: INSERT INTO submissions ... RETURNING *
-    Postgres-->>DB: Registro persistido
-    DB-->>API: Instancia tipada do registro
-    API-->>Web: Retorno JSON com tipos inferidos
-    Web-->>Membro: Feedback visual imediato e revalidacao do cache
+    subgraph Client ["1. Frontend (apps/web - React 19)"]
+        Form["Formulário de Resolução"]
+        Hook["trpc.challenge.submit.useMutation()\nDispara POST com cookie de sessão"]
+        Form --> Hook
+    end
+
+    subgraph Server ["2. API & Domínio (packages/api - tRPC v11)"]
+        Context["createTRPCContext(req)\nValida sessão via Better Auth"]
+        Procedure["protectedProcedure\nValida payload via Zod Schema"]
+        Context --> Procedure
+    end
+
+    subgraph Database ["3. Persistência Relacional (packages/db + PostgreSQL)"]
+        Drizzle["Drizzle ORM\ndb.insert(submissions).values(...)"]
+        Postgres[("Neon Postgres Database\nINSERT INTO submissions RETURNING *")]
+        Drizzle --> Postgres
+    end
+
+    Membro --> Client
+    Hook -->|"1. Payload JSON + Cookie"| Context
+    Procedure -->|"2. Executa mutação tipada"| Drizzle
+    Postgres -.->|"3. Linha persistida"| Drizzle
+    Drizzle -.->|"4. Instância tipada"| Procedure
+    Procedure -.->|"5. Resposta com inferência estrita"| Hook
+    Hook -.->|"6. Toast de sucesso e refetch de ranking"| Membro
 ```
 
 ---

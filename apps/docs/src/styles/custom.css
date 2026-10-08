@@ -334,21 +334,40 @@ nav.sidebar {
 }
 
 /* Cards & CardGrid */
+.card-grid {
+	gap: 1.25rem !important;
+	padding-bottom: 0 !important;
+}
+
+.card-grid.stagger {
+	--stagger-height: 0px !important;
+	padding-bottom: 0 !important;
+}
+
+.card-grid > *,
+.card-grid.stagger > * {
+	margin-top: 0 !important;
+	transform: none !important;
+}
+
+.card,
 article.card,
 .sl-link-card {
 	background-color: var(--theme-card-bg) !important;
 	border: 2px solid var(--theme-border-color) !important;
 	border-radius: 0.5rem !important;
 	box-shadow: var(--theme-shadow) !important;
+	transform: none !important;
 	transition:
 		transform 0.15s cubic-bezier(0.16, 1, 0.3, 1),
 		box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+.card:hover,
 article.card:hover,
 .sl-link-card:hover {
 	box-shadow: 6px 6px 0px var(--theme-border-color) !important;
-	transform: translate(-2px, -2px);
+	transform: translate(-2px, -2px) !important;
 }
 
 article.card .title {
@@ -424,8 +443,7 @@ td {
 .badge-track-front,
 .badge-track-back,
 .badge-track-proto,
-.badge-track-devops,
-.badge-track-git {
+.badge-track-devops {
 	display: inline-flex;
 	gap: 0.35rem;
 	align-items: center;
@@ -458,11 +476,6 @@ td {
 .badge-track-devops {
 	color: #121212;
 	background-color: #facc15;
-}
-
-.badge-track-git {
-	color: #ffffff;
-	background-color: #7c3aed;
 }
 
 /* ==========================================================================
@@ -499,17 +512,17 @@ pre.mermaid .actor {
 	fill: var(--sl-color-bg-nav) !important;
 	stroke: var(--theme-border-color) !important;
 	stroke-width: 2px !important;
-	rx: 4px !important;
-	ry: 4px !important;
+	rx: 6px !important;
+	ry: 6px !important;
 }
 
 /* Subgrafos / Clusters */
 pre.mermaid .cluster rect {
 	fill: var(--sl-color-accent-low) !important;
 	stroke: var(--theme-border-color) !important;
-	stroke-width: 1.5px !important;
+	stroke-width: 2px !important;
 	stroke-dasharray: 4, 4 !important;
-	rx: 6px !important;
+	rx: 8px !important;
 }
 
 /* Textos e Rótulos */
@@ -517,17 +530,33 @@ pre.mermaid text,
 pre.mermaid .nodeLabel,
 pre.mermaid .edgeLabel,
 pre.mermaid .actor,
-pre.mermaid .messageText {
+pre.mermaid .messageText,
+pre.mermaid .labelText,
+pre.mermaid tspan {
 	font-family: var(--font-sans) !important;
-	font-size: 0.8125rem !important;
+	font-size: 0.875rem !important;
 	font-weight: 600 !important;
 	color: var(--sl-color-white) !important;
 	fill: var(--sl-color-white) !important;
 }
 
-pre.mermaid .cluster text {
+pre.mermaid .edgeLabel {
+	font-weight: 700 !important;
+	color: var(--sl-color-white) !important;
+	background-color: var(--sl-color-bg-nav) !important;
+	fill: var(--sl-color-white) !important;
+}
+
+pre.mermaid .edgeLabel rect {
+	opacity: 0.95 !important;
+	fill: var(--sl-color-bg-nav) !important;
+}
+
+pre.mermaid .cluster text,
+pre.mermaid .cluster-label text,
+pre.mermaid .cluster-label span {
 	font-family: var(--font-display) !important;
-	font-size: 0.75rem !important;
+	font-size: 0.8125rem !important;
 	font-weight: 800 !important;
 	text-transform: uppercase !important;
 	letter-spacing: 0.05em !important;
@@ -536,10 +565,11 @@ pre.mermaid .cluster text {
 
 /* Conexões e Setas */
 pre.mermaid .edgePath .path,
+pre.mermaid .flowchart-link,
 pre.mermaid .messageLine0,
 pre.mermaid .messageLine1 {
 	stroke: var(--theme-accent-color) !important;
-	stroke-width: 2px !important;
+	stroke-width: 2.5px !important;
 }
 
 pre.mermaid marker path {
@@ -554,6 +584,6 @@ pre.mermaid .note {
 }
 
 pre.mermaid .noteText {
-	font-size: 0.75rem !important;
+	font-size: 0.8125rem !important;
 	fill: var(--sl-color-text) !important;
 }

@@ -9,16 +9,23 @@ A suíte de testes do projeto foi projetada para resolver um desafio comum em ap
 
 ## Duas Camadas Complementares
 
-```
-                               ┌────────────────────────────────────────┐
-                               │       Playwright End-to-End Tests      │
-                               │  (Chromium Desktop / Mobile Viewports) │
-                               └──────────────────┬─────────────────────┘
-                                                  │
-                               ┌──────────────────▼─────────────────────┐
-                               │  Vitest + tRPC Integration (PGlite)    │
-                               │  (PostgreSQL 16 WASM com Migrações)    │
-                               └────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph E2E ["Testes End-to-End (Playwright)"]
+        direction TB
+        E2E_Runners["Navegadores Reais (Chromium Desktop & Mobile)"]
+        E2E_Flows["Fluxos de Usuário:\nLogin, Desafios, Trava de Spoiler, Admin"]
+        E2E_Runners --> E2E_Flows
+    end
+
+    subgraph Integration ["Testes de Integração & Caixa-Cinza (Vitest + tRPC)"]
+        direction TB
+        Caller["tRPC createCaller\nInvoca roteadores diretamente com contexto de teste"]
+        PGlite[("PGlite (PostgreSQL 16 WASM)\nInstância isolada em memória com migrações reais")]
+        Caller -->|"Executa queries reais sem mocks"| PGlite
+    end
+
+    E2E -->|"Valida experiência ponta a ponta"| Integration
 ```
 
 1. **Testes de Integração & Caixa-Cinza (`tests/integration/`)**:
