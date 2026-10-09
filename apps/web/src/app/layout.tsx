@@ -61,12 +61,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html
-			className="orc-dark"
-			lang="pt-BR"
-			style={{ colorScheme: "dark" }}
-			suppressHydrationWarning
-		>
+		<html lang="pt-BR" suppressHydrationWarning>
 			<body
 				className={`${ubuntuMono.variable} ${poppins.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased selection:bg-[#FF4A1C] selection:text-white`}
 			>

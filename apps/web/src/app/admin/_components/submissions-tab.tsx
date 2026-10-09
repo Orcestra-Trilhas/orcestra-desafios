@@ -79,7 +79,7 @@ const SubmissionItem = memo(function SubmissionItemRender({
 			</div>
 
 			<button
-				className="btn-tactile w-full self-stretch rounded-md border-2 border-black bg-[#FACC15] px-4 py-2 text-center font-black font-display text-[#121212] text-xs uppercase shadow-hard-sm hover:bg-[#EAB308] sm:w-auto sm:self-auto dark:border-white"
+				className="btn-tactile w-full self-stretch rounded-md border-2 border-black bg-primary px-4 py-2 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 sm:w-auto sm:self-auto dark:border-white"
 				onClick={handleAssessClick}
 				type="button"
 			>

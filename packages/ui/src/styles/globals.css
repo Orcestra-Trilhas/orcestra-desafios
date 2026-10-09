@@ -5,7 +5,11 @@
 @source "../**/*.{ts,tsx}";
 
 @custom-variant dark (
-	&:is(.dark *, .orc-dark *, :root:not(.light):not(.orc-light) *)
+	&:is(
+		.dark *,
+		.orc-dark *,
+		:root:not(.light):not(.orc-light):not(.custom-light) *
+	)
 );
 
 :root,
@@ -54,6 +58,11 @@
 	--baugasm-purple: #a855f7;
 	--baugasm-cream: #f0f7ef;
 	--baugasm-black: #080f07;
+
+	--logo-bg: #02571e;
+	--logo-border: #1e3b1a;
+	--logo-shadow: 2px 2px 0px #020602;
+	--logo-fill: #ffffff;
 }
 
 .light {
@@ -97,6 +106,11 @@
 	--baugasm-purple: #9f1239;
 	--baugasm-cream: #fff1f2;
 	--baugasm-black: #4c0519;
+
+	--logo-bg: #dc2626;
+	--logo-border: #881337;
+	--logo-shadow: 2px 2px 0px #700b22;
+	--logo-fill: #ffffff;
 }
 
 .dark {
@@ -144,6 +158,11 @@
 	--baugasm-purple: #991b1b;
 	--baugasm-cream: #f4f4f5;
 	--baugasm-black: #09090b;
+
+	--logo-bg: #09090b;
+	--logo-border: #eab308;
+	--logo-shadow: 2px 2px 0px #000000;
+	--logo-fill: #eab308;
 }
 
 .orc-light {
@@ -191,6 +210,11 @@
 	--baugasm-purple: #7c3aed;
 	--baugasm-cream: #edf7ec;
 	--baugasm-black: #071a06;
+
+	--logo-bg: #15803d;
+	--logo-border: #1e461a;
+	--logo-shadow: 2px 2px 0px #133b10;
+	--logo-fill: #ffffff;
 }
 
 @theme inline {
@@ -705,24 +729,12 @@
 
 	/* Orc'estra Official Logo Badge Theme Variations */
 	.orc-logo-badge {
-		background-color: #dc2626;
-		border-color: #881337;
-		box-shadow: 2px 2px 0px #700b22;
+		background-color: var(--logo-bg, #02571e);
+		border-color: var(--logo-border, #1e3b1a);
+		box-shadow: var(--logo-shadow, 2px 2px 0px #020602);
 	}
-	:is(.dark *) .orc-logo-badge {
-		background-color: #09090b !important;
-		border-color: #eab308 !important;
-		box-shadow: 2px 2px 0px #000000 !important;
-	}
-	:is(.orc-dark *) .orc-logo-badge {
-		background-color: #02571e !important;
-		border-color: #1e3b1a !important;
-		box-shadow: 2px 2px 0px #020602 !important;
-	}
-	:is(.orc-light *) .orc-logo-badge {
-		background-color: #15803d !important;
-		border-color: #1e461a !important;
-		box-shadow: 2px 2px 0px #133b10 !important;
+	.orc-logo-badge svg path {
+		fill: var(--logo-fill, #ffffff);
 	}
 
 	/* Explicit Track Badges & Filters (Universal Contrast) */

@@ -52,7 +52,7 @@ export function PopBadge({
 		member:
 			"bg-secondary text-secondary-foreground border-black dark:border-white font-bold",
 		neutral:
-			"bg-secondary text-secondary-foreground border-black dark:border-white",
+			"bg-[var(--badge-status-bg,var(--secondary))] text-[var(--badge-status-fg,var(--secondary-foreground))] border-black dark:border-white",
 		purple:
 			"bg-[#7C3AED] text-white border-black dark:border-white dark:bg-[#8B5CF6] dark:text-white font-bold",
 		vermilion:
@@ -124,7 +124,7 @@ export function PopPointsBadge({
 
 	return (
 		<div
-			className={`inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FACC15] font-black text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#F59E0B] dark:text-[#121212] ${sizeClasses}`}
+			className={`inline-flex items-center gap-1.5 rounded-md border-2 border-black bg-[var(--badge-highlight-bg,#FACC15)] font-black text-[var(--badge-highlight-fg,#121212)] shadow-hard-sm dark:border-white dark:bg-[var(--badge-highlight-bg,#F59E0B)] dark:text-[var(--badge-highlight-fg,#121212)] ${sizeClasses}`}
 		>
 			<svg
 				aria-hidden="true"

@@ -288,7 +288,7 @@ export function ChallengeSubmissionModal({
 					</button>
 
 					<button
-						className="btn-tactile flex-1 rounded-md border-2 border-black bg-[#FF4A1C] px-5 py-2.5 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 sm:flex-initial dark:border-white"
+						className="btn-tactile flex-1 rounded-md border-2 border-black bg-primary px-5 py-2.5 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 disabled:opacity-50 sm:flex-initial dark:border-white"
 						disabled={isPending}
 						type="submit"
 					>

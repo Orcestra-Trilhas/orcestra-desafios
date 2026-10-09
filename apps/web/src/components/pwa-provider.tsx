@@ -206,7 +206,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
 						<div className="mt-5 pt-2">
 							<button
-								className="btn-tactile w-full rounded-md border-2 border-black bg-[#FF4A1C] py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] dark:border-white"
+								className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 dark:border-white"
 								onClick={closeIosModal}
 								type="button"
 							>
@@ -282,7 +282,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
 						<div className="mt-5 pt-2">
 							<button
-								className="btn-tactile w-full rounded-md border-2 border-black bg-[#FF4A1C] py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] dark:border-white"
+								className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 dark:border-white"
 								onClick={closeBrowserModal}
 								type="button"
 							>

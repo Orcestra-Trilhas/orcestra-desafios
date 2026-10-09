@@ -32,6 +32,13 @@ Definimos quatro esquemas de cores oficiais:
 
 O portal de documentação (`apps/docs`) implementa seletor equivalente com os mesmos 4 esquemas, sincronizando a preferência do usuário via `localStorage`.
 
+5. **Motor de Temas Customizados (Criador de Temas & Perfil do Membro)**:
+   - Além das 4 paletas oficiais, a plataforma implementa um motor dinâmico de temas customizados (`CustomThemeProvider` e `CustomThemeDialog`).
+   - Os membros podem personalizar livremente: cor primária, cor secundária, botões de ação (primários e secundários), badges/selos (destaque e status) e textos secundários/muted.
+   - **Cálculo Automático de Contraste**: Garante legibilidade ideal gerando texto claro ou escuro sobre fundos dinâmicos com algoritmo de luminância relativa (`getContrastForeground`).
+   - **Isolamento Multiusuário e Troca Instantânea (0ms)**: Cada usuário possui seu tema gravado de forma isolada em chaves com escopo de ID (`orc_theme_applied_${userId}` e `orc_custom_theme_${userId}`). Ao alternar de conta ou fazer logout, o cache de consultas (`user.me`) é purgado imediatamente e o tema correto da nova conta é recuperado de forma síncrona, eliminando vazamento visual de contas anteriores.
+   - **Perfis de Terceiros**: Ao visitar o perfil público de outro membro, a aplicação renderiza temporariamente o tema customizado daquele autor apenas durante a navegação em sua página, restaurando automaticamente o tema do visitante ao sair.
+
 ---
 
 ## Alternativas Consideradas
@@ -41,15 +48,18 @@ O portal de documentação (`apps/docs`) implementa seletor equivalente com os m
 | **CSS-in-JS (Styled Components / Emotion)** | Incompatível com Server Components do React 19; adiciona sobrecarga de execução JavaScript no cliente e prejudica métricas de Core Web Vitals (INP). |
 | **Tailwind CSS v3 Legado** | Depende de configuração manual em `tailwind.config.js`, dependências pesadas de PostCSS e compilação mais lenta se comparada ao motor Lightning CSS da v4. |
 | **CSS Modules isolados** | Menor velocidade na criação de componentes táteis compartilhados e dificuldade para manter a alternância de temas sincronizada em múltiplos workspaces. |
+| **Armazenamento Global de Tema no LocalStorage** | Causava vazamento de temas entre contas diferentes no mesmo navegador e requeria refetch de rede para carregar o tema correto. Substituído por chaves com escopo de usuário. |
 
 ---
 
 ## Consequências
 
 ### Positivas
-- Zero impacto de runtime de JavaScript para renderização de estilos no navegador.
+- Zero impacto de runtime de JavaScript para renderização dos temas estáticos.
+- Motor dinâmico com injeção de CSS em runtime (`generateCustomThemeCss`) apenas quando o modo customizado está ativo, sem polling e com limpeza estrita de estilos residuais.
 - Alternância instantânea de temas sem recarregamento de página nem piscadas de tela (*flash of unstyled content*).
 - Consistência estética neo-brutalista tátil (bordas nítidas de 2px, sombras sólidas rígidas `4px 4px 0px` e tipografia display marcante em `Ubuntu Mono Nerd Font` com corpo em `Poppins`).
 
 ### Trade-offs & Mitigações
 - **Sintaxe nova do Tailwind v4**: A versão 4 utiliza a diretiva `@import "tailwindcss";` e definições inline `@theme`. Centralizamos os tokens em `packages/ui/src/styles/globals.css` para manter um ponto único de verdade documentado.
+- **Sobrescrita de Cores em Componentes com Cores Fixas**: Elementos neo-brutalistas com regras de cor hardcoded (como amarelos ou laranjas fixos) foram unificados para classes semânticas do Tailwind (`bg-primary`, `bg-secondary`, `text-muted-foreground`), respeitando o seletor ativo do usuário.

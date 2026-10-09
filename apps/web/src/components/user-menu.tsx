@@ -62,7 +62,7 @@ export default function UserMenu() {
 	if (!session) {
 		return (
 			<Link
-				className="btn-tactile rounded-md border-2 border-black bg-[#FF4A1C] px-3 py-1.5 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] dark:border-white"
+				className="btn-tactile rounded-md border-2 border-black bg-primary px-3 py-1.5 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
 				href="/login"
 			>
 				ENTRAR

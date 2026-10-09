@@ -12,7 +12,7 @@ export function ProfileBadgesCard({ badges }: ProfileBadgesCardProps) {
 	return (
 		<div className="space-y-3 rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:p-6 dark:border-white">
 			<div className="flex items-center gap-2 border-black/10 border-b-2 pb-2 dark:border-white/10">
-				<div className="h-3 w-3 rounded-full border-2 border-black bg-[#FACC15] dark:border-white" />
+				<div className="h-3 w-3 rounded-full border-2 border-black bg-primary dark:border-white" />
 				<h2 className="font-black font-display text-sm uppercase tracking-wider">
 					SELOS & BADGES CONQUISTADOS
 				</h2>

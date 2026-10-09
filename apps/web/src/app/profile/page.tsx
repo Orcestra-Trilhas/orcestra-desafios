@@ -25,6 +25,7 @@ function ProfileContent() {
 	const { data: session } = authClient.useSession();
 
 	const targetUserId = searchParams.get("id") || undefined;
+	const isOwnProfile = !targetUserId || targetUserId === session?.user?.id;
 
 	const { openThemeModal, setActiveProfileTheme } = useCustomTheme();
 
@@ -33,7 +34,9 @@ function ProfileContent() {
 	);
 
 	useEffect(() => {
-		if (profileQuery.data?.customTheme) {
+		// Apenas aplica o tema customizado no perfil de terceiros
+		// No próprio perfil, respeita estritamente o seletor de temas do usuário
+		if (!isOwnProfile && profileQuery.data?.customTheme) {
 			const parsed = parseCustomTheme(profileQuery.data.customTheme);
 			setActiveProfileTheme(parsed);
 		} else {
@@ -42,7 +45,7 @@ function ProfileContent() {
 		return () => {
 			setActiveProfileTheme(null);
 		};
-	}, [profileQuery.data?.customTheme, setActiveProfileTheme]);
+	}, [isOwnProfile, profileQuery.data?.customTheme, setActiveProfileTheme]);
 
 	const updateProfileMutation = useMutation(
 		trpc.user.updateProfile.mutationOptions({
@@ -192,6 +195,11 @@ function ProfileContent() {
 	);
 
 	const handleSignOut = useCallback(async () => {
+		try {
+			localStorage.removeItem("orc-custom-theme-data");
+		} catch {
+			// ignore
+		}
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
@@ -219,7 +227,7 @@ function ProfileContent() {
 					O perfil solicitado não existe ou você não tem acesso.
 				</p>
 				<Link
-					className="btn-tactile inline-block rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm dark:border-white"
+					className="btn-tactile inline-block rounded-md border-2 border-black bg-primary px-4 py-2 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
 					href="/profile"
 				>
 					Voltar ao Meu Perfil
@@ -288,15 +296,12 @@ function ProfileContent() {
 			{isOwner ? (
 				<EditPersonalDataCard
 					department={department}
-					gifUrl={gifUrl}
 					isPending={updateProfileMutation.isPending}
 					name={name}
 					onChangeDepartment={setDepartment}
-					onChangeGifUrl={setGifUrl}
 					onChangeName={setName}
 					onChangeWhatsapp={setWhatsapp}
 					onSubmit={handleSave}
-					onUploadAvatar={handleAvatarUploaded}
 					whatsapp={whatsapp}
 				/>
 			) : null}

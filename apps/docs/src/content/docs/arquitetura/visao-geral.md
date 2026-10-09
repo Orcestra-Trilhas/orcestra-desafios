@@ -59,7 +59,7 @@ flowchart TB
   - Servir as interfaces interativas da plataforma (lista de desafios por semana/trilha, submissões com proteção contra spoiler, ranking dinâmico de pontuação e painel administrativo).
   - Progressive Web App (PWA) instalável em dispositivos móveis com cache de recursos estáticos via service worker.
   - Implementar o Route Handler do tRPC sob `/api/trpc` para despachar chamadas de backend a partir do mesmo domínio.
-  - Alternância instantânea entre quatro temas gráficos (Orc'estra Dark, Orc'estra Light, Fauvismo e Pop Art).
+  - Alternância instantânea entre temas oficiais (Orc'estra Dark, Orc'estra Light, Le Noir e Le Rouge) e motor dinâmico de temas customizados com isolamento por usuário.
 
 #### `apps/docs`
 - **Stack**: Astro 7, Starlight, astro-mermaid, Pagefind.

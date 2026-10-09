@@ -5,27 +5,31 @@ export type ThemeVariant = "orc-dark" | "orc-light" | "dark" | "light";
 
 const THEME_STYLES: Record<
 	ThemeVariant,
-	{ bg: string; border: string; shadow: string }
+	{ bg: string; border: string; fill: string; shadow: string }
 > = {
 	dark: {
-		bg: "#D9381E",
-		border: "#273463",
-		shadow: "2px 2px 0px #040714",
+		bg: "#09090B",
+		border: "#EAB308",
+		fill: "#EAB308",
+		shadow: "2px 2px 0px #000000",
 	},
 	light: {
-		bg: "#EC4899",
-		border: "#18181B",
-		shadow: "2px 2px 0px #18181B",
+		bg: "#DC2626",
+		border: "#881337",
+		fill: "#FFFFFF",
+		shadow: "2px 2px 0px #700B22",
 	},
 	"orc-dark": {
 		bg: "#02571E",
 		border: "#1E3B1A",
+		fill: "#FFFFFF",
 		shadow: "2px 2px 0px #020602",
 	},
 	"orc-light": {
-		bg: "#0D3309",
-		border: "#234A1F",
-		shadow: "2px 2px 0px #0C2609",
+		bg: "#15803D",
+		border: "#1E461A",
+		fill: "#FFFFFF",
+		shadow: "2px 2px 0px #133B10",
 	},
 };
 
@@ -70,7 +74,11 @@ export function OrcIcon({
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<title>Orc&apos;estra Gamificação</title>
-				<path d={ORC_MASK_PATH} fill="#FFFFFF" fillRule="evenodd" />
+				<path
+					d={ORC_MASK_PATH}
+					fill={theme ? THEME_STYLES[theme].fill : undefined}
+					fillRule="evenodd"
+				/>
 			</svg>
 		</div>
 	);

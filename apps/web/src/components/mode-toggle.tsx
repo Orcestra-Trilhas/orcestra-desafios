@@ -9,22 +9,44 @@ import {
 import { Check, Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { getUserThemeKey } from "@/lib/custom-theme";
 import { useCustomTheme } from "./custom-theme-provider";
 
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
-	const { customTheme, openThemeModal } = useCustomTheme();
+	const { customTheme, openThemeModal, setActiveProfileTheme } =
+		useCustomTheme();
+	const { data: session } = authClient.useSession();
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	const setOrcDark = useCallback(() => setTheme("orc-dark"), [setTheme]);
-	const setOrcLight = useCallback(() => setTheme("orc-light"), [setTheme]);
-	const setDark = useCallback(() => setTheme("dark"), [setTheme]);
-	const setLight = useCallback(() => setTheme("light"), [setTheme]);
-	const setCustom = useCallback(() => setTheme("custom"), [setTheme]);
+	const changeTheme = useCallback(
+		(newTheme: string) => {
+			setActiveProfileTheme(null);
+			setTheme(newTheme);
+			if (session?.user?.id) {
+				try {
+					localStorage.setItem(getUserThemeKey(session.user.id), newTheme);
+				} catch {
+					// ignore
+				}
+			}
+		},
+		[setActiveProfileTheme, setTheme, session?.user?.id]
+	);
+
+	const setOrcDark = useCallback(() => changeTheme("orc-dark"), [changeTheme]);
+	const setOrcLight = useCallback(
+		() => changeTheme("orc-light"),
+		[changeTheme]
+	);
+	const setDark = useCallback(() => changeTheme("dark"), [changeTheme]);
+	const setLight = useCallback(() => changeTheme("light"), [changeTheme]);
+	const setCustom = useCallback(() => changeTheme("custom"), [changeTheme]);
 	const handleOpenCreator = useCallback(
 		(e: React.MouseEvent) => {
 			e.stopPropagation();
@@ -162,14 +184,6 @@ export function ModeToggle() {
 							<Check className="h-3.5 w-3.5 shrink-0" />
 						) : null}
 					</div>
-				</DropdownMenuItem>
-
-				<DropdownMenuItem
-					className="flex cursor-pointer items-center justify-center gap-1.5 border-black/10 border-t py-2 font-black font-display text-[11px] text-primary uppercase tracking-wider hover:bg-muted dark:border-white/10"
-					onClick={openThemeModal}
-				>
-					<Sparkles className="h-3 w-3" />
-					<span>CRIAR SEU PRÓPRIO TEMA</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

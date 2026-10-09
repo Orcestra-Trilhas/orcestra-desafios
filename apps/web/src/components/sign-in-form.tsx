@@ -159,7 +159,7 @@ export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 					</div>
 
 					<button
-						className="btn-tactile mt-2 flex w-full items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] py-3 font-black font-display text-sm text-white uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 dark:border-white"
+						className="btn-tactile mt-2 flex w-full items-center justify-center rounded-md border-2 border-black bg-primary py-3 font-black font-display text-primary-foreground text-sm uppercase tracking-wider shadow-hard-sm hover:opacity-90 disabled:opacity-50 dark:border-white"
 						disabled={loading}
 						type="submit"
 					>

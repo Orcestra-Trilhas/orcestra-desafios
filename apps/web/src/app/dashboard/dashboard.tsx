@@ -104,7 +104,7 @@ export default function Dashboard() {
 			{/* Section Header */}
 			<div className="flex items-center justify-between border-black border-b-2 pb-2 dark:border-white">
 				<div className="flex items-center gap-2">
-					<div className="h-3 w-3 rounded-full border-2 border-black bg-[#FF4A1C] dark:border-white" />
+					<div className="h-3 w-3 rounded-full border-2 border-black bg-primary dark:border-white" />
 					<h2 className="font-black font-display text-base uppercase tracking-tight sm:text-lg">
 						MEUS DESAFIOS ATIVOS {"//"} MISSÕES
 					</h2>

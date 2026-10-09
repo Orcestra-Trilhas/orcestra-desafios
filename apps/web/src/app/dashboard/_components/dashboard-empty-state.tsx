@@ -12,7 +12,7 @@ export const DashboardEmptyState = memo(function DashboardEmptyStateRender({
 }: DashboardEmptyStateProps) {
 	return (
 		<div className="space-y-4 rounded-lg border-2 border-black border-dashed bg-card p-8 text-center shadow-hard dark:border-white">
-			<div className="mx-auto flex h-14 w-14 items-center justify-center rounded-sm border-2 border-black bg-[#FACC15] font-black text-2xl text-black shadow-hard-sm dark:border-white">
+			<div className="mx-auto flex h-14 w-14 items-center justify-center rounded-sm border-2 border-black bg-primary font-black text-2xl text-primary-foreground shadow-hard-sm dark:border-white">
 				!
 			</div>
 			<div className="space-y-1">
@@ -26,7 +26,7 @@ export const DashboardEmptyState = memo(function DashboardEmptyStateRender({
 			</div>
 			<div className="flex flex-wrap items-center justify-center gap-3 pt-2">
 				<button
-					className="btn-tactile rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] dark:border-white"
+					className="btn-tactile rounded-md border-2 border-black bg-primary px-4 py-2 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
 					onClick={onOpenExplorer}
 					type="button"
 				>

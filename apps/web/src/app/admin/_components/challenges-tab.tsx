@@ -73,7 +73,7 @@ const ChallengeItem = memo(function ChallengeItemRender({
 					</button>
 
 					<button
-						className="btn-tactile flex-1 rounded-md border-2 border-black bg-[#FF4A1C] px-3.5 py-1 text-center font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 sm:flex-initial dark:border-white"
+						className="btn-tactile flex-1 rounded-md border-2 border-black bg-primary px-3.5 py-1 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 disabled:opacity-50 sm:flex-initial dark:border-white"
 						disabled={isDrawing}
 						onClick={handleDraw}
 						type="button"

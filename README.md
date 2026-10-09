@@ -37,7 +37,7 @@ Nele você encontrará:
   - `ADR-002`: tRPC v11 para Comunicação Cliente-Servidor Type-Safe
   - `ADR-003`: Neon Serverless Postgres e Drizzle ORM
   - `ADR-004`: Better Auth para Gestão de Identidade e Sessões
-  - `ADR-005`: Tailwind CSS v4 e Design System Temático (Pop Art, Fauvismo e Orc'estra Dark)
+  - `ADR-005`: Tailwind CSS v4, Design System Multi-Temas e Motor de Temas Customizados
   - `ADR-006`: PGlite WASM, Vitest e Playwright para Testes SOTA
   - `ADR-007`: Ultracite e Biome para Governança e Qualidade de Código
 

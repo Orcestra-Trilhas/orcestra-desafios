@@ -225,7 +225,7 @@ function SendGiftForm({
 					<button
 						className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
 							giftSource === "preset"
-								? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-xs dark:border-white"
 								: "border-transparent text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSetPresetSource}
@@ -236,7 +236,7 @@ function SendGiftForm({
 					<button
 						className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
 							giftSource === "upload"
-								? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-xs dark:border-white"
 								: "border-transparent text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSetUploadSource}
@@ -247,7 +247,7 @@ function SendGiftForm({
 					<button
 						className={`btn-tactile rounded py-1.5 font-black font-display text-[11px] uppercase transition ${
 							giftSource === "url"
-								? "border-2 border-black bg-[#FF4A1C] text-white shadow-hard-xs dark:border-white"
+								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-xs dark:border-white"
 								: "border-transparent text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSetUrlSource}
@@ -372,7 +372,7 @@ function SendGiftForm({
 					CANCELAR
 				</button>
 				<button
-					className="btn-tactile rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] disabled:opacity-50 dark:border-white"
+					className="btn-tactile rounded-md border-2 border-black bg-primary px-4 py-2 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 disabled:opacity-50 dark:border-white"
 					disabled={isSendingGift || !giftMediaUrl.trim()}
 					type="submit"
 				>
@@ -416,7 +416,7 @@ export function ProfileGiftsMural({
 			<div className="flex flex-col justify-between gap-3 border-black/10 border-b-2 pb-3 sm:flex-row sm:items-center dark:border-white/10">
 				<div>
 					<div className="flex items-center gap-2">
-						<div className="h-3 w-3 rounded-full border-2 border-black bg-[#FF4A1C] dark:border-white" />
+						<div className="h-3 w-3 rounded-full border-2 border-black bg-primary dark:border-white" />
 						<h2 className="font-black font-display text-sm uppercase tracking-wider">
 							MURAL {"//"} PRESENTES
 						</h2>
@@ -428,7 +428,7 @@ export function ProfileGiftsMural({
 				</div>
 
 				<button
-					className="btn-tactile inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-[#FF4A1C] px-3.5 py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] dark:border-white"
+					className="btn-tactile inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-primary px-3.5 py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 dark:border-white"
 					onClick={toggleGiftForm}
 					type="button"
 				>

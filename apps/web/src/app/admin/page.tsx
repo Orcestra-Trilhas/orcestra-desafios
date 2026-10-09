@@ -223,7 +223,7 @@ export default function AdminPage() {
 				</div>
 
 				<button
-					className="btn-tactile flex w-full items-center justify-center gap-1.5 rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2.5 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] sm:w-auto sm:py-2 dark:border-white"
+					className="btn-tactile flex w-full items-center justify-center gap-1.5 rounded-md border-2 border-black bg-primary px-4 py-2.5 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 sm:w-auto sm:py-2 dark:border-white"
 					onClick={handleOpenCreateModal}
 					type="button"
 				>

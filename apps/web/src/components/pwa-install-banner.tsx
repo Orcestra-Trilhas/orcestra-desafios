@@ -35,12 +35,12 @@ export function PwaInstallBanner() {
 	return (
 		<div className="relative flex flex-col justify-between gap-3 overflow-hidden rounded-lg border-2 border-black bg-gradient-to-r from-card to-secondary/40 p-3.5 shadow-hard sm:flex-row sm:items-center sm:gap-4 sm:p-4 dark:border-white">
 			<div className="flex items-start gap-3">
-				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] text-white shadow-hard-sm dark:border-white">
+				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white">
 					<Smartphone className="h-5 w-5" />
 				</div>
 				<div className="space-y-0.5">
 					<div className="flex items-center gap-2">
-						<span className="font-black font-mono text-[#FF4A1C] text-[10px] uppercase tracking-widest">
+						<span className="font-black font-mono text-[10px] text-primary uppercase tracking-widest">
 							APP NATIVO {"//"} PWA
 						</span>
 					</div>
@@ -56,7 +56,7 @@ export function PwaInstallBanner() {
 
 			<div className="flex items-center gap-2 pt-1 sm:pt-0">
 				<button
-					className="btn-tactile flex flex-1 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-[#FF4A1C] px-3.5 py-1.5 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10] sm:flex-initial dark:border-white"
+					className="btn-tactile flex flex-1 items-center justify-center gap-1.5 rounded-md border-2 border-black bg-primary px-3.5 py-1.5 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 sm:flex-initial dark:border-white"
 					onClick={handleInstall}
 					type="button"
 				>

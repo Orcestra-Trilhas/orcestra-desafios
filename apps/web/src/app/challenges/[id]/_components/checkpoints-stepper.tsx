@@ -108,7 +108,7 @@ function CheckpointStep2({
 
 				{canSubmitSolution ? (
 					<button
-						className="btn-tactile mt-2 w-full rounded-md border-2 border-black bg-[#FF4A1C] px-3.5 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#E03A10] sm:w-auto sm:px-4 dark:border-white"
+						className="btn-tactile mt-2 w-full rounded-md border-2 border-black bg-primary px-3.5 py-2 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 sm:w-auto sm:px-4 dark:border-white"
 						onClick={onOpenSubmit}
 						type="button"
 					>

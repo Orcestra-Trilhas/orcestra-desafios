@@ -1,6 +1,6 @@
-import { Sparkles, Trash2 } from "lucide-react";
+import { Camera, Loader2, Sparkles, Trash2 } from "lucide-react";
 import Image from "next/image";
-import CloudinaryUploadButton from "@/components/cloudinary-upload-button";
+import { useCloudinaryUpload } from "@/components/cloudinary-upload-button";
 import { PopBadge, PopWhatsAppButton } from "@/components/pop-elements";
 import { getOptimizedMediaUrl } from "@/lib/cloudinary";
 import type { CustomThemeConfig } from "@/lib/custom-theme";
@@ -32,70 +32,112 @@ function ProfileAvatarSection({
 	role?: string | null;
 }) {
 	const roleBadgeColor = role === "ADMIN" ? "admin" : "member";
+	const {
+		fileInputRef,
+		handleDragLeave,
+		handleDragOver,
+		handleDrop,
+		handleFileChange,
+		isDragging,
+		isUploading,
+		openFileDialog,
+	} = useCloudinaryUpload({
+		folder: "orcestra-avatars",
+		maxSizeMb: 10,
+		onUploadSuccess: onAvatarUploaded,
+	});
+
+	const avatarVisual = gifUrl ? (
+		<Image
+			alt="Avatar Membro"
+			className="h-20 w-20 rounded-md border-2 border-black object-cover shadow-hard-sm sm:h-24 sm:w-24 dark:border-white"
+			height={96}
+			src={getOptimizedMediaUrl(gifUrl, {
+				crop: "fill",
+				height: 96,
+				width: 96,
+			})}
+			unoptimized
+			width={96}
+		/>
+	) : (
+		<div className="flex h-20 w-20 items-center justify-center rounded-md border-2 border-black bg-primary font-black font-display text-3xl text-primary-foreground shadow-hard-sm sm:h-24 sm:w-24 sm:text-4xl dark:border-white">
+			{name ? name.charAt(0).toUpperCase() : "M"}
+		</div>
+	);
+
+	let overlayClass =
+		"opacity-0 group-hover:opacity-100 group-focus:opacity-100";
+	if (isUploading) {
+		overlayClass = "opacity-100";
+	} else if (isDragging) {
+		overlayClass = "bg-primary/70 opacity-100";
+	}
 
 	return (
 		<div className="flex flex-col items-center gap-2">
 			<div className="group relative">
-				{gifUrl ? (
-					<Image
-						alt="Avatar Membro"
-						className="h-20 w-20 rounded-md border-2 border-black object-cover shadow-hard-sm sm:h-24 sm:w-24 dark:border-white"
-						height={96}
-						src={getOptimizedMediaUrl(gifUrl, {
-							crop: "fill",
-							height: 96,
-							width: 96,
-						})}
-						unoptimized
-						width={96}
-					/>
+				{isOwner ? (
+					<>
+						<input
+							accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+							className="hidden"
+							disabled={isUploading}
+							onChange={handleFileChange}
+							ref={fileInputRef}
+							type="file"
+						/>
+						<button
+							aria-label="Trocar foto de perfil"
+							className="btn-tactile group relative block cursor-pointer overflow-hidden rounded-md focus:outline-hidden focus:ring-2 focus:ring-primary"
+							disabled={isUploading}
+							onClick={openFileDialog}
+							onDragEnter={handleDragOver}
+							onDragLeave={handleDragLeave}
+							onDragOver={handleDragOver}
+							onDrop={handleDrop}
+							title="Clique ou toque para trocar a foto de perfil"
+							type="button"
+						>
+							{avatarVisual}
+
+							<div
+								className={`absolute inset-0 flex flex-col items-center justify-center rounded-md bg-black/60 p-1 text-white backdrop-blur-xs transition ${overlayClass}`}
+							>
+								{isUploading ? (
+									<Loader2 className="h-5 w-5 animate-spin text-white sm:h-6 sm:w-6" />
+								) : (
+									<>
+										<Camera className="h-5 w-5 drop-shadow sm:h-6 sm:w-6" />
+										<span className="mt-0.5 font-bold font-display text-[9px] uppercase tracking-wider sm:text-[10px]">
+											Trocar Foto
+										</span>
+									</>
+								)}
+							</div>
+						</button>
+					</>
 				) : (
-					<div className="flex h-20 w-20 items-center justify-center rounded-md border-2 border-black bg-[#FF4A1C] font-black font-display text-3xl text-white shadow-hard-sm sm:h-24 sm:w-24 sm:text-4xl dark:border-white">
-						{name ? name.charAt(0).toUpperCase() : "M"}
-					</div>
+					avatarVisual
 				)}
 
-				{/* Desktop hover quick change overlay for Owner */}
-				{isOwner ? (
-					<div className="absolute inset-0 hidden items-center justify-center rounded-md bg-black/60 p-1 opacity-0 backdrop-blur-xs transition group-hover:flex group-hover:opacity-100">
-						<CloudinaryUploadButton
-							className="w-full justify-center px-1 py-1 text-[9px]"
-							folder="orcestra-avatars"
-							label="Mudar"
-							onUploadSuccess={onAvatarUploaded}
-							variant="avatar"
-						/>
-					</div>
-				) : null}
-
-				<div className="absolute -right-2 -bottom-2">
+				<div className="pointer-events-none absolute -right-2 -bottom-2">
 					<PopBadge color={roleBadgeColor}>
 						{role === "ADMIN" ? "ADMIN" : "MEMBRO"}
 					</PopBadge>
 				</div>
 			</div>
 
-			{/* Quick direct buttons for profile owner */}
-			{isOwner ? (
-				<div className="flex flex-wrap items-center justify-center gap-1.5 pt-0.5">
-					<CloudinaryUploadButton
-						className="px-2 py-1 text-[10px]"
-						folder="orcestra-avatars"
-						label="Trocar Foto"
-						onUploadSuccess={onAvatarUploaded}
-					/>
-					{gifUrl ? (
-						<button
-							className="btn-tactile inline-flex cursor-pointer items-center gap-1 rounded-md border-2 border-black bg-destructive/10 px-2 py-1 font-mono text-[10px] text-destructive uppercase hover:bg-destructive/20 dark:border-white"
-							onClick={onRemoveAvatar}
-							title="Remover foto e voltar ao avatar com iniciais"
-							type="button"
-						>
-							<Trash2 className="h-3 w-3" />
-							<span>Remover</span>
-						</button>
-					) : null}
-				</div>
+			{isOwner && gifUrl ? (
+				<button
+					className="btn-tactile inline-flex cursor-pointer items-center gap-1 rounded-md border-2 border-black bg-destructive/10 px-2 py-0.5 font-mono text-[10px] text-destructive uppercase hover:bg-destructive/20 dark:border-white"
+					onClick={onRemoveAvatar}
+					title="Remover foto e voltar ao avatar com iniciais"
+					type="button"
+				>
+					<Trash2 className="h-3 w-3" />
+					<span>Remover Foto</span>
+				</button>
 			) : null}
 		</div>
 	);

@@ -115,7 +115,7 @@ function SubmissionCard({
 
 							{hasMyPair ? (
 								<button
-									className="btn-tactile shrink-0 rounded-md border-2 border-white bg-[#FF4A1C] px-3.5 py-2 font-black font-display text-white text-xs uppercase tracking-wider shadow-hard-sm hover:bg-[#E03A10]"
+									className="btn-tactile shrink-0 rounded-md border-2 border-white bg-primary px-3.5 py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90"
 									onClick={onOpenSubmit}
 									type="button"
 								>

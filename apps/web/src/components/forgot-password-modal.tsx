@@ -212,7 +212,7 @@ export function ForgotPasswordModal({
 							Cancelar
 						</button>
 						<button
-							className="btn-tactile flex-1 rounded-md border-2 border-black bg-[#FF4A1C] py-2.5 font-black font-display text-white text-xs uppercase tracking-wider transition hover:bg-[#E03A10] disabled:opacity-50 dark:border-white"
+							className="btn-tactile flex-1 rounded-md border-2 border-black bg-primary py-2.5 font-black font-display text-primary-foreground text-xs uppercase tracking-wider transition hover:opacity-90 disabled:opacity-50 dark:border-white"
 							disabled={isSubmitting}
 							type="submit"
 						>

@@ -104,7 +104,7 @@ const AuthorsSection = memo(function AuthorsSectionRender({
 						key={member.id}
 					>
 						<div className="flex min-w-0 items-center gap-2">
-							<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black bg-[#FACC15] font-black font-display text-[#121212] text-xs uppercase dark:border-white">
+							<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black bg-primary font-black font-display text-primary-foreground text-xs uppercase dark:border-white">
 								{member.name.charAt(0)}
 							</div>
 							<div className="min-w-0">
