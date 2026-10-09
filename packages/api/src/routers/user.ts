@@ -1,4 +1,5 @@
-import { profileGift, user } from "@orcestra-desafios/db";
+import { hashPassword } from "@orcestra-desafios/auth";
+import { account, profileGift, session, user } from "@orcestra-desafios/db";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -248,6 +249,62 @@ export const userRouter = router({
 			trackPreferencesList: tracks,
 		};
 	}),
+
+	resetPassword: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email("E-mail inválido"),
+				newPassword: z
+					.string()
+					.min(4, "A senha deve ter no mínimo 4 caracteres"),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const normalizedEmail = input.email.trim().toLowerCase();
+			const foundUser = await ctx.db.query.user.findFirst({
+				where: { email: normalizedEmail },
+			});
+
+			if (!foundUser) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Nenhum usuário cadastrado com este e-mail.",
+				});
+			}
+
+			const existingAccount = await ctx.db.query.account.findFirst({
+				where: {
+					providerId: "credential",
+					userId: foundUser.id,
+				},
+			});
+
+			const hashedPassword = await hashPassword(input.newPassword);
+
+			if (existingAccount) {
+				await ctx.db
+					.update(account)
+					.set({ password: hashedPassword })
+					.where(eq(account.id, existingAccount.id));
+			} else {
+				await ctx.db.insert(account).values({
+					accountId: foundUser.email,
+					id: `account-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+					password: hashedPassword,
+					providerId: "credential",
+					userId: foundUser.id,
+				});
+			}
+
+			// Invalida sessões ativas anteriores por segurança
+			await ctx.db.delete(session).where(eq(session.userId, foundUser.id));
+
+			return {
+				email: foundUser.email,
+				name: foundUser.name,
+				success: true,
+			};
+		}),
 
 	sendGift: protectedProcedure
 		.input(

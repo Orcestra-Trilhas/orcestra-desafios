@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { PopLogo } from "@/components/pop-elements";
 import { authClient } from "@/lib/auth-client";
+import { ForgotPasswordModal } from "./forgot-password-modal";
 import Loader from "./loader";
 
 interface SignInFormProps {
@@ -17,6 +18,15 @@ export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
+	const handleOpenForgotPassword = useCallback(() => {
+		setIsForgotPasswordOpen(true);
+	}, []);
+
+	const handleCloseForgotPassword = useCallback(() => {
+		setIsForgotPasswordOpen(false);
+	}, []);
 
 	const handleSignIn = useCallback(
 		async (userEmail = email, userPassword = password) => {
@@ -122,12 +132,21 @@ export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 					</div>
 
 					<div className="space-y-1.5">
-						<label
-							className="font-bold font-display text-xs uppercase tracking-wider"
-							htmlFor="password"
-						>
-							Senha
-						</label>
+						<div className="flex items-center justify-between">
+							<label
+								className="font-bold font-display text-xs uppercase tracking-wider"
+								htmlFor="password"
+							>
+								Senha
+							</label>
+							<button
+								className="font-mono text-[#FF4A1C] text-[11px] uppercase tracking-wider hover:underline"
+								onClick={handleOpenForgotPassword}
+								type="button"
+							>
+								Esqueci a senha
+							</button>
+						</div>
 						<input
 							className="h-11 w-full rounded-md border-2 border-black bg-background px-3 font-medium text-sm transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
 							id="password"
@@ -158,6 +177,12 @@ export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 					</button>
 				</div>
 			</div>
+
+			<ForgotPasswordModal
+				defaultEmail={email}
+				isOpen={isForgotPasswordOpen}
+				onClose={handleCloseForgotPassword}
+			/>
 		</div>
 	);
 }

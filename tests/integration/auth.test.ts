@@ -118,4 +118,47 @@ describe("Auth & Role-Based Access Control (Caixa-Cinza)", () => {
 		expect(adminUser?.role).toBe("ADMIN");
 		expect(adminUser?.department).toBe("TOPS");
 	});
+
+	it("deve permitir redefinir a senha via self-service usando e-mail válido", async () => {
+		const unauthCaller = createTestCaller({
+			db: testDb.db,
+			persona: "unauthenticated",
+		});
+
+		const result = await unauthCaller.user.resetPassword({
+			email: memberPersona.email,
+			newPassword: "novaSenhaSegura123",
+		});
+
+		expect(result.success).toBe(true);
+		expect(result.email).toBe(memberPersona.email);
+
+		// Verifica se a conta do usuário foi gravada com a nova senha
+		const accountRecord = await testDb.db.query.account.findFirst({
+			where: (a, { eq }) => eq(a.userId, memberPersona.id),
+		});
+
+		expect(accountRecord).toBeDefined();
+		expect(accountRecord?.password).toBeDefined();
+
+		// Valida que sessões ativas anteriores foram revogadas
+		const activeSessions = await testDb.db.query.session.findMany({
+			where: { userId: memberPersona.id },
+		});
+		expect(activeSessions.length).toBe(0);
+	});
+
+	it("deve falhar ao tentar redefinir senha com e-mail inexistente", async () => {
+		const unauthCaller = createTestCaller({
+			db: testDb.db,
+			persona: "unauthenticated",
+		});
+
+		await expect(
+			unauthCaller.user.resetPassword({
+				email: "naoexiste@orcestra.com",
+				newPassword: "senha123Qualquer",
+			})
+		).rejects.toThrowError("Nenhum usuário cadastrado com este e-mail.");
+	});
 });

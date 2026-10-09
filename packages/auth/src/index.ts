@@ -72,3 +72,5 @@ export function createAuth(env: AuthConfig, database: Database) {
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth["$Infer"]["Session"];
 export type AuthUser = Session["user"];
+// biome-ignore lint/performance/noBarrelFile: Crypto utilities re-export
+export { hashPassword, verifyPassword } from "better-auth/crypto";
