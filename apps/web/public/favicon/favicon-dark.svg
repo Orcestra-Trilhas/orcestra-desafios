@@ -6,13 +6,13 @@
 >
 	<title>Orc&apos;estra Gamificação</title>
 	<!-- Sombra rígida neo-brutalista -->
-	<rect fill="#040714" height="176" rx="36" width="176" x="16" y="16" />
+	<rect fill="#000000" height="176" rx="36" width="176" x="16" y="16" />
 	<!-- Card base temático -->
 	<rect
-		fill="#D9381E"
+		fill="#09090B"
 		height="176"
 		rx="36"
-		stroke="#273463"
+		stroke="#EAB308"
 		stroke-linejoin="round"
 		stroke-width="8"
 		width="176"

@@ -4,10 +4,22 @@ import path from "node:path";
 export interface SheetMember {
 	displayTrack: string;
 	name: string;
+	primaryTrack: string | null;
 	progressPercent: number;
 	rawTrack: string;
 	satisfaction: string;
 	trackPreferences: string[];
+}
+
+export const MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS = 85;
+
+export function canMemberChooseOtherTracks(
+	member: SheetMember | null | undefined
+): boolean {
+	if (!member?.primaryTrack) {
+		return true;
+	}
+	return member.progressPercent >= MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS;
 }
 
 const DEFAULT_TRACKS = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"] as const;
@@ -23,26 +35,41 @@ function normalizeName(name: string): string {
 
 function mapTrackToTheme(rawTrack: string): {
 	displayTrack: string;
+	primaryTrack: string | null;
 	trackPreferences: string[];
 } {
 	const trimmed = rawTrack.trim().toLowerCase();
 	if (trimmed.includes("back")) {
-		return { displayTrack: "Back-end", trackPreferences: ["BACK"] };
+		return {
+			displayTrack: "Back-end",
+			primaryTrack: "BACK",
+			trackPreferences: ["BACK"],
+		};
 	}
 	if (trimmed.includes("front")) {
-		return { displayTrack: "Front-end", trackPreferences: ["FRONT"] };
+		return {
+			displayTrack: "Front-end",
+			primaryTrack: "FRONT",
+			trackPreferences: ["FRONT"],
+		};
 	}
 	if (trimmed.includes("devops")) {
-		return { displayTrack: "DevOps", trackPreferences: ["DEVOPS"] };
+		return {
+			displayTrack: "DevOps",
+			primaryTrack: "DEVOPS",
+			trackPreferences: ["DEVOPS"],
+		};
 	}
 	if (trimmed.includes("design") || trimmed.includes("prototip")) {
 		return {
 			displayTrack: "Design / Protótipo",
+			primaryTrack: "PROTOTIPACAO",
 			trackPreferences: ["PROTOTIPACAO"],
 		};
 	}
 	return {
 		displayTrack: "Geral (Todas as Trilhas)",
+		primaryTrack: null,
 		trackPreferences: [...DEFAULT_TRACKS],
 	};
 }
@@ -110,12 +137,14 @@ export function parseMembersCsv(csvContent: string): SheetMember[] {
 			continue;
 		}
 
-		const { displayTrack, trackPreferences } = mapTrackToTheme(rawTrack);
+		const { displayTrack, primaryTrack, trackPreferences } =
+			mapTrackToTheme(rawTrack);
 		const progressPercent = parseProgress(rawProgress);
 
 		members.push({
 			displayTrack,
 			name: rawName,
+			primaryTrack,
 			progressPercent,
 			rawTrack: rawTrack.trim(),
 			satisfaction: rawSatisfaction.replace(/^"|"$/g, "").trim(),
@@ -152,6 +181,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Geral (Todas as Trilhas)",
 			name: "Ana",
+			primaryTrack: null,
 			progressPercent: 0,
 			rawTrack: "",
 			satisfaction: "Sem avaliações",
@@ -160,6 +190,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "DevOps",
 			name: "Artur",
+			primaryTrack: "DEVOPS",
 			progressPercent: 0,
 			rawTrack: "DevOps",
 			satisfaction: "Sem avaliações",
@@ -168,6 +199,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Back-end",
 			name: "Carlos",
+			primaryTrack: "BACK",
 			progressPercent: 0,
 			rawTrack: "Back-end",
 			satisfaction: "Sem avaliações",
@@ -176,6 +208,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Front-end",
 			name: "DaniProj",
+			primaryTrack: "FRONT",
 			progressPercent: 0,
 			rawTrack: "Front-end",
 			satisfaction: "Sem avaliações",
@@ -184,6 +217,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "DevOps",
 			name: "Eduardo L.",
+			primaryTrack: "DEVOPS",
 			progressPercent: 90,
 			rawTrack: "DevOps",
 			satisfaction: "4,8 ⭐",
@@ -192,6 +226,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Design / Protótipo",
 			name: "Faby",
+			primaryTrack: "PROTOTIPACAO",
 			progressPercent: 50,
 			rawTrack: "Design",
 			satisfaction: "4,5 ⭐",
@@ -200,6 +235,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Design / Protótipo",
 			name: "Geovanna",
+			primaryTrack: "PROTOTIPACAO",
 			progressPercent: 8,
 			rawTrack: "Design",
 			satisfaction: "5,0 ⭐",
@@ -208,6 +244,7 @@ export function getSheetMembers(): SheetMember[] {
 		{
 			displayTrack: "Back-end",
 			name: "Lucas N.",
+			primaryTrack: "BACK",
 			progressPercent: 25,
 			rawTrack: "Back-end",
 			satisfaction: "4,6 ⭐",

@@ -3,16 +3,16 @@
    Incorpora os 4 temas oficiais do projeto:
      1. Orc'estra Dark (Padrão Oficial - Carvão Floresta / Verde Neon)
      2. Orc'estra Light (Clean & Refinado - Branco Linho / Verde Floresta)
-     3. Fauvismo Dark (Matisse / André Derain - Azul Índigo / Vermilion Ardente)
-     4. Pop Art Light (Andy Warhol Factory - Marfim / Marilyn Pink / Preto Gráfico)
+     3. Le Noir Dark (Grand Magasin Sisyphe - Preto Obsidiana / Resina Dourada)
+     4. Le Rouge Light (Grand Magasin Sisyphe - Vitrine Carmesim / Haute Couture)
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 :root {
-	--font-display: "Syne", sans-serif;
-	--font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+	--font-display: "UbuntuMono Nerd Font", "Ubuntu Mono", monospace;
+	--font-sans: "Poppins", system-ui, -apple-system, sans-serif;
+	--font-mono: "UbuntuMono Nerd Font", "Ubuntu Mono", monospace;
 
 	--sl-font: var(--font-sans);
 	--sl-font-mono: var(--font-mono);
@@ -87,118 +87,118 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. TEMA: ORC'ESTRA LIGHT (Clean & Refinado - Branco Linho / Verde Floresta)
+   2. TEMA: ORC'ESTRA LIGHT (Fresco, Florestal & Autêntico)
    -------------------------------------------------------------------------- */
 :root[data-palette="orc-light"],
 .orc-light {
-	--theme-shadow: 4px 4px 0px #0c2609;
-	--theme-shadow-sm: 2px 2px 0px #0c2609;
-	--theme-border-color: #234a1f;
-	--theme-card-bg: #ffffff;
+	--theme-shadow: 4px 4px 0px #133b10;
+	--theme-shadow-sm: 2px 2px 0px #133b10;
+	--theme-border-color: #1e461a;
+	--theme-card-bg: #f7fbf6;
 	--theme-text-color: #071a06;
-	--theme-accent-color: #0d3309;
+	--theme-accent-color: #15803d;
 	--theme-accent-contrast: #ffffff;
 
-	--sl-color-accent-low: #ebf5ea;
-	--sl-color-accent: #0d3309;
-	--sl-color-accent-high: #1b5614;
+	--sl-color-accent-low: #dcf2da;
+	--sl-color-accent: #15803d;
+	--sl-color-accent-high: #3bc90c;
 	--sl-color-white: #071a06;
 	--sl-color-gray-1: #071a06;
-	--sl-color-gray-2: #234a1f;
-	--sl-color-gray-3: #41633e;
+	--sl-color-gray-2: #1e461a;
+	--sl-color-gray-3: #2d5a27;
 	--sl-color-gray-4: #8fad8c;
-	--sl-color-gray-5: #234a1f;
-	--sl-color-gray-6: #ffffff;
-	--sl-color-black: #f9fbf9;
+	--sl-color-gray-5: #1e461a;
+	--sl-color-gray-6: #f7fbf6;
+	--sl-color-black: #edf7ec;
 
-	--sl-color-bg: #f9fbf9;
-	--sl-color-bg-nav: #ffffff;
-	--sl-color-bg-sidebar: #f2f7f2;
-	--sl-color-bg-inline-code: #ebf5ea;
+	--sl-color-bg: #edf7ec;
+	--sl-color-bg-nav: #f7fbf6;
+	--sl-color-bg-sidebar: #e5f3e4;
+	--sl-color-bg-inline-code: #dcf2da;
 	--sl-color-text: #071a06;
-	--sl-color-text-accent: #0d3309;
+	--sl-color-text-accent: #15803d;
 	--sl-color-text-invert: #ffffff;
-	--sl-color-hairline: #234a1f;
+	--sl-color-hairline: #1e461a;
 	--sl-color-hairline-light: #234a1f;
 }
 
 /* --------------------------------------------------------------------------
-   3. TEMA: FAUVISMO DARK (Henri Matisse "La Danse" / Azul Índigo & Vermilion)
+   3. TEMA: LE NOIR DARK (Grand Magasin Sisyphe - Alfaiataria & Resina Dourada)
    -------------------------------------------------------------------------- */
 :root[data-palette="dark"],
 .dark:not(.orc-dark) {
-	--theme-shadow: 4px 4px 0px #040714;
-	--theme-shadow-sm: 2px 2px 0px #040714;
-	--theme-border-color: #273463;
-	--theme-card-bg: #12193b;
-	--theme-text-color: #f4ede0;
-	--theme-accent-color: #d9381e;
-	--theme-accent-contrast: #ffffff;
+	--theme-shadow: 4px 4px 0px #000000;
+	--theme-shadow-sm: 2px 2px 0px #000000;
+	--theme-border-color: #27272f;
+	--theme-card-bg: #131317;
+	--theme-text-color: #f4f4f5;
+	--theme-accent-color: #f59e0b;
+	--theme-accent-contrast: #09090b;
 
-	--sl-color-accent-low: #1a234f;
-	--sl-color-accent: #d9381e;
-	--sl-color-accent-high: #ff6b50;
-	--sl-color-white: #f4ede0;
-	--sl-color-gray-1: #f4ede0;
-	--sl-color-gray-2: #c4cced;
-	--sl-color-gray-3: #9ba5cf;
-	--sl-color-gray-4: #3d4f8a;
-	--sl-color-gray-5: #273463;
-	--sl-color-gray-6: #12193b;
-	--sl-color-black: #0a0f24;
+	--sl-color-accent-low: #1c1c22;
+	--sl-color-accent: #f59e0b;
+	--sl-color-accent-high: #fbbf24;
+	--sl-color-white: #f4f4f5;
+	--sl-color-gray-1: #f4f4f5;
+	--sl-color-gray-2: #e4e4e7;
+	--sl-color-gray-3: #a1a1aa;
+	--sl-color-gray-4: #52525b;
+	--sl-color-gray-5: #27272f;
+	--sl-color-gray-6: #131317;
+	--sl-color-black: #09090b;
 
-	--sl-color-bg: #0a0f24;
-	--sl-color-bg-nav: #12193b;
-	--sl-color-bg-sidebar: #0e1432;
-	--sl-color-bg-inline-code: #1a234f;
-	--sl-color-text: #f4ede0;
-	--sl-color-text-accent: #d9381e;
-	--sl-color-text-invert: #ffffff;
-	--sl-color-hairline: #273463;
-	--sl-color-hairline-light: #374885;
+	--sl-color-bg: #09090b;
+	--sl-color-bg-nav: #131317;
+	--sl-color-bg-sidebar: #0e0e11;
+	--sl-color-bg-inline-code: #1c1c22;
+	--sl-color-text: #f4f4f5;
+	--sl-color-text-accent: #f59e0b;
+	--sl-color-text-invert: #09090b;
+	--sl-color-hairline: #27272f;
+	--sl-color-hairline-light: #3f3f46;
 }
 
 /* --------------------------------------------------------------------------
-   4. TEMA: POP ART LIGHT (Andy Warhol The Factory / Silkscreen & Marilyn Pink)
+   4. TEMA: LE ROUGE LIGHT (Grand Magasin Sisyphe - Vitrine Carmesim / Haute Couture)
    -------------------------------------------------------------------------- */
 :root[data-palette="light"],
 .light:not(.orc-light) {
-	--theme-shadow: 4px 4px 0px #18181b;
-	--theme-shadow-sm: 2px 2px 0px #18181b;
-	--theme-border-color: #18181b;
+	--theme-shadow: 4px 4px 0px #700b22;
+	--theme-shadow-sm: 2px 2px 0px #700b22;
+	--theme-border-color: #881337;
 	--theme-card-bg: #ffffff;
-	--theme-text-color: #18181b;
-	--theme-accent-color: #ec4899;
+	--theme-text-color: #4c0519;
+	--theme-accent-color: #dc2626;
 	--theme-accent-contrast: #ffffff;
 
-	--sl-color-accent-low: #fdf2f8;
-	--sl-color-accent: #ec4899;
-	--sl-color-accent-high: #db2777;
-	--sl-color-white: #18181b;
-	--sl-color-gray-1: #18181b;
-	--sl-color-gray-2: #3f3f46;
-	--sl-color-gray-3: #71717a;
-	--sl-color-gray-4: #a1a1aa;
-	--sl-color-gray-5: #18181b;
+	--sl-color-accent-low: #fee2e2;
+	--sl-color-accent: #dc2626;
+	--sl-color-accent-high: #991b1b;
+	--sl-color-white: #4c0519;
+	--sl-color-gray-1: #4c0519;
+	--sl-color-gray-2: #881337;
+	--sl-color-gray-3: #9f1239;
+	--sl-color-gray-4: #fda4af;
+	--sl-color-gray-5: #881337;
 	--sl-color-gray-6: #ffffff;
-	--sl-color-black: #fffdfa;
+	--sl-color-black: #fff1f2;
 
-	--sl-color-bg: #fffdfa;
+	--sl-color-bg: #fff1f2;
 	--sl-color-bg-nav: #ffffff;
-	--sl-color-bg-sidebar: #fdfaf4;
-	--sl-color-bg-inline-code: #fdf2f8;
-	--sl-color-text: #18181b;
-	--sl-color-text-accent: #ec4899;
+	--sl-color-bg-sidebar: #ffe4e6;
+	--sl-color-bg-inline-code: #fee2e2;
+	--sl-color-text: #4c0519;
+	--sl-color-text-accent: #dc2626;
 	--sl-color-text-invert: #ffffff;
-	--sl-color-hairline: #18181b;
-	--sl-color-hairline-light: #18181b;
+	--sl-color-hairline: #881337;
+	--sl-color-hairline-light: #9f1239;
 }
 
 /* ==========================================================================
    TIPOGRAFIA & ESTILIZAÇÃO NEO-BRUTALISTA TÁTIL
    ========================================================================== */
 
-/* Cabeçalhos & Títulos com Fonte Display (Syne) */
+/* Cabeçalhos & Títulos com Fonte Display (Ubuntu Mono Nerd Font) */
 h1,
 h2,
 h3,
@@ -209,7 +209,7 @@ h6,
 	font-family: var(--font-display) !important;
 	font-weight: 800;
 	color: var(--sl-color-white) !important;
-	letter-spacing: -0.02em;
+	letter-spacing: 0;
 }
 
 h1 {

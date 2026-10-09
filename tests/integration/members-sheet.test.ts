@@ -2,37 +2,54 @@ import { describe, expect, it } from "vitest";
 
 import {
 	calculateMemberKnowledgeScore,
+	canMemberChooseOtherTracks,
 	findSheetMember,
 	getSheetMembers,
+	MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
 	parseMembersCsv,
 } from "../../packages/api/src/services/members-sheet";
 
 describe("Members Sheet Service & CSV Parser (Issue #3 & #4)", () => {
-	it("deve carregar e processar membros da planilha oficial de acompanhamentos", () => {
+	it("deve carregar e processar membros da planilha oficial de acompanhamentos com regra de 85%", () => {
+		expect(MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS).toBe(85);
+
 		const members = getSheetMembers();
 		expect(members.length).toBeGreaterThan(0);
 
-		// Eduardo L. possui 90% de progresso em DevOps
+		// Eduardo L. possui 90% de progresso em DevOps (>= 85% -> pode escolher outras trilhas)
 		const eduardoL = members.find((m) => m.name.includes("Eduardo L"));
 		expect(eduardoL).toBeDefined();
 		expect(eduardoL?.progressPercent).toBe(90);
+		expect(eduardoL?.primaryTrack).toBe("DEVOPS");
 		expect(eduardoL?.trackPreferences).toEqual(["DEVOPS"]);
+		expect(canMemberChooseOtherTracks(eduardoL)).toBe(true);
 
-		// Faby possui 50% de progresso em Design (PROTOTIPACAO)
+		// Faby possui 50% de progresso em Design (PROTOTIPACAO) (< 85% -> NÃO pode escolher outras)
 		const faby = members.find((m) => m.name === "Faby");
 		expect(faby).toBeDefined();
 		expect(faby?.progressPercent).toBe(50);
+		expect(faby?.primaryTrack).toBe("PROTOTIPACAO");
 		expect(faby?.trackPreferences).toEqual(["PROTOTIPACAO"]);
+		expect(canMemberChooseOtherTracks(faby)).toBe(false);
 
-		// Membro sem trilha definida na planilha (Ana) recebe todas as trilhas gerais
+		// Carlos possui 0% de progresso em Back-end (< 85% -> NÃO pode escolher outras)
+		const carlos = members.find((m) => m.name === "Carlos");
+		expect(carlos).toBeDefined();
+		expect(carlos?.progressPercent).toBe(0);
+		expect(carlos?.primaryTrack).toBe("BACK");
+		expect(canMemberChooseOtherTracks(carlos)).toBe(false);
+
+		// Membro sem trilha definida na planilha (Ana) recebe todas as trilhas gerais e canChooseOtherTracks = true
 		const ana = members.find((m) => m.name === "Ana");
 		expect(ana).toBeDefined();
+		expect(ana?.primaryTrack).toBeNull();
 		expect(ana?.trackPreferences).toEqual([
 			"BACK",
 			"FRONT",
 			"PROTOTIPACAO",
 			"DEVOPS",
 		]);
+		expect(canMemberChooseOtherTracks(ana)).toBe(true);
 	});
 
 	it("deve mapear corretamente as trilhas e porcentagens ao fazer parse de CSV bruto", () => {

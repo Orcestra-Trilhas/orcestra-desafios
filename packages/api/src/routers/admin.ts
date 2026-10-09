@@ -195,8 +195,8 @@ export const adminRouter = router({
 					});
 				}
 
-				left++;
-				right--;
+				left += 1;
+				right -= 1;
 			}
 
 			// Se a quantidade for ímpar (ex: 3, 5, 7 membros), o membro mediano restante
@@ -209,8 +209,8 @@ export const adminRouter = router({
 				}
 			}
 
-			for (const p of pairsToInsert) {
-				await ctx.db.insert(pair).values(p);
+			if (pairsToInsert.length > 0) {
+				await ctx.db.insert(pair).values(pairsToInsert);
 			}
 
 			await ctx.db.insert(adminLog).values({
@@ -378,14 +378,16 @@ export const adminRouter = router({
 					(id): id is string => Boolean(id)
 				);
 
-				for (const memberId of memberIds) {
-					await ctx.db
-						.update(user)
-						.set({
-							points: sql`${user.points} + ${pointsAwarded}`,
-						})
-						.where(eq(user.id, memberId));
-				}
+				await Promise.all(
+					memberIds.map((memberId) =>
+						ctx.db
+							.update(user)
+							.set({
+								points: sql`${user.points} + ${pointsAwarded}`,
+							})
+							.where(eq(user.id, memberId))
+					)
+				);
 
 				await ctx.db.insert(adminLog).values({
 					action: "APROVOU_SUBMISSAO",

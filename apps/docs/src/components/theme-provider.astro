@@ -13,7 +13,8 @@ export type Props = Record<string, never>;
 				choice === "orc-dark" ||
 				choice === "orc-light" ||
 				choice === "dark" ||
-				choice === "light"
+				choice === "light" ||
+				choice === "custom"
 			) {
 				return choice;
 			}
@@ -24,8 +25,18 @@ export type Props = Record<string, never>;
 		}
 
 		function apply(choice) {
+			let customTheme = null;
+			if (choice === "custom" && typeof localStorage !== "undefined") {
+				try {
+					customTheme = JSON.parse(
+						localStorage.getItem("orc-custom-theme-data") || "null"
+					);
+				} catch {}
+			}
 			const palette = resolvePalette(choice);
-			const isDark = palette === "orc-dark" || palette === "dark";
+			const isDark = customTheme
+				? customTheme.baseMode === "dark"
+				: palette === "orc-dark" || palette === "dark" || palette === "custom";
 			const root = document.documentElement;
 
 			// Set Starlight and astro-mermaid expected theme
@@ -37,12 +48,39 @@ export type Props = Record<string, never>;
 			root.dataset.palette = palette;
 
 			// Update CSS classes for style selectors
-			root.classList.remove("orc-dark", "orc-light", "dark", "light");
+			root.classList.remove(
+				"orc-dark",
+				"orc-light",
+				"dark",
+				"light",
+				"custom"
+			);
 			root.classList.add(palette);
 			if (isDark) {
 				root.classList.add("dark");
 			} else {
 				root.classList.remove("dark");
+			}
+
+			let customStyle = document.getElementById("orc-docs-custom-theme");
+			if (customTheme && palette === "custom") {
+				if (!customStyle) {
+					customStyle = document.createElement("style");
+					customStyle.id = "orc-docs-custom-theme";
+					document.head.appendChild(customStyle);
+				}
+				customStyle.innerHTML = `
+					:root[data-palette="custom"] {
+						--sl-color-accent: ${customTheme.primary} !important;
+						--sl-color-accent-high: ${customTheme.primary} !important;
+						--sl-color-text-accent: ${customTheme.primary} !important;
+						--theme-border-color: ${customTheme.border} !important;
+						--sl-color-bg: ${customTheme.background} !important;
+						--sl-color-bg-nav: ${customTheme.card} !important;
+					}
+				`;
+			} else if (customStyle) {
+				customStyle.remove();
 			}
 		}
 

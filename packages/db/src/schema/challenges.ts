@@ -32,7 +32,11 @@ export const challenge = pgTable(
 			.$onUpdate(() => /* @__PURE__ */ new Date())
 			.notNull(),
 	},
-	(table) => [index("challenge_assessorId_idx").on(table.assessorId)]
+	(table) => [
+		index("challenge_assessorId_idx").on(table.assessorId),
+		index("challenge_active_idx").on(table.active),
+		index("challenge_trackTheme_idx").on(table.trackTheme),
+	]
 );
 
 export const pair = pgTable(
@@ -69,6 +73,8 @@ export const pair = pgTable(
 		index("pair_challengeId_idx").on(table.challengeId),
 		index("pair_member1Id_idx").on(table.member1Id),
 		index("pair_member2Id_idx").on(table.member2Id),
+		index("pair_member3Id_idx").on(table.member3Id),
+		index("pair_status_idx").on(table.status),
 	]
 );
 

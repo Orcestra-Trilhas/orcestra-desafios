@@ -305,21 +305,228 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 			name: "Carlos",
 		});
 		expect(trackCarlos.displayTrack).toBe("Back-end");
+		expect(trackCarlos.primaryTrack).toBe("BACK");
+		expect(trackCarlos.progressPercent).toBe(0);
+		expect(trackCarlos.canChooseOtherTracks).toBe(false);
 		expect(trackCarlos.trackPreferences).toEqual(["BACK"]);
 
 		const trackFaby = await caller.user.getMemberTrackByName({ name: "Faby" });
 		expect(trackFaby.displayTrack).toBe("Design / Protótipo");
+		expect(trackFaby.primaryTrack).toBe("PROTOTIPACAO");
+		expect(trackFaby.progressPercent).toBe(50);
+		expect(trackFaby.canChooseOtherTracks).toBe(false);
 		expect(trackFaby.trackPreferences).toEqual(["PROTOTIPACAO"]);
+
+		const trackEduardo = await caller.user.getMemberTrackByName({
+			name: "Eduardo L.",
+		});
+		expect(trackEduardo.displayTrack).toBe("DevOps");
+		expect(trackEduardo.primaryTrack).toBe("DEVOPS");
+		expect(trackEduardo.progressPercent).toBe(90);
+		expect(trackEduardo.canChooseOtherTracks).toBe(true);
+		expect(trackEduardo.trackPreferences).toEqual(["DEVOPS"]);
 
 		const trackUnknown = await caller.user.getMemberTrackByName({
 			name: "Desconhecido",
 		});
 		expect(trackUnknown.displayTrack).toBe("Geral (Todas as Trilhas)");
+		expect(trackUnknown.primaryTrack).toBeNull();
+		expect(trackUnknown.canChooseOtherTracks).toBe(true);
 		expect(trackUnknown.trackPreferences).toEqual([
 			"BACK",
 			"FRONT",
 			"PROTOTIPACAO",
 			"DEVOPS",
 		]);
+	});
+
+	it("deve bloquear seleção de outras trilhas se progresso da trilha principal for inferior a 85%", async () => {
+		// Cria o usuário Carlos (Back-end, 0% no CSV)
+		const carlosUser = await createTestUser(testDb.db, {
+			email: "carlos.dev@orcestra.com",
+			name: "Carlos",
+			trackPreferences: JSON.stringify(["BACK"]),
+		});
+
+		// Cria uma sessão/caller para o Carlos
+		const carlosCaller = createTestCaller({
+			db: testDb.db,
+			persona: {
+				department: "DIPROJ",
+				email: "carlos.dev@orcestra.com",
+				id: carlosUser.id,
+				name: "Carlos",
+				role: "MEMBER",
+				session: {
+					session: {
+						createdAt: new Date(),
+						expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+						id: "sess_carlos_001",
+						ipAddress: "127.0.0.1",
+						token: "tok_carlos_001",
+						updatedAt: new Date(),
+						userId: carlosUser.id,
+					},
+					user: {
+						createdAt: new Date(),
+						department: "DIPROJ",
+						email: "carlos.dev@orcestra.com",
+						emailVerified: true,
+						id: carlosUser.id,
+						name: "Carlos",
+						points: 0,
+						role: "MEMBER",
+						updatedAt: new Date(),
+						whatsapp: null,
+					},
+				},
+			},
+		});
+
+		const carlosMe = await carlosCaller.user.me();
+		expect(carlosMe.primaryTrack).toBe("BACK");
+		expect(carlosMe.primaryTrackProgress).toBe(0);
+		expect(carlosMe.canChooseOtherTracks).toBe(false);
+		expect(carlosMe.trackPreferencesList).toEqual(["BACK"]);
+
+		// Carlos tenta salvar outras trilhas (ex: DevOps) sem atingir 85% -> deve falhar com BAD_REQUEST
+		await expect(
+			carlosCaller.user.updateProfile({
+				department: "DIPROJ",
+				name: "Carlos",
+				trackPreferences: ["BACK", "DEVOPS"],
+			})
+		).rejects.toThrowError(
+			"Você precisa atingir pelo menos 85% de progresso na sua trilha principal (Back-end) para selecionar outras trilhas."
+		);
+
+		// Carlos salvando apenas sua trilha principal -> deve ter sucesso
+		const successRes = await carlosCaller.user.updateProfile({
+			department: "DIPROJ",
+			name: "Carlos",
+			trackPreferences: ["BACK"],
+		});
+		expect(successRes.success).toBe(true);
+	});
+
+	it("deve permitir seleção de outras trilhas se progresso da trilha principal for >= 85%", async () => {
+		// Cria o usuário Eduardo L. (DevOps, 90% no CSV)
+		const eduUser = await createTestUser(testDb.db, {
+			email: "edul.senior@orcestra.com",
+			name: "Eduardo L.",
+			trackPreferences: JSON.stringify(["DEVOPS"]),
+		});
+
+		const eduCaller = createTestCaller({
+			db: testDb.db,
+			persona: {
+				department: "TOPS",
+				email: "edul.senior@orcestra.com",
+				id: eduUser.id,
+				name: "Eduardo L.",
+				role: "MEMBER",
+				session: {
+					session: {
+						createdAt: new Date(),
+						expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+						id: "sess_edu_001",
+						ipAddress: "127.0.0.1",
+						token: "tok_edu_001",
+						updatedAt: new Date(),
+						userId: eduUser.id,
+					},
+					user: {
+						createdAt: new Date(),
+						department: "TOPS",
+						email: "edul.senior@orcestra.com",
+						emailVerified: true,
+						id: eduUser.id,
+						name: "Eduardo L.",
+						points: 0,
+						role: "MEMBER",
+						updatedAt: new Date(),
+						whatsapp: null,
+					},
+				},
+			},
+		});
+
+		const eduMe = await eduCaller.user.me();
+		expect(eduMe.primaryTrack).toBe("DEVOPS");
+		expect(eduMe.primaryTrackProgress).toBe(90);
+		expect(eduMe.canChooseOtherTracks).toBe(true);
+
+		// Eduardo L. pode adicionar outras trilhas livremente
+		const updateRes = await eduCaller.user.updateProfile({
+			department: "TOPS",
+			name: "Eduardo L.",
+			trackPreferences: ["DEVOPS", "FRONT", "BACK"],
+		});
+		expect(updateRes.success).toBe(true);
+
+		const updatedMe = await eduCaller.user.me();
+		expect(updatedMe.trackPreferencesList).toEqual(["DEVOPS", "FRONT", "BACK"]);
+	});
+
+	it("deve permitir que o usuário crie e atualize seu próprio tema personalizado", async () => {
+		const caller = createTestCaller({
+			db: testDb.db,
+			persona: "member",
+		});
+
+		const customThemePayload = JSON.stringify({
+			background: "#121212",
+			baseMode: "dark",
+			border: "#FF4A1C",
+			card: "#1C1C1C",
+			foreground: "#FFFFFF",
+			name: "MEU TEMA FAUVE",
+			primary: "#FF4A1C",
+		});
+
+		const updateRes = await caller.user.updateCustomTheme({
+			customTheme: customThemePayload,
+		});
+		expect(updateRes.success).toBe(true);
+
+		const me = await caller.user.me();
+		expect(me.customTheme).toBe(customThemePayload);
+
+		const profile = await caller.user.getProfile({ userId: memberPersona.id });
+		expect(profile.customTheme).toBe(customThemePayload);
+	});
+
+	it("deve exibir o tema personalizado de outro usuário ao visitar seu perfil", async () => {
+		// Atualiza o tema do membro
+		const memberCaller = createTestCaller({
+			db: testDb.db,
+			persona: "member",
+		});
+
+		const customThemePayload = JSON.stringify({
+			background: "#08090D",
+			baseMode: "dark",
+			border: "#00F0FF",
+			card: "#12141F",
+			foreground: "#F0F6FC",
+			name: "CYBERPUNK NEON",
+			primary: "#00F0FF",
+		});
+
+		await memberCaller.user.updateCustomTheme({
+			customTheme: customThemePayload,
+		});
+
+		// Assessor visita o perfil do membro
+		const assessorCaller = createTestCaller({
+			db: testDb.db,
+			persona: "assessor",
+		});
+
+		const targetProfile = await assessorCaller.user.getProfile({
+			userId: memberPersona.id,
+		});
+		expect(targetProfile.isOwner).toBe(false);
+		expect(targetProfile.customTheme).toBe(customThemePayload);
 	});
 });

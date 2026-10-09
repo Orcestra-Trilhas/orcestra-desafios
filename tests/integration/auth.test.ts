@@ -109,23 +109,13 @@ describe("Auth & Role-Based Access Control (Caixa-Cinza)", () => {
 		expect(dbChallenge?.pointsReward).toBe(150);
 	});
 
-	it("deve executar ensureDevAdmin garantindo que exista um admin padrão no sistema", async () => {
-		const publicCaller = createTestCaller({
-			db: testDb.db,
-			persona: "unauthenticated",
+	it("deve validar que um usuário com role ADMIN possui privilégios de diretoria", async () => {
+		const adminUser = await testDb.db.query.user.findFirst({
+			where: (u, { eq }) => eq(u.role, "ADMIN"),
 		});
 
-		const result = await publicCaller.user.ensureDevAdmin();
-		expect(result.success).toBe(true);
-
-		// Valida existência do admin no banco
-		const admin = await testDb.db.query.user.findFirst({
-			where: (u, { eq }) => eq(u.email, "admin@orcestra.com"),
-		});
-
-		if (admin) {
-			expect(admin.role).toBe("ADMIN");
-			expect(admin.department).toBe("TOPS");
-		}
+		expect(adminUser).toBeDefined();
+		expect(adminUser?.role).toBe("ADMIN");
+		expect(adminUser?.department).toBe("TOPS");
 	});
 });

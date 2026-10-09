@@ -3,7 +3,12 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { findSheetMember, getSheetMembers } from "../services/members-sheet";
+import {
+	canMemberChooseOtherTracks,
+	findSheetMember,
+	getSheetMembers,
+	MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
+} from "../services/members-sheet";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
@@ -40,54 +45,6 @@ export const userRouter = router({
 			return { success: true };
 		}),
 
-	ensureDevAdmin: publicProcedure.mutation(async ({ ctx }) => {
-		const adminEmail = "admin@orcestra.com";
-		const existing = await ctx.db.query.user.findFirst({
-			where: { email: adminEmail },
-		});
-
-		if (existing) {
-			if (
-				existing.role !== "ADMIN" ||
-				existing.department !== "TOPS" ||
-				!existing.whatsapp
-			) {
-				await ctx.db
-					.update(user)
-					.set({ department: "TOPS", role: "ADMIN", whatsapp: "5511999999999" })
-					.where(eq(user.id, existing.id));
-			}
-			return { message: "Admin já configurado", success: true };
-		}
-
-		if (ctx.auth) {
-			try {
-				const result = await ctx.auth.api.signUpEmail({
-					body: {
-						email: adminEmail,
-						name: "Administrador EJ Orcestra",
-						password: "admin",
-					},
-				});
-
-				if (result?.user?.id) {
-					await ctx.db
-						.update(user)
-						.set({
-							department: "TOPS",
-							role: "ADMIN",
-							whatsapp: "5511999999999",
-						})
-						.where(eq(user.id, result.user.id));
-				}
-			} catch {
-				// Fallback
-			}
-		}
-
-		return { message: "Admin inicial verificado/criado", success: true };
-	}),
-
 	getEligibleMembers: publicProcedure.query(async ({ ctx }) => {
 		const sheetMembers = getSheetMembers();
 		const registeredUsers = await ctx.db.query.user.findMany({
@@ -101,9 +58,12 @@ export const userRouter = router({
 		);
 
 		return sheetMembers.map((m) => ({
+			canChooseOtherTracks: canMemberChooseOtherTracks(m),
 			displayTrack: m.displayTrack,
 			isRegistered: registeredNames.has(m.name.trim().toLowerCase()),
+			minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
 			name: m.name,
+			primaryTrack: m.primaryTrack,
 			progressPercent: m.progressPercent,
 			rawTrack: m.rawTrack,
 			satisfaction: m.satisfaction,
@@ -113,19 +73,25 @@ export const userRouter = router({
 
 	getMemberTrackByName: publicProcedure
 		.input(z.object({ name: z.string() }))
-		.query(async ({ input }) => {
+		.query(({ input }) => {
 			const member = findSheetMember(input.name);
 			if (member) {
 				return {
+					canChooseOtherTracks: canMemberChooseOtherTracks(member),
 					displayTrack: member.displayTrack,
+					minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
 					name: member.name,
+					primaryTrack: member.primaryTrack,
 					progressPercent: member.progressPercent,
 					trackPreferences: member.trackPreferences,
 				};
 			}
 			return {
+				canChooseOtherTracks: true,
 				displayTrack: "Geral (Todas as Trilhas)",
+				minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
 				name: input.name,
+				primaryTrack: null,
 				progressPercent: 0,
 				trackPreferences: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"],
 			};
@@ -187,6 +153,9 @@ export const userRouter = router({
 				},
 			});
 
+			const member = findSheetMember(foundUser.name);
+			const canChooseOtherTracks = canMemberChooseOtherTracks(member);
+
 			let tracks: string[] = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
 			if (foundUser.trackPreferences) {
 				try {
@@ -196,12 +165,22 @@ export const userRouter = router({
 				}
 			}
 
+			if (!canChooseOtherTracks && member?.primaryTrack) {
+				tracks = [member.primaryTrack];
+			}
+
 			return {
 				...foundUser,
 				badges: badges.map((b) => b.badge),
+				canChooseOtherTracks,
 				completedChallenges: pairs.length,
+				customTheme: foundUser.customTheme ?? null,
 				gifts,
 				isOwner: ctx.session.user.id === targetUserId,
+				minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
+				primaryTrack: member?.primaryTrack ?? null,
+				primaryTrackLabel: member?.displayTrack ?? "Geral (Todas as Trilhas)",
+				primaryTrackProgress: member?.progressPercent ?? 0,
 				trackPreferencesList: tracks,
 			};
 		}),
@@ -241,6 +220,9 @@ export const userRouter = router({
 			},
 		});
 
+		const member = findSheetMember(foundUser.name);
+		const canChooseOtherTracks = canMemberChooseOtherTracks(member);
+
 		let tracks: string[] = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
 		if (foundUser.trackPreferences) {
 			try {
@@ -250,9 +232,19 @@ export const userRouter = router({
 			}
 		}
 
+		if (!canChooseOtherTracks && member?.primaryTrack) {
+			tracks = [member.primaryTrack];
+		}
+
 		return {
 			...foundUser,
 			badges: badges.map((b) => b.badge),
+			canChooseOtherTracks,
+			customTheme: foundUser.customTheme ?? null,
+			minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
+			primaryTrack: member?.primaryTrack ?? null,
+			primaryTrackLabel: member?.displayTrack ?? "Geral (Todas as Trilhas)",
+			primaryTrackProgress: member?.progressPercent ?? 0,
 			trackPreferencesList: tracks,
 		};
 	}),
@@ -295,9 +287,28 @@ export const userRouter = router({
 			return { id, success: true };
 		}),
 
+	updateCustomTheme: protectedProcedure
+		.input(
+			z.object({
+				customTheme: z.string().nullable(),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const userId = ctx.session.user.id;
+			await ctx.db
+				.update(user)
+				.set({
+					customTheme: input.customTheme,
+				})
+				.where(eq(user.id, userId));
+
+			return { success: true };
+		}),
+
 	updateProfile: protectedProcedure
 		.input(
 			z.object({
+				customTheme: z.string().optional().nullable(),
 				department: z.enum(["DICOM", "DIBIS", "DIPROJ", "TOPS"]),
 				gifUrl: z.string().optional().nullable(),
 				image: z.string().optional().nullable(),
@@ -309,14 +320,55 @@ export const userRouter = router({
 		.mutation(async ({ ctx, input }) => {
 			const userId = ctx.session.user.id;
 
+			const foundUser = await ctx.db.query.user.findFirst({
+				where: { id: userId },
+			});
+
+			if (!foundUser) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Usuário não encontrado",
+				});
+			}
+
+			// Procura o membro na planilha pelo nome atual ou pelo novo nome
+			const member =
+				findSheetMember(foundUser.name) ?? findSheetMember(input.name);
+			const canChooseOther = canMemberChooseOtherTracks(member);
+
+			if (!canChooseOther && member?.primaryTrack) {
+				const invalidTracks = input.trackPreferences.filter(
+					(t) => t !== member.primaryTrack
+				);
+
+				if (invalidTracks.length > 0) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: `Você precisa atingir pelo menos 85% de progresso na sua trilha principal (${member.displayTrack}) para selecionar outras trilhas. Progresso atual: ${member.progressPercent}%.`,
+					});
+				}
+			}
+
+			let finalTrackPreferences = input.trackPreferences;
+			if (
+				member?.primaryTrack &&
+				!finalTrackPreferences.includes(member.primaryTrack)
+			) {
+				finalTrackPreferences = [member.primaryTrack, ...finalTrackPreferences];
+			}
+
 			await ctx.db
 				.update(user)
 				.set({
+					customTheme:
+						input.customTheme === undefined
+							? foundUser.customTheme
+							: input.customTheme,
 					department: input.department,
 					gifUrl: input.gifUrl || null,
 					image: input.image || null,
 					name: input.name,
-					trackPreferences: JSON.stringify(input.trackPreferences),
+					trackPreferences: JSON.stringify(finalTrackPreferences),
 					whatsapp: input.whatsapp || null,
 				})
 				.where(eq(user.id, userId));

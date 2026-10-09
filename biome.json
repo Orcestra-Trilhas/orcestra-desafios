@@ -25,7 +25,12 @@
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
       "!**/.source",
-      "!**/convex/_generated"
+      "!**/convex/_generated",
+      "!**/coverage",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/.vercel",
+      "!**/env.ts"
     ]
   },
   "formatter": {

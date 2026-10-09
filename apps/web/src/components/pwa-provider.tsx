@@ -12,7 +12,7 @@ import {
 
 interface BeforeInstallPromptEvent extends Event {
 	readonly platforms: string[];
-	prompt(): Promise<void>;
+	prompt: () => Promise<void>;
 	readonly userChoice: Promise<{
 		outcome: "accepted" | "dismissed";
 		platform: string;
@@ -28,7 +28,9 @@ interface PwaContextType {
 
 const PwaContext = createContext<PwaContextType>({
 	canInstall: false,
-	installApp: async () => {},
+	installApp: async () => {
+		// Default no-op
+	},
 	isIos: false,
 	isStandalone: false,
 });
@@ -36,6 +38,8 @@ const PwaContext = createContext<PwaContextType>({
 export function usePwa() {
 	return useContext(PwaContext);
 }
+
+const IOS_USER_AGENT_REGEX = /iPhone|iPad|iPod/;
 
 export function PwaProvider({ children }: { children: React.ReactNode }) {
 	const [deferredPrompt, setDeferredPrompt] =
@@ -57,9 +61,9 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 		setIsStandalone(isStandaloneMode);
 
 		// Detect iOS
-		const userAgent = window.navigator.userAgent;
+		const { userAgent } = window.navigator;
 		const isIosDevice =
-			/iPhone|iPad|iPod/.test(userAgent) &&
+			IOS_USER_AGENT_REGEX.test(userAgent) &&
 			!userAgent.includes("Windows Phone");
 		setIsIos(isIosDevice);
 

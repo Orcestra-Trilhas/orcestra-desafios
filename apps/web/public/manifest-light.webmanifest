@@ -2,13 +2,13 @@
   "name": "orc//desafios",
   "short_name": "orc//desafios",
   "description": "Desafios t\u00e9cnicos em duplas, suporte via WhatsApp e gamifica\u00e7\u00e3o para a Empresa J\u00fanior.",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "scope": "/",
-  "id": "/dashboard",
+  "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFDFA",
-  "theme_color": "#EC4899",
+  "background_color": "#FDFBF9",
+  "theme_color": "#DC2626",
   "icons": [
     {
       "src": "/favicon/web-app-manifest-192x192-light.png",

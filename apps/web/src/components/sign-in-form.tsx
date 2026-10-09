@@ -1,60 +1,85 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
-
 import { PopLogo } from "@/components/pop-elements";
 import { authClient } from "@/lib/auth-client";
-
 import Loader from "./loader";
 
-export default function SignInForm({
-	onSwitchToSignUp,
-}: {
+interface SignInFormProps {
 	onSwitchToSignUp: () => void;
-}) {
+}
+
+export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 	const router = useRouter();
 	const { isPending } = authClient.useSession();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const handleSignIn = async (userEmail = email, userPassword = password) => {
-		if (!(userEmail && userPassword)) {
-			toast.error("Preencha e-mail e senha");
-			return;
-		}
+	const handleSignIn = useCallback(
+		async (userEmail = email, userPassword = password) => {
+			if (!(userEmail && userPassword)) {
+				toast.error("Preencha e-mail e senha");
+				return;
+			}
 
-		setLoading(true);
-		try {
-			await authClient.signIn.email(
-				{
-					email: userEmail,
-					password: userPassword,
-				},
-				{
-					onError: (error) => {
-						toast.error(error.error.message || "E-mail ou senha inválidos");
-						setLoading(false);
+			setLoading(true);
+			try {
+				await authClient.signIn.email(
+					{
+						email: userEmail,
+						password: userPassword,
 					},
-					onSuccess: async () => {
-						toast.success("Login realizado com sucesso!");
-						const sessionResult = await authClient.getSession();
-						const role = (sessionResult.data?.user as { role?: string })?.role;
-						if (role === "ADMIN") {
-							router.push("/admin");
-						} else {
-							router.push("/dashboard");
-						}
-					},
-				}
-			);
-		} catch {
-			toast.error("Erro inesperado ao conectar");
-			setLoading(false);
-		}
-	};
+					{
+						onError: (error) => {
+							toast.error(error.error.message || "E-mail ou senha inválidos");
+							setLoading(false);
+						},
+						onSuccess: async () => {
+							toast.success("Login realizado com sucesso!");
+							const sessionResult = await authClient.getSession();
+							const userData = sessionResult.data?.user as
+								| { role?: string }
+								| undefined;
+							if (userData?.role === "ADMIN") {
+								router.push("/admin");
+							} else {
+								router.push("/dashboard");
+							}
+						},
+					}
+				);
+			} catch {
+				toast.error("Erro inesperado ao conectar");
+				setLoading(false);
+			}
+		},
+		[email, password, router]
+	);
+
+	const handleSubmit = useCallback(
+		(e: React.FormEvent<HTMLFormElement>) => {
+			e.preventDefault();
+			handleSignIn();
+		},
+		[handleSignIn]
+	);
+
+	const handleEmailChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setEmail(e.target.value);
+		},
+		[]
+	);
+
+	const handlePasswordChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setPassword(e.target.value);
+		},
+		[]
+	);
 
 	if (isPending) {
 		return <Loader />;
@@ -77,13 +102,7 @@ export default function SignInForm({
 
 			{/* Form Card */}
 			<div className="rounded-lg border-2 border-black bg-card p-4 shadow-hard sm:p-6 dark:border-white">
-				<form
-					className="space-y-4"
-					onSubmit={(e) => {
-						e.preventDefault();
-						handleSignIn();
-					}}
-				>
+				<form className="space-y-4" onSubmit={handleSubmit}>
 					<div className="space-y-1.5">
 						<label
 							className="font-bold font-display text-xs uppercase tracking-wider"
@@ -94,7 +113,7 @@ export default function SignInForm({
 						<input
 							className="h-11 w-full rounded-md border-2 border-black bg-background px-3 font-medium text-sm transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
 							id="email"
-							onChange={(e) => setEmail(e.target.value)}
+							onChange={handleEmailChange}
 							placeholder="nome@orcestra.com"
 							required
 							type="email"
@@ -112,7 +131,7 @@ export default function SignInForm({
 						<input
 							className="h-11 w-full rounded-md border-2 border-black bg-background px-3 font-medium text-sm transition focus:border-[#FF4A1C] focus:outline-hidden dark:border-white"
 							id="password"
-							onChange={(e) => setPassword(e.target.value)}
+							onChange={handlePasswordChange}
 							placeholder="••••••••"
 							required
 							type="password"

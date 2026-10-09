@@ -15,13 +15,13 @@ const THEME_PWA_MAP: Record<string, PwaThemeConfig> = {
 		appleTouchIcon: "/favicon/apple-touch-icon-dark.png",
 		favicon: "/favicon/favicon-dark.svg",
 		manifest: "/manifest-dark.webmanifest",
-		themeColor: "#D9381E",
+		themeColor: "#09090B",
 	},
 	light: {
 		appleTouchIcon: "/favicon/apple-touch-icon-light.png",
 		favicon: "/favicon/favicon-light.svg",
 		manifest: "/manifest-light.webmanifest",
-		themeColor: "#EC4899",
+		themeColor: "#DC2626",
 	},
 	"orc-dark": {
 		appleTouchIcon: "/favicon/apple-touch-icon-orc-dark.png",

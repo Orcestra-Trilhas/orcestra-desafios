@@ -6,12 +6,14 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@orcestra-desafios/ui/components/dropdown-menu";
-import { Check } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useState } from "react";
+import { useCustomTheme } from "./custom-theme-provider";
 
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
+	const { customTheme, openThemeModal } = useCustomTheme();
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -22,7 +24,14 @@ export function ModeToggle() {
 	const setOrcLight = useCallback(() => setTheme("orc-light"), [setTheme]);
 	const setDark = useCallback(() => setTheme("dark"), [setTheme]);
 	const setLight = useCallback(() => setTheme("light"), [setTheme]);
-	const setSystem = useCallback(() => setTheme("system"), [setTheme]);
+	const setCustom = useCallback(() => setTheme("custom"), [setTheme]);
+	const handleOpenCreator = useCallback(
+		(e: React.MouseEvent) => {
+			e.stopPropagation();
+			openThemeModal();
+		},
+		[openThemeModal]
+	);
 
 	return (
 		<DropdownMenu>
@@ -98,9 +107,9 @@ export function ModeToggle() {
 					<div className="flex items-center gap-2">
 						<span
 							aria-hidden="true"
-							className="inline-block h-3 w-3 rounded-full border border-[#273463] bg-[#D9381E]"
+							className="inline-block h-3 w-3 rounded-full border border-[#EAB308] bg-[#09090B]"
 						/>
-						<span>DARK {"//"} FAUVISM</span>
+						<span>DARK {"//"} LE NOIR</span>
 					</div>
 					{mounted && theme === "dark" ? (
 						<Check className="h-3.5 w-3.5 shrink-0" />
@@ -114,9 +123,9 @@ export function ModeToggle() {
 					<div className="flex items-center gap-2">
 						<span
 							aria-hidden="true"
-							className="inline-block h-3 w-3 rounded-full border border-[#18181B] bg-[#EC4899]"
+							className="inline-block h-3 w-3 rounded-full border border-[#18181B] bg-[#DC2626]"
 						/>
-						<span>LIGHT {"//"} POP ART</span>
+						<span>LIGHT {"//"} LE ROUGE</span>
 					</div>
 					{mounted && theme === "light" ? (
 						<Check className="h-3.5 w-3.5 shrink-0" />
@@ -125,18 +134,42 @@ export function ModeToggle() {
 
 				<DropdownMenuItem
 					className="flex cursor-pointer items-center justify-between font-black font-display text-xs uppercase tracking-wider"
-					onClick={setSystem}
+					onClick={setCustom}
 				>
 					<div className="flex items-center gap-2">
 						<span
 							aria-hidden="true"
-							className="inline-block h-3 w-3 rounded-full border border-black bg-gradient-to-r from-muted to-primary dark:border-white"
+							className="inline-block h-3 w-3 rounded-full border border-black dark:border-white"
+							style={{
+								background: `linear-gradient(135deg, ${customTheme.background} 0%, ${customTheme.primary} 100%)`,
+							}}
 						/>
-						<span>SYSTEM {"//"} AUTO</span>
+						<span className="max-w-[125px] truncate">
+							{customTheme.name || "MEU TEMA"}
+						</span>
 					</div>
-					{mounted && theme === "system" ? (
-						<Check className="h-3.5 w-3.5 shrink-0" />
-					) : null}
+					<div className="flex items-center gap-1.5">
+						<button
+							aria-label="Editar tema personalizado"
+							className="btn-tactile rounded border border-black bg-muted p-1 hover:bg-secondary dark:border-white"
+							onClick={handleOpenCreator}
+							title="Editar tema"
+							type="button"
+						>
+							<Sparkles className="h-3 w-3 text-primary" />
+						</button>
+						{mounted && theme === "custom" ? (
+							<Check className="h-3.5 w-3.5 shrink-0" />
+						) : null}
+					</div>
+				</DropdownMenuItem>
+
+				<DropdownMenuItem
+					className="flex cursor-pointer items-center justify-center gap-1.5 border-black/10 border-t py-2 font-black font-display text-[11px] text-primary uppercase tracking-wider hover:bg-muted dark:border-white/10"
+					onClick={openThemeModal}
+				>
+					<Sparkles className="h-3 w-3" />
+					<span>CRIAR SEU PRÓPRIO TEMA</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

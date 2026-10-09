@@ -31,6 +31,8 @@ export async function createTestDatabase(): Promise<TestDbInstance> {
 	const migrationFolders = [
 		"20261001225032_lowly_maddog",
 		"20261002121630_loose_dreaming_celestial",
+		"20261008185500_add_custom_theme",
+		"20261008210000_add_performance_indexes",
 	];
 
 	const migrationSqlChunks = migrationFolders.map((folder) => {

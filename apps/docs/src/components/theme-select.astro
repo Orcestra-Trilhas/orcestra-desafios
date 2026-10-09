@@ -74,8 +74,8 @@ export type Props = Record<string, never>;
 			data-theme-value="dark"
 		>
 			<div class="item-label">
-				<span class="dot dot-fauvism" aria-hidden="true"></span>
-				<span class="label-text">DARK // FAUVISM</span>
+				<span class="dot dot-noir" aria-hidden="true"></span>
+				<span class="label-text">DARK // LE NOIR</span>
 			</div>
 			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<polyline points="20 6 9 17 4 12"></polyline>
@@ -89,8 +89,8 @@ export type Props = Record<string, never>;
 			data-theme-value="light"
 		>
 			<div class="item-label">
-				<span class="dot dot-popart" aria-hidden="true"></span>
-				<span class="label-text">LIGHT // POP ART</span>
+				<span class="dot dot-rouge" aria-hidden="true"></span>
+				<span class="label-text">LIGHT // LE ROUGE</span>
 			</div>
 			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<polyline points="20 6 9 17 4 12"></polyline>
@@ -101,11 +101,11 @@ export type Props = Record<string, never>;
 			type="button"
 			role="menuitem"
 			class="orc-theme-item"
-			data-theme-value="system"
+			data-theme-value="custom"
 		>
 			<div class="item-label">
-				<span class="dot dot-system" aria-hidden="true"></span>
-				<span class="label-text">SYSTEM // AUTO</span>
+				<span class="dot dot-custom" aria-hidden="true"></span>
+				<span class="label-text">TEMA // PERSONALIZADO</span>
 			</div>
 			<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<polyline points="20 6 9 17 4 12"></polyline>
@@ -181,7 +181,7 @@ export type Props = Record<string, never>;
 		background: transparent;
 		color: var(--sl-color-text, #f0f7ef);
 		cursor: pointer;
-		font-family: var(--font-display, "Syne", sans-serif);
+		font-family: var(--font-display, "UbuntuMono Nerd Font", "Ubuntu Mono", monospace);
 		font-weight: 800;
 		font-size: 0.75rem;
 		text-transform: uppercase;
@@ -227,18 +227,18 @@ export type Props = Record<string, never>;
 		border: 1px solid #234a1f;
 	}
 
-	.dot-fauvism {
-		background-color: #d9381e;
-		border: 1px solid #273463;
+	.dot-noir {
+		background-color: #09090b;
+		border: 1px solid #eab308;
 	}
 
-	.dot-popart {
-		background-color: #ec4899;
+	.dot-rouge {
+		background-color: #dc2626;
 		border: 1px solid #18181b;
 	}
 
-	.dot-system {
-		background: linear-gradient(135deg, #71717a 0%, #3bc90c 100%);
+	.dot-custom {
+		background: linear-gradient(135deg, #ff4a1c 0%, #00f0ff 100%);
 		border: 1px solid var(--theme-border-color, #1e3b1a);
 	}
 

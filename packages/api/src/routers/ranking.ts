@@ -1,3 +1,5 @@
+import { challenge, pair } from "@orcestra-desafios/db";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -13,14 +15,18 @@ export const rankingRouter = router({
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.viewMode === "MEMBERS") {
+				const isDeptFilter =
+					input.category === "DEPARTMENT" && Boolean(input.filterValue);
+
 				const users = await ctx.db.query.user.findMany({
 					orderBy: { points: "desc" },
+					where:
+						isDeptFilter && input.filterValue
+							? { department: input.filterValue }
+							: undefined,
 				});
 
 				const filtered = users.filter((u) => {
-					if (input.category === "DEPARTMENT" && input.filterValue) {
-						return u.department === input.filterValue;
-					}
 					if (input.category === "TRACK" && input.filterValue) {
 						try {
 							const tracks = u.trackPreferences
@@ -109,19 +115,26 @@ export const rankingRouter = router({
 			};
 		}),
 	getSprintThermometer: protectedProcedure.query(async ({ ctx }) => {
-		const allPairs = await ctx.db.query.pair.findMany({
-			with: {
-				challenge: true,
-			},
-		});
+		const activePairsData = await ctx.db
+			.select({
+				status: pair.status,
+			})
+			.from(pair)
+			.innerJoin(challenge, eq(pair.challengeId, challenge.id))
+			.where(eq(challenge.active, true));
 
-		const activePairs = allPairs.filter((p) => p.challenge?.active);
-		const approvedPairs = activePairs.filter((p) => p.status === "APPROVED");
-		const submittedPairs = activePairs.filter((p) => p.status === "SUBMITTED");
+		let completed = 0;
+		let submitted = 0;
 
-		const total = activePairs.length;
-		const completed = approvedPairs.length;
-		const submitted = submittedPairs.length;
+		for (const p of activePairsData) {
+			if (p.status === "APPROVED") {
+				completed += 1;
+			} else if (p.status === "SUBMITTED") {
+				submitted += 1;
+			}
+		}
+
+		const total = activePairsData.length;
 		const percentage =
 			total > 0 ? Math.round(((completed + submitted * 0.5) / total) * 100) : 0;
 

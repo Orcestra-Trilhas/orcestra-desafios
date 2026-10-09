@@ -185,7 +185,7 @@ export default function SignUpForm({
 							</option>
 							{membersList.map((m) => (
 								<option disabled={m.isRegistered} key={m.name} value={m.name}>
-									{m.name} ({m.displayTrack})
+									{m.name} ({m.displayTrack} - {m.progressPercent}% progresso)
 									{m.isRegistered ? " - [Já cadastrado]" : ""}
 								</option>
 							))}
@@ -227,8 +227,9 @@ export default function SignUpForm({
 							</span>
 						</div>
 						<p className="mt-1.5 text-[11px] text-muted-foreground leading-tight">
-							Sua trilha é definida automaticamente pela planilha oficial de
-							acompanhamentos da EJ para garantir pareamento justo.
+							Sua trilha principal é definida pela planilha oficial de
+							acompanhamentos da EJ. A escolha de outras trilhas será liberada
+							no seu perfil após atingir 85% de progresso na trilha principal.
 						</p>
 					</div>
 

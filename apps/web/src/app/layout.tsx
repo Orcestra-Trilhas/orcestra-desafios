@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Syne } from "next/font/google";
+import { Poppins, Ubuntu_Mono } from "next/font/google";
 
 import "../index.css";
 import BottomNav from "@/components/bottom-nav";
@@ -7,16 +7,17 @@ import Header from "@/components/header";
 import Providers from "@/components/providers";
 import PwaRegistration from "@/components/pwa-registration";
 
-const syne = Syne({
+const ubuntuMono = Ubuntu_Mono({
+	fallback: ["UbuntuMono Nerd Font", "Ubuntu Mono Nerd Font", "monospace"],
 	subsets: ["latin"],
 	variable: "--font-display",
-	weight: ["600", "700", "800"],
+	weight: ["400", "700"],
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const poppins = Poppins({
 	subsets: ["latin"],
 	variable: "--font-sans",
-	weight: ["400", "500", "600", "700"],
+	weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -60,9 +61,14 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pt-BR" suppressHydrationWarning>
+		<html
+			className="orc-dark"
+			lang="pt-BR"
+			style={{ colorScheme: "dark" }}
+			suppressHydrationWarning
+		>
 			<body
-				className={`${syne.variable} ${plusJakartaSans.variable} flex min-h-screen flex-col bg-background text-foreground antialiased selection:bg-[#FF4A1C] selection:text-white`}
+				className={`${ubuntuMono.variable} ${poppins.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased selection:bg-[#FF4A1C] selection:text-white`}
 			>
 				<PwaRegistration />
 

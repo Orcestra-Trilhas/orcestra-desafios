@@ -35,16 +35,22 @@ export function PopBadge({
 		| "green"
 		| "purple"
 		| "black"
-		| "neutral";
+		| "neutral"
+		| "admin"
+		| "member";
 	className?: string;
 }) {
 	const colors = {
+		admin:
+			"bg-primary text-primary-foreground border-black dark:border-white font-black",
 		black:
 			"bg-[#18181b] text-white border-black dark:border-white dark:bg-card dark:text-foreground",
 		cobalt:
 			"bg-[#1E40AF] text-white border-black dark:border-white dark:bg-[#2563EB] dark:text-white",
 		green:
 			"bg-[#15803D] text-white border-black dark:border-white dark:bg-[#16A34A] dark:text-white font-bold",
+		member:
+			"bg-secondary text-secondary-foreground border-black dark:border-white font-bold",
 		neutral:
 			"bg-secondary text-secondary-foreground border-black dark:border-white",
 		purple:

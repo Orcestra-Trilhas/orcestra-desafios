@@ -10,4 +10,5 @@ export function createDb(env: DatabaseConfig) {
 }
 
 export type Database = ReturnType<typeof createDb>;
+// biome-ignore lint/performance/noBarrelFile: Package entry point
 export * from "./schema";

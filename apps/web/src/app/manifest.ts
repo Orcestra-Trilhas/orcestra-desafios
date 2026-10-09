@@ -40,7 +40,7 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: "image/png",
 			},
 		],
-		id: "/dashboard",
+		id: "/",
 		name: "orc//desafios",
 		orientation: "portrait",
 		scope: "/",
@@ -83,7 +83,7 @@ export default function manifest(): MetadataRoute.Manifest {
 				url: "/profile",
 			},
 		],
-		start_url: "/dashboard",
+		start_url: "/",
 		theme_color: "#02571E",
 	};
 }

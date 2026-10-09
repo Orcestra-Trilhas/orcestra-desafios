@@ -25,10 +25,10 @@ Definimos quatro esquemas de cores oficiais:
    - Fundo carvão profundo com respiro florestal (`#080f07`), cards em verde escuro aveludado (`#0f1d0d`), bordas em verde musgo (`#1e3b1a`) e acentos vibrantes em verde claro (`#3bc90c`). Proporciona leitura confortável e contraste ideal para IDEs e editores de código.
 2. **Orc'estra Light**:
    - Branco linho limpo (`#f9fbf9`), tipografia nítida em verde floresta escuro (`#071a06`), bordas estruturadas (`#234a1f`) e realces sutis em menta.
-3. **Fauvismo Dark (Noturno)**:
-   - Inspirado na obra *"La Danse"* de Henri Matisse e André Derain. Tela índigo mediterrânea profunda (`#0a0f24`), detalhes em vermilion terracota ardente (`#d9381e`), azul cobalto e amarelo cádmio.
-4. **Pop Art Light (Diurno)**:
-   - Inspirado na serigrafia de Andy Warhol (The Factory). Papel serigráfico marfim claro (`#fffdfa`), preto gráfico com contornos marcados (`#18181b`), magenta Marilyn (`#ec4899`), ciano elétrico (`#06b6d4`) e amarelo banana (`#facc15`).
+3. **Le Noir Dark (Noturno)**:
+   - Inspirado na estética monolítica e litúrgica de *Limbus Company* (Grand Magasin Sisyphe). Fundo em preto obsidiana profundo (`#09090b`), cartões em grafite estruturado (`#131317`), bordas de contenção (`#27272f`) e acentos em Dourado Litúrgico "Golden Resin" (`#f59e0b`).
+4. **Le Rouge Light (Diurno)**:
+   - Inspirado na alta-costura carmesim de *Limbus Company* (Grand Magasin Sisyphe). Mármore marfim suave de vitrine (`#fdfbf9`), traço gráfico de corte em preto alfaiate (`#18181b`), carmesim rubro de alta-costura (`#dc2626`) e toques de "Golden Hide" (`#f59e0b`).
 
 O portal de documentação (`apps/docs`) implementa seletor equivalente com os mesmos 4 esquemas, sincronizando a preferência do usuário via `localStorage`.
 
@@ -49,7 +49,7 @@ O portal de documentação (`apps/docs`) implementa seletor equivalente com os m
 ### Positivas
 - Zero impacto de runtime de JavaScript para renderização de estilos no navegador.
 - Alternância instantânea de temas sem recarregamento de página nem piscadas de tela (*flash of unstyled content*).
-- Consistência estética neo-brutalista tátil (bordas nítidas de 2px, sombras sólidas rígidas `4px 4px 0px` e tipografia display marcante em `Syne`).
+- Consistência estética neo-brutalista tátil (bordas nítidas de 2px, sombras sólidas rígidas `4px 4px 0px` e tipografia display marcante em `Ubuntu Mono Nerd Font` com corpo em `Poppins`).
 
 ### Trade-offs & Mitigações
 - **Sintaxe nova do Tailwind v4**: A versão 4 utiliza a diretiva `@import "tailwindcss";` e definições inline `@theme`. Centralizamos os tokens em `packages/ui/src/styles/globals.css` para manter um ponto único de verdade documentado.

@@ -48,13 +48,13 @@ describe("Theme Logos & Favicon Assets", () => {
 			path.join(faviconDir, "favicon-dark.svg"),
 			"utf-8"
 		);
-		expect(dark).toContain("#D9381E");
+		expect(dark).toContain("#09090B");
 
 		const light = fs.readFileSync(
 			path.join(faviconDir, "favicon-light.svg"),
 			"utf-8"
 		);
-		expect(light).toContain("#EC4899");
+		expect(light).toContain("#DC2626");
 	});
 
 	it("deve conter todos os ícones PNG para PWA e Apple Touch", () => {

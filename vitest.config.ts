@@ -26,6 +26,7 @@ export default defineConfig({
 		},
 		environment: "node",
 		globals: true,
+		hookTimeout: 30_000,
 		include: ["tests/integration/**/*.test.ts"],
 		testTimeout: 20_000,
 	},

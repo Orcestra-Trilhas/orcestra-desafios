@@ -8,26 +8,34 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 
-export const user = pgTable("user", {
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	department: text("department").default("DIPROJ").notNull(),
-	email: text("email").notNull().unique(),
-	emailVerified: boolean("email_verified").default(false).notNull(),
-	gifUrl: text("gif_url"),
-	id: text("id").primaryKey(),
-	image: text("image"),
-	name: text("name").notNull(),
-	points: integer("points").default(0).notNull(),
-	role: text("role").default("MEMBER").notNull(),
-	trackPreferences: text("track_preferences")
-		.default('["BACK","FRONT","PROTOTIPACAO","DEVOPS"]')
-		.notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull(),
-	whatsapp: text("whatsapp"),
-});
+export const user = pgTable(
+	"user",
+	{
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		customTheme: text("custom_theme"),
+		department: text("department").default("DIPROJ").notNull(),
+		email: text("email").notNull().unique(),
+		emailVerified: boolean("email_verified").default(false).notNull(),
+		gifUrl: text("gif_url"),
+		id: text("id").primaryKey(),
+		image: text("image"),
+		name: text("name").notNull(),
+		points: integer("points").default(0).notNull(),
+		role: text("role").default("MEMBER").notNull(),
+		trackPreferences: text("track_preferences")
+			.default('["BACK","FRONT","PROTOTIPACAO","DEVOPS"]')
+			.notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull(),
+		whatsapp: text("whatsapp"),
+	},
+	(table) => [
+		index("user_department_idx").on(table.department),
+		index("user_points_idx").on(table.points),
+	]
+);
 
 export const session = pgTable(
 	"session",

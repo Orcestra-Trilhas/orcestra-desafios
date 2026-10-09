@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { queryClient } from "@/utils/trpc";
 
+import { CustomThemeDialog } from "./custom-theme-dialog";
+import { CustomThemeProvider } from "./custom-theme-provider";
 import { DynamicFavicon } from "./dynamic-favicon";
 import { PwaProvider } from "./pwa-provider";
 import { ThemeProvider } from "./theme-provider";
@@ -16,12 +18,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 			attribute="class"
 			defaultTheme="orc-dark"
 			disableTransitionOnChange
-			enableSystem
-			themes={["orc-dark", "orc-light", "dark", "light"]}
+			enableSystem={false}
+			themes={["orc-dark", "orc-light", "dark", "light", "custom"]}
 		>
-			<DynamicFavicon />
 			<QueryClientProvider client={queryClient}>
-				<PwaProvider>{children}</PwaProvider>
+				<CustomThemeProvider>
+					<DynamicFavicon />
+					<PwaProvider>{children}</PwaProvider>
+					<CustomThemeDialog />
+				</CustomThemeProvider>
 				<ReactQueryDevtools />
 			</QueryClientProvider>
 			<Toaster richColors />

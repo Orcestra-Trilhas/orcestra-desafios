@@ -1,5 +1,6 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import type { Database } from "@orcestra-desafios/db";
+// biome-ignore lint/performance/noNamespaceImport: Better Auth drizzleAdapter requires schema namespace
 import * as schema from "@orcestra-desafios/db/schema/auth";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
@@ -25,6 +26,11 @@ export function createAuth(env: AuthConfig, database: Database) {
 		trustedOrigins: [env.BETTER_AUTH_URL],
 		user: {
 			additionalFields: {
+				customTheme: {
+					input: true,
+					required: false,
+					type: "string",
+				},
 				department: {
 					defaultValue: "DIPROJ",
 					input: true,

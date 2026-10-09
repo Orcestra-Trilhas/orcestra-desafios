@@ -10,17 +10,20 @@ export default function Home() {
 	const { data: session, isPending } = authClient.useSession();
 
 	useEffect(() => {
-		if (!isPending) {
-			if (session?.user) {
-				const role = (session.user as { role?: string })?.role;
-				if (role === "ADMIN") {
-					router.replace("/admin");
-				} else {
-					router.replace("/dashboard");
-				}
-			} else {
-				router.replace("/login");
-			}
+		if (isPending) {
+			return;
+		}
+
+		if (!session?.user) {
+			router.replace("/login");
+			return;
+		}
+
+		const userWithRole = session.user as { role?: string };
+		if (userWithRole.role === "ADMIN") {
+			router.replace("/admin");
+		} else {
+			router.replace("/dashboard");
 		}
 	}, [session, isPending, router]);
 
