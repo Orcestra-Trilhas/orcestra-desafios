@@ -206,6 +206,15 @@ export function getSheetMembers(): SheetMember[] {
 			trackPreferences: ["BACK"],
 		},
 		{
+			displayTrack: "Back-end",
+			name: "Dandan",
+			primaryTrack: "BACK",
+			progressPercent: 0,
+			rawTrack: "Back-end",
+			satisfaction: "Sem avaliações",
+			trackPreferences: ["BACK"],
+		},
+		{
 			displayTrack: "Front-end",
 			name: "DaniProj",
 			primaryTrack: "FRONT",
@@ -268,9 +277,24 @@ export function findSheetMember(name: string): SheetMember | null {
 	const members = getSheetMembers();
 	const target = normalizeName(name);
 
-	// Regra específica para Danis:
-	// "Danielle de Sousa Pinheiro" == DaniProj
-	// Qualquer outra Dani (ex: "Danielle", "Dany", "DanyTops", etc.) == DanyTOps
+	// 1. Regra específica para Daniel Almeida Frota == Dandan (Back-end)
+	const isDanielFrota =
+		target === "dandan" ||
+		target === "daniel almeida frota" ||
+		(target.includes("daniel") && target.includes("frota")) ||
+		(target.includes("daniel") && target.includes("almeida")) ||
+		target === "daniel" ||
+		target.includes("dandan");
+
+	if (isDanielFrota) {
+		const dandan = members.find((m) => normalizeName(m.name) === "dandan");
+		if (dandan) {
+			return dandan;
+		}
+	}
+
+	// 2. Regra específica para Danis:
+	// "Danielle de Sousa Pinheiro" == DaniProj (Front-end)
 	const isDanielleSousaPinheiro =
 		target === "daniproj" ||
 		target === "danielle de sousa pinheiro" ||
@@ -284,20 +308,16 @@ export function findSheetMember(name: string): SheetMember | null {
 		}
 	}
 
-	// Se for Dandan específico, deixa para a correspondência normal
-	if (target !== "dandan") {
-		const isOtherDani =
-			target === "danytops" ||
-			target.includes("dany") ||
-			target.startsWith("dani");
+	// 3. Qualquer outra Dani (ex: "Danielle", "Dany", "DanyTops", etc.) == DanyTOps (Back-end)
+	const isOtherDani =
+		target === "danytops" ||
+		target.includes("dany") ||
+		target.startsWith("dani");
 
-		if (isOtherDani) {
-			const danyTops = members.find(
-				(m) => normalizeName(m.name) === "danytops"
-			);
-			if (danyTops) {
-				return danyTops;
-			}
+	if (isOtherDani) {
+		const danyTops = members.find((m) => normalizeName(m.name) === "danytops");
+		if (danyTops) {
+			return danyTops;
 		}
 	}
 

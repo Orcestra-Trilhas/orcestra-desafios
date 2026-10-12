@@ -286,6 +286,12 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 			name: "Danielle de Sousa Pinheiro",
 		});
 
+		// Cadastra usuário Daniel Almeida Frota (que mapeia para Dandan)
+		await createTestUser(testDb.db, {
+			email: "daniel.frota@orcestra.com",
+			name: "Daniel Almeida Frota",
+		});
+
 		const eligible = await caller.user.getEligibleMembers();
 		expect(eligible.length).toBeGreaterThan(0);
 
@@ -299,6 +305,11 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 		const daniProj = eligible.find((m) => m.name === "DaniProj");
 		expect(daniProj).toBeDefined();
 		expect(daniProj?.isRegistered).toBe(true);
+
+		// Dandan deve estar marcado como cadastrado através de Daniel Almeida Frota
+		const dandan = eligible.find((m) => m.name === "Dandan");
+		expect(dandan).toBeDefined();
+		expect(dandan?.isRegistered).toBe(true);
 
 		// DanyTOps NÃO está cadastrada ainda
 		const danyTops = eligible.find((m) => m.name === "DanyTOps");
@@ -316,6 +327,12 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 			db: testDb.db,
 			persona: "member",
 		});
+
+		const trackDaniel = await caller.user.getMemberTrackByName({
+			name: "Daniel Almeida Frota",
+		});
+		expect(trackDaniel.displayTrack).toBe("Back-end");
+		expect(trackDaniel.primaryTrack).toBe("BACK");
 
 		const trackCarlos = await caller.user.getMemberTrackByName({
 			name: "Carlos",
