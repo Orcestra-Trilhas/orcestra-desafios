@@ -17,13 +17,10 @@ export const TRACKS = [
 ] as const;
 
 const TRACK_ACTIVE_STYLES: Record<string, string> = {
-	BACK: "border-black bg-[#1E40AF] text-white shadow-hard-sm dark:border-white dark:bg-[#2563EB]",
-	DEVOPS:
-		"border-black bg-[#FACC15] text-[#121212] shadow-hard-sm dark:border-white dark:bg-[#F59E0B]",
-	FRONT:
-		"border-black bg-[#EA580C] text-white shadow-hard-sm dark:border-white dark:bg-[#EA580C]",
-	PROTOTIPACAO:
-		"border-black bg-[#15803D] text-white shadow-hard-sm dark:border-white dark:bg-[#16A34A]",
+	BACK: "border-border bg-[#1E40AF] text-white shadow-hard-sm",
+	DEVOPS: "border-border bg-[#FACC15] text-[#121212] shadow-hard-sm",
+	FRONT: "border-border bg-[#EA580C] text-white shadow-hard-sm",
+	PROTOTIPACAO: "border-border bg-[#15803D] text-white shadow-hard-sm",
 };
 
 interface FilterPillProps {
@@ -50,8 +47,8 @@ const FilterPill = memo(function FilterPillRender({
 			className={`btn-tactile rounded-md border-2 px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:px-3 sm:text-xs ${
 				isSelected
 					? (activeStyle ??
-						"border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white")
-					: "border-black/30 bg-card text-muted-foreground hover:border-black dark:border-white/30 dark:hover:text-foreground"
+						"border-border bg-primary text-primary-foreground shadow-hard-sm")
+					: "border-border/30 bg-card text-muted-foreground hover:border-border hover:text-foreground"
 			}`}
 			onClick={handleClick}
 			type="button"
@@ -105,11 +102,11 @@ export const RankingFilters = memo(function RankingFiltersRender({
 		<div className="space-y-3">
 			<div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
 				{/* Category Tabs */}
-				<div className="flex items-center gap-1 overflow-x-auto rounded-md border-2 border-black bg-secondary p-1 dark:border-white">
+				<div className="flex items-center gap-1 overflow-x-auto rounded-md border-2 border-border bg-secondary p-1">
 					<button
 						className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 							filterType === "ALL"
-								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
+								? "border-2 border-border bg-primary text-primary-foreground shadow-hard-sm"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSelectAll}
@@ -121,7 +118,7 @@ export const RankingFilters = memo(function RankingFiltersRender({
 					<button
 						className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 							filterType === "DEPARTMENT"
-								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
+								? "border-2 border-border bg-primary text-primary-foreground shadow-hard-sm"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSelectDept}
@@ -133,7 +130,7 @@ export const RankingFilters = memo(function RankingFiltersRender({
 					<button
 						className={`btn-tactile shrink-0 rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 							filterType === "TRACK"
-								? "border-2 border-black bg-primary text-primary-foreground shadow-hard-sm dark:border-white"
+								? "border-2 border-border bg-primary text-primary-foreground shadow-hard-sm"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSelectTrack}
@@ -144,11 +141,11 @@ export const RankingFilters = memo(function RankingFiltersRender({
 				</div>
 
 				{/* View Mode Toggle */}
-				<div className="flex items-center gap-1 self-start rounded-md border-2 border-black bg-secondary p-1 sm:self-auto dark:border-white">
+				<div className="flex items-center gap-1 self-start rounded-md border-2 border-border bg-secondary p-1 sm:self-auto">
 					<button
 						className={`btn-tactile rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 							viewMode === "PAIRS"
-								? "border-2 border-black bg-foreground text-background shadow-hard-sm dark:border-white"
+								? "border-2 border-border bg-primary text-primary-foreground shadow-hard-sm"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSelectPairs}
@@ -160,7 +157,7 @@ export const RankingFilters = memo(function RankingFiltersRender({
 					<button
 						className={`btn-tactile rounded px-2.5 py-1 font-black font-display text-[11px] uppercase transition sm:text-xs ${
 							viewMode === "MEMBERS"
-								? "border-2 border-black bg-foreground text-background shadow-hard-sm dark:border-white"
+								? "border-2 border-border bg-primary text-primary-foreground shadow-hard-sm"
 								: "text-muted-foreground hover:text-foreground"
 						}`}
 						onClick={handleSelectMembers}
@@ -176,7 +173,7 @@ export const RankingFilters = memo(function RankingFiltersRender({
 				<div className="flex flex-wrap items-center gap-1.5 pt-1 sm:gap-2">
 					{DEPARTMENTS.map((dept) => (
 						<FilterPill
-							activeStyle="border-black bg-[#1E40AF] text-white shadow-hard-sm dark:border-white dark:bg-[#2563EB]"
+							activeStyle="border-border bg-primary text-primary-foreground shadow-hard-sm"
 							id={dept.id}
 							isSelected={filterValue === dept.id}
 							key={dept.id}

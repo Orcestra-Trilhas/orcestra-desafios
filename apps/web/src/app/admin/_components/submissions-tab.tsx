@@ -29,10 +29,13 @@ const SubmissionItem = memo(function SubmissionItemRender({
 	);
 
 	return (
-		<div className="flex flex-col justify-between gap-3 rounded-md border-2 border-black bg-card p-3.5 shadow-hard-sm sm:flex-row sm:items-center sm:p-4 dark:border-white">
+		<div className="flex flex-col justify-between gap-3 rounded-md border-2 border-border bg-card p-3.5 shadow-hard-sm sm:flex-row sm:items-center sm:p-4">
 			<div className="min-w-0 flex-1 space-y-1.5">
-				<div className="flex flex-wrap items-center gap-2">
-					<span className="font-black font-display text-sm uppercase sm:text-base">
+				<div className="flex min-w-0 items-center gap-2">
+					<span
+						className="min-w-0 truncate font-black font-display text-sm uppercase sm:text-base"
+						title={sub.challenge?.title}
+					>
 						{sub.challenge?.title}
 					</span>
 					<PopStamp
@@ -46,16 +49,21 @@ const SubmissionItem = memo(function SubmissionItemRender({
 					/>
 				</div>
 
-				<div className="flex flex-wrap items-center gap-1.5 font-mono text-muted-foreground text-xs uppercase sm:gap-2">
-					<span>DUPLA: {members.map((m) => m.name).join(" & ")}</span>
-					<span>{"//"}</span>
-					<span>TIPO: {sub.submissionType ?? "PR"}</span>
+				<div className="flex min-w-0 max-w-full items-center gap-1.5 font-mono text-muted-foreground text-xs uppercase sm:gap-2">
+					<span
+						className="min-w-0 max-w-[260px] truncate sm:max-w-[380px]"
+						title={`DUPLA: ${members.map((m) => m.name).join(" & ")}`}
+					>
+						DUPLA: {members.map((m) => m.name).join(" & ")}
+					</span>
+					<span className="shrink-0">{"//"}</span>
+					<span className="shrink-0">TIPO: {sub.submissionType ?? "PR"}</span>
 				</div>
 
 				<div className="flex flex-wrap items-center gap-2 pt-0.5">
 					{sub.prUrl ? (
 						<a
-							className="inline-flex items-center gap-1 font-bold font-mono text-[#1E40AF] text-xs hover:underline dark:text-blue-400"
+							className="inline-flex items-center gap-1 font-bold font-mono text-primary text-xs hover:underline"
 							href={sub.prUrl}
 							rel="noopener noreferrer"
 							target="_blank"
@@ -79,7 +87,7 @@ const SubmissionItem = memo(function SubmissionItemRender({
 			</div>
 
 			<button
-				className="btn-tactile w-full self-stretch rounded-md border-2 border-black bg-primary px-4 py-2 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 sm:w-auto sm:self-auto dark:border-white"
+				className="btn-tactile w-full self-stretch rounded-md border-2 border-border bg-primary px-4 py-2 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 sm:w-auto sm:self-auto"
 				onClick={handleAssessClick}
 				type="button"
 			>
@@ -100,7 +108,7 @@ export const SubmissionsTab = memo(function SubmissionsTabRender({
 
 	if (submissions.length === 0) {
 		return (
-			<div className="rounded-md border-2 border-black border-dashed bg-card p-8 text-center dark:border-white">
+			<div className="rounded-md border-2 border-border border-dashed bg-card p-8 text-center">
 				<p className="font-black font-display text-muted-foreground text-xs uppercase">
 					Nenhuma submissão pendente na fila no momento.
 				</p>

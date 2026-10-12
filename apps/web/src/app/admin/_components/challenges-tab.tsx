@@ -44,16 +44,22 @@ const ChallengeItem = memo(function ChallengeItemRender({
 	}, [onDelete, ch]);
 
 	return (
-		<div className="space-y-3 rounded-md border-2 border-black bg-card p-3.5 shadow-hard-sm sm:p-5 dark:border-white">
-			<div className="flex flex-col justify-between gap-3 border-black/10 border-b-2 pb-3 sm:flex-row sm:items-center dark:border-white/10">
-				<div className="min-w-0">
-					<div className="flex items-center gap-2">
+		<div className="space-y-3 rounded-md border-2 border-border bg-card p-3.5 shadow-hard-sm sm:p-5">
+			<div className="flex flex-col justify-between gap-3 border-border/10 border-b-2 pb-3 sm:flex-row sm:items-center">
+				<div className="min-w-0 flex-1">
+					<div className="flex min-w-0 items-center gap-2">
 						<PopTrackBadge track={ch.trackTheme} />
-						<h3 className="truncate font-black font-display text-base uppercase sm:text-lg">
+						<h3
+							className="min-w-0 flex-1 truncate font-black font-display text-sm uppercase sm:text-base"
+							title={ch.title}
+						>
 							{ch.title}
 						</h3>
 					</div>
-					<p className="mt-1 font-mono text-muted-foreground text-xs uppercase">
+					<p
+						className="mt-1 max-w-full truncate font-mono text-muted-foreground text-xs uppercase"
+						title={`ASSESSOR: ${ch.assessor?.name ?? "—"} // PRAZO: ${new Date(ch.deadline).toLocaleDateString("pt-BR")}`}
+					>
 						ASSESSOR: {ch.assessor?.name} {"//"} PRAZO:{" "}
 						{new Date(ch.deadline).toLocaleDateString("pt-BR")}
 					</p>
@@ -63,8 +69,8 @@ const ChallengeItem = memo(function ChallengeItemRender({
 					<button
 						className={`btn-tactile flex-1 rounded-md border-2 px-3 py-1 font-black font-display text-xs uppercase sm:flex-initial ${
 							ch.active
-								? "border-black bg-[#15803D] text-white dark:border-white"
-								: "border-black/30 bg-muted text-muted-foreground dark:border-white/30"
+								? "border-border bg-[#15803D] text-white"
+								: "border-border/30 bg-muted text-muted-foreground"
 						}`}
 						onClick={handleToggle}
 						type="button"
@@ -73,7 +79,7 @@ const ChallengeItem = memo(function ChallengeItemRender({
 					</button>
 
 					<button
-						className="btn-tactile flex-1 rounded-md border-2 border-black bg-primary px-3.5 py-1 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 disabled:opacity-50 sm:flex-initial dark:border-white"
+						className="btn-tactile flex-1 rounded-md border-2 border-border bg-primary px-3.5 py-1 text-center font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm hover:opacity-90 disabled:opacity-50 sm:flex-initial"
 						disabled={isDrawing}
 						onClick={handleDraw}
 						type="button"
@@ -83,7 +89,7 @@ const ChallengeItem = memo(function ChallengeItemRender({
 
 					<button
 						aria-label={`Excluir desafio ${ch.title}`}
-						className="btn-tactile flex items-center justify-center gap-1 rounded-md border-2 border-black bg-[#DC2626] px-2.5 py-1 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#B91C1C] sm:flex-initial dark:border-white"
+						className="btn-tactile flex items-center justify-center gap-1 rounded-md border-2 border-border bg-[#DC2626] px-2.5 py-1 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:bg-[#B91C1C] sm:flex-initial"
 						onClick={handleDelete}
 						title="Excluir Desafio"
 						type="button"
@@ -97,7 +103,7 @@ const ChallengeItem = memo(function ChallengeItemRender({
 			<div className="flex items-center justify-between font-mono text-muted-foreground text-xs uppercase">
 				<span>{pairsCount} DUPLAS / TRIOS ALOCADOS</span>
 				<Link
-					className="font-bold text-foreground hover:underline"
+					className="font-bold text-foreground hover:text-primary hover:underline"
 					href={`/challenges/${ch.id}`}
 				>
 					VER DETALHES &rarr;
@@ -116,7 +122,7 @@ export const ChallengesTab = memo(function ChallengesTabRender({
 }: ChallengesTabProps) {
 	if (challenges.length === 0) {
 		return (
-			<div className="rounded-md border-2 border-black border-dashed bg-card p-8 text-center dark:border-white">
+			<div className="rounded-md border-2 border-border border-dashed bg-card p-8 text-center">
 				<p className="font-black font-display text-muted-foreground text-xs uppercase">
 					Nenhum desafio cadastrado até o momento.
 				</p>

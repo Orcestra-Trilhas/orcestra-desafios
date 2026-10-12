@@ -130,22 +130,23 @@ function getPairStatusConfig(status: string) {
 
 function MemberItem({ member }: { member: ChallengePairMember }) {
 	return (
-		<div className="flex items-center justify-between gap-2 rounded-md border border-black/20 bg-background/80 p-2.5 dark:border-white/20">
-			<div className="flex min-w-0 items-center gap-2">
-				<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-black bg-primary/20 font-black font-display text-[11px] uppercase dark:border-white">
+		<div className="flex min-w-0 items-center justify-between gap-2 overflow-hidden rounded-md border border-border bg-background/80 p-2.5">
+			<div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+				<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-primary/20 font-black font-display text-[11px] uppercase">
 					{member.name.charAt(0)}
 				</div>
-				<div className="min-w-0">
-					<div className="flex items-center gap-1.5">
-						{member.department ? (
-							<span className="rounded bg-muted px-1.5 py-0.2 font-mono text-[9px] text-muted-foreground">
+				<div className="min-w-0 flex-1 overflow-hidden">
+					{member.department ? (
+						<div className="flex items-center gap-1.5">
+							<span className="truncate rounded bg-muted px-1.5 py-0.2 font-mono text-[9px] text-muted-foreground">
 								{member.department}
 							</span>
-						) : null}
-					</div>
+						</div>
+					) : null}
 					<Link
-						className="truncate font-black font-display text-xs uppercase hover:text-[#FF4A1C] hover:underline"
+						className="block truncate font-black font-display text-xs uppercase hover:text-primary hover:underline"
 						href={`/profile?id=${member.id}`}
+						title={member.name}
 					>
 						{member.name}
 					</Link>
