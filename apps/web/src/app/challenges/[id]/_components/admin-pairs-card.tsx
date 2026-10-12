@@ -9,7 +9,9 @@ import {
 	MessageSquare,
 	RefreshCw,
 	Sparkles,
+	Trash2,
 	UserCheck,
+	UserPlus,
 	Users,
 } from "lucide-react";
 import Image from "next/image";
@@ -21,8 +23,12 @@ import type { ChallengePairItem, ChallengePairMember } from "./types";
 
 export interface AdminPairsCardProps {
 	challengeTitle?: string;
+	deletingPairId?: string | null;
 	isDrawing: boolean;
+	onDeletePair: (pairId: string) => void;
 	onDrawPairs: () => void;
+	onOpenAllocateModal: () => void;
+	onOpenClearModal: () => void;
 	onReviewPair: (pair: ChallengePairItem) => void;
 	pairs: ChallengePairItem[];
 }
@@ -254,10 +260,14 @@ function PairCard({
 	pair,
 	index,
 	onReviewPair,
+	onDeletePair,
+	isDeleting,
 }: {
 	pair: ChallengePairItem;
 	index: number;
 	onReviewPair: (pair: ChallengePairItem) => void;
+	onDeletePair: (pairId: string) => void;
+	isDeleting: boolean;
 }) {
 	const config = getPairStatusConfig(pair.status);
 	const StatusIcon = config.icon;
@@ -266,6 +276,10 @@ function PairCard({
 	const handleReview = useCallback(() => {
 		onReviewPair(pair);
 	}, [onReviewPair, pair]);
+
+	const handleDelete = useCallback(() => {
+		onDeletePair(pair.id);
+	}, [onDeletePair, pair.id]);
 
 	return (
 		<div
@@ -282,7 +296,7 @@ function PairCard({
 						</h4>
 					</div>
 
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-1.5 sm:gap-2">
 						<div
 							className={`flex items-center gap-1 rounded px-2 py-0.5 font-bold font-mono text-[10px] uppercase ${config.bg} ${config.textColor}`}
 						>
@@ -292,6 +306,15 @@ function PairCard({
 						<span className="rounded border border-black/30 bg-muted px-2 py-0.5 font-bold font-mono text-[10px] uppercase dark:border-white/30">
 							ETAPA {pair.currentStep}/3
 						</span>
+						<button
+							className="btn-tactile flex h-6 w-6 items-center justify-center rounded border border-black/30 bg-secondary text-muted-foreground hover:bg-[#DC2626] hover:text-white disabled:opacity-50 dark:border-white/30"
+							disabled={isDeleting}
+							onClick={handleDelete}
+							title="Remover esta dupla"
+							type="button"
+						>
+							<Trash2 className="h-3 w-3" />
+						</button>
 					</div>
 				</div>
 
@@ -398,6 +421,10 @@ export function AdminPairsCard({
 	pairs,
 	onReviewPair,
 	onDrawPairs,
+	onOpenAllocateModal,
+	onOpenClearModal,
+	onDeletePair,
+	deletingPairId,
 	isDrawing,
 	challengeTitle: _challengeTitle,
 }: AdminPairsCardProps) {
@@ -419,17 +446,39 @@ export function AdminPairsCard({
 					</div>
 				</div>
 
-				<button
-					className="btn-tactile flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FFD700] px-3.5 py-1.5 font-bold font-mono text-black text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
-					disabled={isDrawing}
-					onClick={onDrawPairs}
-					type="button"
-				>
-					<RefreshCw
-						className={`h-3.5 w-3.5 ${isDrawing ? "animate-spin" : ""}`}
-					/>
-					<span>{isDrawing ? "SORTEANDO..." : "SORTEAR DUPLAS"}</span>
-				</button>
+				<div className="flex flex-wrap items-center gap-2">
+					<button
+						className="btn-tactile flex items-center gap-1.5 rounded-md border-2 border-black bg-secondary px-3 py-1.5 font-bold font-mono text-foreground text-xs uppercase shadow-hard-xs hover:bg-muted dark:border-white"
+						onClick={onOpenAllocateModal}
+						type="button"
+					>
+						<UserPlus className="h-3.5 w-3.5 text-primary" />
+						<span>ALOCAR MANUAL</span>
+					</button>
+
+					<button
+						className="btn-tactile flex items-center gap-1.5 rounded-md border-2 border-black bg-[#FFD700] px-3.5 py-1.5 font-bold font-mono text-black text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
+						disabled={isDrawing}
+						onClick={onDrawPairs}
+						type="button"
+					>
+						<RefreshCw
+							className={`h-3.5 w-3.5 ${isDrawing ? "animate-spin" : ""}`}
+						/>
+						<span>{isDrawing ? "SORTEANDO..." : "SORTEAR DUPLAS"}</span>
+					</button>
+
+					{pairs.length > 0 ? (
+						<button
+							className="btn-tactile flex items-center gap-1.5 rounded-md border-2 border-black bg-[#DC2626] px-3 py-1.5 font-bold font-mono text-white text-xs uppercase shadow-hard-xs hover:bg-[#B91C1C] dark:border-white"
+							onClick={onOpenClearModal}
+							type="button"
+						>
+							<Trash2 className="h-3.5 w-3.5" />
+							<span>DESORTEAR</span>
+						</button>
+					) : null}
+				</div>
 			</div>
 
 			{pairs.length > 0 ? (
@@ -440,7 +489,9 @@ export function AdminPairsCard({
 						{pairs.map((pair, idx) => (
 							<PairCard
 								index={idx}
+								isDeleting={deletingPairId === pair.id}
 								key={pair.id}
+								onDeletePair={onDeletePair}
 								onReviewPair={onReviewPair}
 								pair={pair}
 							/>
@@ -461,7 +512,7 @@ export function AdminPairsCard({
 							alocados em duplas.
 						</p>
 					</div>
-					<div className="mt-5">
+					<div className="mt-5 flex flex-wrap items-center justify-center gap-3">
 						<button
 							className="btn-tactile inline-flex items-center gap-2 rounded-md border-2 border-black bg-[#FF4A1C] px-4 py-2 font-black font-display text-white text-xs uppercase shadow-hard-sm hover:opacity-90 dark:border-white"
 							disabled={isDrawing}
@@ -474,6 +525,14 @@ export function AdminPairsCard({
 							<span>
 								{isDrawing ? "SORTEANDO DUPLAS..." : "SORTEAR DUPLAS AGORA"}
 							</span>
+						</button>
+						<button
+							className="btn-tactile inline-flex items-center gap-2 rounded-md border-2 border-black bg-secondary px-4 py-2 font-black font-display text-foreground text-xs uppercase shadow-hard-sm hover:bg-muted dark:border-white"
+							onClick={onOpenAllocateModal}
+							type="button"
+						>
+							<UserPlus className="h-3.5 w-3.5 text-primary" />
+							<span>ALOCAR DUPLA MANUALMENTE</span>
 						</button>
 					</div>
 				</div>

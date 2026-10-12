@@ -7,21 +7,146 @@ import { calculateMemberKnowledgeScore } from "../services/members-sheet";
 import { adminProcedure, router } from "../trpc";
 
 export const adminRouter = router({
+	allocatePair: adminProcedure
+		.input(
+			z.object({
+				challengeId: z.string(),
+				member1Id: z.string(),
+				member2Id: z.string(),
+				member3Id: z.string().optional().nullable(),
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (input.member1Id === input.member2Id) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "O Membro 1 e o Membro 2 não podem ser a mesma pessoa.",
+				});
+			}
+			if (
+				input.member3Id &&
+				(input.member3Id === input.member1Id ||
+					input.member3Id === input.member2Id)
+			) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "O Membro 3 não pode ser repetido.",
+				});
+			}
+
+			const ch = await ctx.db.query.challenge.findFirst({
+				where: { id: input.challengeId },
+				with: { pairs: true },
+			});
+
+			if (!ch) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Desafio não encontrado",
+				});
+			}
+
+			// Verifica se algum dos membros já está alocado em uma dupla deste desafio
+			const selectedIds = new Set(
+				[input.member1Id, input.member2Id, input.member3Id].filter(
+					Boolean
+				) as string[]
+			);
+
+			for (const p of ch.pairs) {
+				if (
+					selectedIds.has(p.member1Id) ||
+					selectedIds.has(p.member2Id) ||
+					(p.member3Id && selectedIds.has(p.member3Id))
+				) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message:
+							"Um ou mais membros selecionados já estão alocados em outra dupla deste desafio.",
+					});
+				}
+			}
+
+			const newPairId = crypto.randomUUID();
+			const [newPair] = await ctx.db
+				.insert(pair)
+				.values({
+					challengeId: ch.id,
+					currentStep: 1,
+					id: newPairId,
+					member1Id: input.member1Id,
+					member2Id: input.member2Id,
+					member3Id: input.member3Id || null,
+					status: "IN_PROGRESS",
+				})
+				.returning();
+
+			await ctx.db.insert(adminLog).values({
+				action: "ALOCOU_DUPLA_MANUAL",
+				actorId: ctx.session.user.id,
+				details: {
+					challengeId: ch.id,
+					member1Id: input.member1Id,
+					member2Id: input.member2Id,
+					member3Id: input.member3Id || null,
+					pairId: newPairId,
+				},
+				id: crypto.randomUUID(),
+			});
+
+			return {
+				pair: newPair ?? { id: newPairId },
+				success: true,
+			};
+		}),
+
+	clearPairs: adminProcedure
+		.input(z.object({ challengeId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const ch = await ctx.db.query.challenge.findFirst({
+				where: { id: input.challengeId },
+				with: { pairs: true },
+			});
+
+			if (!ch) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Desafio não encontrado",
+				});
+			}
+
+			const deleted = await ctx.db
+				.delete(pair)
+				.where(eq(pair.challengeId, input.challengeId))
+				.returning();
+
+			await ctx.db.insert(adminLog).values({
+				action: "DESORTEOU_DUPLAS",
+				actorId: ctx.session.user.id,
+				details: {
+					challengeId: input.challengeId,
+					clearedPairsCount: deleted.length,
+					title: ch.title,
+				},
+				id: crypto.randomUUID(),
+			});
+
+			return {
+				clearedCount: deleted.length,
+				success: true,
+			};
+		}),
 	createChallenge: adminProcedure
 		.input(
 			z.object({
 				assessorId: z.string(),
-				deadline: z.string(),
-				description: z
-					.string()
-					.min(10, "Descrição deve ter pelo menos 10 caracteres"),
+				deadline: z.string(), // ISO String
+				description: z.string(),
 				enrollmentDeadline: z.string().optional().nullable(),
 				mkdocsUrl: z.string().optional().nullable(),
 				pointsReward: z.number().default(100),
-				rulesMarkdown: z
-					.string()
-					.min(10, "Regras devem ter pelo menos 10 caracteres"),
-				title: z.string().min(3, "Título deve ter pelo menos 3 caracteres"),
+				rulesMarkdown: z.string(),
+				title: z.string(),
 				trackTheme: z.string(),
 			})
 		)
@@ -37,7 +162,7 @@ export const adminRouter = router({
 					? new Date(input.enrollmentDeadline)
 					: null,
 				id,
-				mkdocsUrl: input.mkdocsUrl || null,
+				mkdocsUrl: input.mkdocsUrl,
 				pointsReward: input.pointsReward,
 				rulesMarkdown: input.rulesMarkdown,
 				title: input.title,
@@ -97,6 +222,35 @@ export const adminRouter = router({
 			return { success: true };
 		}),
 
+	deletePair: adminProcedure
+		.input(z.object({ pairId: z.string() }))
+		.mutation(async ({ ctx, input }) => {
+			const p = await ctx.db.query.pair.findFirst({
+				where: { id: input.pairId },
+			});
+
+			if (!p) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Dupla não encontrada",
+				});
+			}
+
+			await ctx.db.delete(pair).where(eq(pair.id, input.pairId));
+
+			await ctx.db.insert(adminLog).values({
+				action: "REMOVEU_DUPLA",
+				actorId: ctx.session.user.id,
+				details: {
+					challengeId: p.challengeId,
+					pairId: input.pairId,
+				},
+				id: crypto.randomUUID(),
+			});
+
+			return { success: true };
+		}),
+
 	drawPairs: adminProcedure
 		.input(z.object({ challengeId: z.string() }))
 		.mutation(async ({ ctx, input }) => {
@@ -130,8 +284,8 @@ export const adminRouter = router({
 				(u) => u.role !== "ADMIN" && u.id !== ch.assessorId
 			);
 
-			// Filter eligible users who have the track in their trackPreferences and are not already assigned
-			let eligible = allUsers.filter((u) => {
+			// Filter eligible users who strictly have this challenge's track in their trackPreferences and are not already assigned
+			const eligible = allUsers.filter((u) => {
 				if (assignedUserIds.has(u.id)) {
 					return false;
 				}
@@ -145,30 +299,10 @@ export const adminRouter = router({
 				}
 			});
 
-			// If no members explicitly have this track toggle on, fall back only to unassigned members who didn't explicitly pause/empty their tracks
-			if (eligible.length < 2) {
-				eligible = allUsers.filter((u) => {
-					if (assignedUserIds.has(u.id)) {
-						return false;
-					}
-					try {
-						const tracks = u.trackPreferences
-							? JSON.parse(u.trackPreferences)
-							: null;
-						if (Array.isArray(tracks) && tracks.length === 0) {
-							return false;
-						}
-					} catch {
-						// ignore
-					}
-					return true;
-				});
-			}
-
 			if (eligible.length < 2) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: `Membros insuficientes para sortear duplas (encontrados: ${eligible.length}, mínimo: 2).`,
+					message: `Membros insuficientes na trilha deste desafio (${ch.trackTheme}) para sortear duplas automaticamente (encontrados: ${eligible.length}, mínimo: 2 necessários). Você pode alocar membros manualmente ou aguardar mais participantes na trilha.`,
 				});
 			}
 
@@ -254,6 +388,7 @@ export const adminRouter = router({
 				success: true,
 			};
 		}),
+
 	getMetrics: adminProcedure.query(async ({ ctx }) => {
 		const allChallenges = await ctx.db.query.challenge.findMany();
 		const allPairs = await ctx.db.query.pair.findMany({
@@ -331,6 +466,69 @@ export const adminRouter = router({
 		});
 		return logs;
 	}),
+
+	listMembersForChallenge: adminProcedure
+		.input(z.object({ challengeId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			const ch = await ctx.db.query.challenge.findFirst({
+				where: { id: input.challengeId },
+				with: { pairs: true },
+			});
+
+			if (!ch) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Desafio não encontrado",
+				});
+			}
+
+			const assignedUserIds = new Set<string>();
+			for (const p of ch.pairs) {
+				assignedUserIds.add(p.member1Id);
+				assignedUserIds.add(p.member2Id);
+				if (p.member3Id) {
+					assignedUserIds.add(p.member3Id);
+				}
+			}
+
+			const rawUsers = await ctx.db.query.user.findMany({
+				orderBy: (u, { asc }) => [asc(u.name)],
+			});
+
+			const filtered = rawUsers
+				.filter((u) => u.role !== "ADMIN" && u.id !== ch.assessorId)
+				.map((u) => {
+					let tracks: string[] = [];
+					try {
+						tracks = u.trackPreferences ? JSON.parse(u.trackPreferences) : [];
+					} catch {
+						tracks = [];
+					}
+					const isMatchingTrack =
+						Array.isArray(tracks) && tracks.includes(ch.trackTheme);
+					const isAssigned = assignedUserIds.has(u.id);
+
+					return {
+						department: u.department,
+						email: u.email,
+						id: u.id,
+						image: u.image,
+						isAssigned,
+						isMatchingTrack,
+						knowledgeScore: calculateMemberKnowledgeScore(u.name, u.points),
+						name: u.name,
+						points: u.points,
+						role: u.role,
+						tracks,
+						whatsapp: u.whatsapp,
+					};
+				});
+
+			return {
+				challengeTrack: ch.trackTheme,
+				members: filtered,
+			};
+		}),
 
 	listSubmissions: adminProcedure.query(async ({ ctx }) => {
 		const submissions = await ctx.db.query.pair.findMany({

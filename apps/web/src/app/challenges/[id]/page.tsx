@@ -14,10 +14,12 @@ import type { AdminSubmission } from "@/app/admin/_components/types";
 import { BauhausSkeleton } from "@/components/pop-elements";
 import { trpc } from "@/utils/trpc";
 import { AdminPairsCard } from "./_components/admin-pairs-card";
+import { AllocatePairModal } from "./_components/allocate-pair-modal";
 import { ChallengeHeader } from "./_components/challenge-header";
 import { ChallengeRulesCard } from "./_components/challenge-rules-card";
 import { ChallengeSubmissionModal } from "./_components/challenge-submission-modal";
 import { CheckpointsStepper } from "./_components/checkpoints-stepper";
+import { ClearPairsDialog } from "./_components/clear-pairs-dialog";
 import { CollectiveThermometerCard } from "./_components/collective-thermometer-card";
 import { CommunitySolutionsSection } from "./_components/community-solutions-section";
 import { DeleteChallengeDialog } from "./_components/delete-challenge-dialog";
@@ -50,6 +52,10 @@ export default function ChallengeDetailPage() {
 
 	const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [isAllocateModalOpen, setIsAllocateModalOpen] = useState(false);
+	const [isClearPairsModalOpen, setIsClearPairsModalOpen] = useState(false);
+	const [deletingPairId, setDeletingPairId] = useState<string | null>(null);
+
 	const [submissionType, setSubmissionType] = useState<SubmissionType>("PR");
 	const [prUrl, setPrUrl] = useState("");
 	const [repoUrl, setRepoUrl] = useState("");
@@ -96,6 +102,46 @@ export default function ChallengeDetailPage() {
 				toast.success(
 					`Duplas sorteadas com sucesso! (${data.pairsCreated} criadas)`
 				);
+				queryClient.invalidateQueries();
+			},
+		})
+	);
+
+	const clearPairsMutation = useMutation(
+		trpc.admin.clearPairs.mutationOptions({
+			onError: (err) => {
+				toast.error(err.message || "Erro ao desortear duplas");
+			},
+			onSuccess: (data) => {
+				toast.success(`${data.clearedCount} duplas removidas com sucesso!`);
+				setIsClearPairsModalOpen(false);
+				queryClient.invalidateQueries();
+			},
+		})
+	);
+
+	const deletePairMutation = useMutation(
+		trpc.admin.deletePair.mutationOptions({
+			onError: (err) => {
+				setDeletingPairId(null);
+				toast.error(err.message || "Erro ao remover dupla");
+			},
+			onSuccess: () => {
+				setDeletingPairId(null);
+				toast.success("Dupla removida com sucesso!");
+				queryClient.invalidateQueries();
+			},
+		})
+	);
+
+	const allocatePairMutation = useMutation(
+		trpc.admin.allocatePair.mutationOptions({
+			onError: (err) => {
+				toast.error(err.message || "Erro ao alocar dupla");
+			},
+			onSuccess: () => {
+				toast.success("Dupla alocada com sucesso!");
+				setIsAllocateModalOpen(false);
 				queryClient.invalidateQueries();
 			},
 		})
@@ -177,6 +223,46 @@ export default function ChallengeDetailPage() {
 	const handleDrawPairs = useCallback(() => {
 		drawPairsMutation.mutate({ challengeId });
 	}, [challengeId, drawPairsMutation]);
+
+	const handleOpenAllocateModal = useCallback(() => {
+		setIsAllocateModalOpen(true);
+	}, []);
+
+	const handleCloseAllocateModal = useCallback(() => {
+		setIsAllocateModalOpen(false);
+	}, []);
+
+	const handleAllocatePair = useCallback(
+		(data: {
+			challengeId: string;
+			member1Id: string;
+			member2Id: string;
+			member3Id?: string | null;
+		}) => {
+			allocatePairMutation.mutate(data);
+		},
+		[allocatePairMutation]
+	);
+
+	const handleOpenClearModal = useCallback(() => {
+		setIsClearPairsModalOpen(true);
+	}, []);
+
+	const handleCloseClearModal = useCallback(() => {
+		setIsClearPairsModalOpen(false);
+	}, []);
+
+	const handleClearPairsConfirm = useCallback(() => {
+		clearPairsMutation.mutate({ challengeId });
+	}, [challengeId, clearPairsMutation]);
+
+	const handleDeletePair = useCallback(
+		(pairId: string) => {
+			setDeletingPairId(pairId);
+			deletePairMutation.mutate({ pairId });
+		},
+		[deletePairMutation]
+	);
 
 	const handleOpenReviewPair = useCallback(
 		(pair: ChallengePairItem) => {
@@ -315,8 +401,12 @@ export default function ChallengeDetailPage() {
 			{isAdmin ? (
 				<AdminPairsCard
 					challengeTitle={ch.title}
+					deletingPairId={deletingPairId}
 					isDrawing={drawPairsMutation.isPending}
+					onDeletePair={handleDeletePair}
 					onDrawPairs={handleDrawPairs}
+					onOpenAllocateModal={handleOpenAllocateModal}
+					onOpenClearModal={handleOpenClearModal}
 					onReviewPair={handleOpenReviewPair}
 					pairs={ch.pairs ?? []}
 				/>
@@ -395,6 +485,30 @@ export default function ChallengeDetailPage() {
 				onConfirm={handleDeleteConfirm}
 				totalPairs={ch.totalPairs ?? 0}
 			/>
+
+			{/* Admin Allocate Pair Modal */}
+			{isAdmin ? (
+				<AllocatePairModal
+					challengeId={challengeId}
+					challengeTitle={ch.title}
+					isOpen={isAllocateModalOpen}
+					isPending={allocatePairMutation.isPending}
+					onAllocate={handleAllocatePair}
+					onClose={handleCloseAllocateModal}
+				/>
+			) : null}
+
+			{/* Admin Clear Pairs Dialog */}
+			{isAdmin ? (
+				<ClearPairsDialog
+					challengeTitle={ch.title}
+					isOpen={isClearPairsModalOpen}
+					isPending={clearPairsMutation.isPending}
+					onClose={handleCloseClearModal}
+					onConfirm={handleClearPairsConfirm}
+					totalPairs={ch.totalPairs ?? 0}
+				/>
+			) : null}
 
 			{/* Admin Review Submission Modal */}
 			{isAdmin ? (

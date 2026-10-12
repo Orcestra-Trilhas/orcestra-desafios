@@ -437,4 +437,189 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 			})
 		).rejects.toThrow();
 	});
+
+	it("não deve sortear membros de outras trilhas e deve falhar se houver menos de 2 membros na trilha", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "PROTOTIPACAO",
+		});
+
+		// Configura todos os usuários existentes para trilhas diferentes de PROTOTIPACAO
+		await testDb.db
+			.update(user)
+			.set({ trackPreferences: JSON.stringify(["FRONT"]) })
+			.where(eq(user.id, memberPersona.id));
+
+		// Cria apenas 1 usuário na trilha PROTOTIPACAO
+		await createTestUser(testDb.db, {
+			name: "Faby",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["PROTOTIPACAO"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		// Deve lançar erro e NÃO puxar quem é de FRONT
+		await expect(
+			adminCaller.admin.drawPairs({
+				challengeId: chal.id,
+			})
+		).rejects.toThrow(
+			/Membros insuficientes na trilha deste desafio \(PROTOTIPACAO\)/
+		);
+
+		const pairsCount = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+		expect(pairsCount).toHaveLength(0);
+	});
+
+	it("deve alocar duplas manualmente (allocatePair) e impedir duplicações", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "FRONT",
+		});
+
+		const u1 = await createTestUser(testDb.db, {
+			name: "Membro A",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["FRONT"]),
+		});
+		const u2 = await createTestUser(testDb.db, {
+			name: "Membro B",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["FRONT"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		// 1. Aloca com sucesso
+		const allocRes = await adminCaller.admin.allocatePair({
+			challengeId: chal.id,
+			member1Id: u1.id,
+			member2Id: u2.id,
+		});
+
+		expect(allocRes.success).toBe(true);
+		expect(allocRes.pair).toBeDefined();
+
+		// 2. Tenta alocar os mesmos membros novamente (deve falhar)
+		await expect(
+			adminCaller.admin.allocatePair({
+				challengeId: chal.id,
+				member1Id: u1.id,
+				member2Id: u2.id,
+			})
+		).rejects.toThrow(/já estão alocados em outra dupla/);
+
+		// 3. Tenta alocar a mesma pessoa como member1 e member2
+		await expect(
+			adminCaller.admin.allocatePair({
+				challengeId: chal.id,
+				member1Id: u1.id,
+				member2Id: u1.id,
+			})
+		).rejects.toThrow(/não podem ser a mesma pessoa/);
+	});
+
+	it("deve desortear duplas do desafio (clearPairs) e excluir dupla individual (deletePair)", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "FRONT",
+		});
+
+		const u1 = await createTestUser(testDb.db, { name: "M1", role: "MEMBER" });
+		const u2 = await createTestUser(testDb.db, { name: "M2", role: "MEMBER" });
+		const u3 = await createTestUser(testDb.db, { name: "M3", role: "MEMBER" });
+		const u4 = await createTestUser(testDb.db, { name: "M4", role: "MEMBER" });
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		const p1 = await adminCaller.admin.allocatePair({
+			challengeId: chal.id,
+			member1Id: u1.id,
+			member2Id: u2.id,
+		});
+		await adminCaller.admin.allocatePair({
+			challengeId: chal.id,
+			member1Id: u3.id,
+			member2Id: u4.id,
+		});
+
+		let pairsInDb = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+		expect(pairsInDb).toHaveLength(2);
+
+		// 1. Deleta uma dupla individual
+		const delSingleRes = await adminCaller.admin.deletePair({
+			pairId: p1.pair.id,
+		});
+		expect(delSingleRes.success).toBe(true);
+
+		pairsInDb = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+		expect(pairsInDb).toHaveLength(1);
+
+		// 2. Desorteia / limpa todas as duplas do desafio
+		const clearRes = await adminCaller.admin.clearPairs({
+			challengeId: chal.id,
+		});
+		expect(clearRes.success).toBe(true);
+		expect(clearRes.clearedCount).toBe(1);
+
+		pairsInDb = await testDb.db.query.pair.findMany({
+			where: { challengeId: chal.id },
+		});
+		expect(pairsInDb).toHaveLength(0);
+	});
+
+	it("deve listar membros para o desafio sinalizando se pertencem à trilha e se já foram alocados (listMembersForChallenge)", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "PROTOTIPACAO",
+		});
+
+		const faby = await createTestUser(testDb.db, {
+			name: "Faby",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["PROTOTIPACAO"]),
+		});
+
+		const carlos = await createTestUser(testDb.db, {
+			name: "Carlos",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["BACK"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		const listRes = await adminCaller.admin.listMembersForChallenge({
+			challengeId: chal.id,
+		});
+
+		expect(listRes.challengeTrack).toBe("PROTOTIPACAO");
+		const fabyItem = listRes.members.find((m) => m.id === faby.id);
+		const carlosItem = listRes.members.find((m) => m.id === carlos.id);
+
+		expect(fabyItem?.isMatchingTrack).toBe(true);
+		expect(fabyItem?.isAssigned).toBe(false);
+
+		expect(carlosItem?.isMatchingTrack).toBe(false);
+		expect(carlosItem?.isAssigned).toBe(false);
+	});
+
 });
