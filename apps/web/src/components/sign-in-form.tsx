@@ -96,7 +96,10 @@ export default function SignInForm({ onSwitchToSignUp }: SignInFormProps) {
 	}
 
 	return (
-		<div className="mx-auto w-full max-w-md px-4 py-8">
+		<div
+			className="mx-auto w-full max-w-md px-4 py-8"
+			style={{ paddingTop: "max(2rem, env(safe-area-inset-top, 0px))" }}
+		>
 			{/* Poster Header */}
 			<div className="mb-6 text-center">
 				<div className="mb-3 flex justify-center">

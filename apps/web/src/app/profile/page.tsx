@@ -108,24 +108,40 @@ function ProfileContent() {
 				return;
 			}
 
-			if (profile?.primaryTrack && !profile.canChooseOtherTracks) {
-				if (trackId === profile.primaryTrack) {
-					toast.info("A sua trilha principal não pode ser desativada.");
-					return;
-				}
+			if (
+				profile?.primaryTrack &&
+				!profile.canChooseOtherTracks &&
+				trackId !== profile.primaryTrack
+			) {
 				toast.error(
 					`Você precisa atingir 85% de progresso na sua trilha principal (${profile.primaryTrackLabel}) para selecionar outras trilhas. Progresso atual: ${profile.primaryTrackProgress}%.`
 				);
 				return;
 			}
 
-			setTracks((prev) =>
-				prev.includes(trackId)
-					? prev.filter((t) => t !== trackId)
-					: [...prev, trackId]
-			);
+			const nextTracks = tracks.includes(trackId)
+				? tracks.filter((t) => t !== trackId)
+				: [...tracks, trackId];
+
+			setTracks(nextTracks);
+			updateProfileMutation.mutate({
+				department,
+				gifUrl: gifUrl || null,
+				name,
+				trackPreferences: nextTracks,
+				whatsapp: whatsapp || null,
+			});
 		},
-		[isOwner, profile]
+		[
+			department,
+			gifUrl,
+			isOwner,
+			name,
+			profile,
+			tracks,
+			updateProfileMutation,
+			whatsapp,
+		]
 	);
 
 	const handleAvatarUploaded = useCallback(

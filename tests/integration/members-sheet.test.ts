@@ -39,17 +39,24 @@ describe("Members Sheet Service & CSV Parser (Issue #3 & #4)", () => {
 		expect(carlos?.primaryTrack).toBe("BACK");
 		expect(canMemberChooseOtherTracks(carlos)).toBe(false);
 
-		// Membro sem trilha definida na planilha (Ana) recebe todas as trilhas gerais e canChooseOtherTracks = true
-		const ana = members.find((m) => m.name === "Ana");
-		expect(ana).toBeDefined();
-		expect(ana?.primaryTrack).toBeNull();
-		expect(ana?.trackPreferences).toEqual([
+		// Membro sem trilha definida na planilha (Bryan) recebe todas as trilhas gerais e canChooseOtherTracks = true
+		const bryan = members.find((m) => m.name === "Bryan");
+		expect(bryan).toBeDefined();
+		expect(bryan?.primaryTrack).toBeNull();
+		expect(bryan?.trackPreferences).toEqual([
 			"BACK",
 			"FRONT",
 			"PROTOTIPACAO",
 			"DEVOPS",
 		]);
-		expect(canMemberChooseOtherTracks(ana)).toBe(true);
+		expect(canMemberChooseOtherTracks(bryan)).toBe(true);
+
+		// Ana Teresa escolheu a trilha Front-end (< 85% -> NÃO pode escolher outras ainda)
+		const ana = members.find((m) => m.name === "Ana Teresa");
+		expect(ana).toBeDefined();
+		expect(ana?.primaryTrack).toBe("FRONT");
+		expect(ana?.trackPreferences).toEqual(["FRONT"]);
+		expect(canMemberChooseOtherTracks(ana)).toBe(false);
 	});
 
 	it("deve mapear corretamente as trilhas e porcentagens ao fazer parse de CSV bruto", () => {
@@ -97,6 +104,10 @@ describe("Members Sheet Service & CSV Parser (Issue #3 & #4)", () => {
 
 		const found2 = findSheetMember("FABIO");
 		expect(found2).toBeDefined();
+
+		const foundAna = findSheetMember("Ana Teresa");
+		expect(foundAna).toBeDefined();
+		expect(foundAna?.primaryTrack).toBe("FRONT");
 
 		const notFound = findSheetMember("NomeInexistenteTotalmente123");
 		expect(notFound).toBeNull();

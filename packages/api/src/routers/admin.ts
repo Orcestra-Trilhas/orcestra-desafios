@@ -124,8 +124,11 @@ export const adminRouter = router({
 				}
 			}
 
-			// Find all users
-			const allUsers = await ctx.db.query.user.findMany();
+			// Find all users (excluding ADMIN role and the assessor of this challenge)
+			const rawUsers = await ctx.db.query.user.findMany();
+			const allUsers = rawUsers.filter(
+				(u) => u.role !== "ADMIN" && u.id !== ch.assessorId
+			);
 
 			// Filter eligible users who have the track in their trackPreferences and are not already assigned
 			let eligible = allUsers.filter((u) => {
@@ -142,9 +145,24 @@ export const adminRouter = router({
 				}
 			});
 
-			// If no members explicitly have this track toggle on, fall back to any unassigned members
+			// If no members explicitly have this track toggle on, fall back only to unassigned members who didn't explicitly pause/empty their tracks
 			if (eligible.length < 2) {
-				eligible = allUsers.filter((u) => !assignedUserIds.has(u.id));
+				eligible = allUsers.filter((u) => {
+					if (assignedUserIds.has(u.id)) {
+						return false;
+					}
+					try {
+						const tracks = u.trackPreferences
+							? JSON.parse(u.trackPreferences)
+							: null;
+						if (Array.isArray(tracks) && tracks.length === 0) {
+							return false;
+						}
+					} catch {
+						// ignore
+					}
+					return true;
+				});
 			}
 
 			if (eligible.length < 2) {

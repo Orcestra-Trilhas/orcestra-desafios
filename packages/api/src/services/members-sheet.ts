@@ -179,13 +179,13 @@ export function getSheetMembers(): SheetMember[] {
 	// Fallback padrão com os membros da planilha da EJ
 	cachedMembers = [
 		{
-			displayTrack: "Geral (Todas as Trilhas)",
-			name: "Ana",
-			primaryTrack: null,
+			displayTrack: "Front-end",
+			name: "Ana Teresa",
+			primaryTrack: "FRONT",
 			progressPercent: 0,
-			rawTrack: "",
+			rawTrack: "Front-end",
 			satisfaction: "Sem avaliações",
-			trackPreferences: [...DEFAULT_TRACKS],
+			trackPreferences: ["FRONT"],
 		},
 		{
 			displayTrack: "DevOps",

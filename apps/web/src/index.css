@@ -1,1 +1,12 @@
 @import "@orcestra-desafios/ui/globals.css";
+
+/* Safe area support for iOS / Android standalone PWA */
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+	header.app-header {
+		padding-top: max(env(safe-area-inset-top, 0px), 1.25rem);
+	}
+}
+
+html.standalone-mode header.app-header {
+	padding-top: max(env(safe-area-inset-top, 0px), 1.25rem);
+}

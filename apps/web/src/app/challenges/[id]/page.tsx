@@ -6,8 +6,14 @@ import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import {
+	ReviewSubmissionModal,
+	type ReviewSubmitData,
+} from "@/app/admin/_components/review-submission-modal";
+import type { AdminSubmission } from "@/app/admin/_components/types";
 import { BauhausSkeleton } from "@/components/pop-elements";
 import { trpc } from "@/utils/trpc";
+import { AdminPairsCard } from "./_components/admin-pairs-card";
 import { ChallengeHeader } from "./_components/challenge-header";
 import { ChallengeRulesCard } from "./_components/challenge-rules-card";
 import { ChallengeSubmissionModal } from "./_components/challenge-submission-modal";
@@ -16,7 +22,7 @@ import { CollectiveThermometerCard } from "./_components/collective-thermometer-
 import { CommunitySolutionsSection } from "./_components/community-solutions-section";
 import { DeleteChallengeDialog } from "./_components/delete-challenge-dialog";
 import { extractEvidenceUrls } from "./_components/submission-utils";
-import type { SubmissionType } from "./_components/types";
+import type { ChallengePairItem, SubmissionType } from "./_components/types";
 
 export default function ChallengeDetailPage() {
 	const params = useParams();
@@ -49,6 +55,9 @@ export default function ChallengeDetailPage() {
 	const [repoUrl, setRepoUrl] = useState("");
 	const [submissionNotes, setSubmissionNotes] = useState("");
 
+	const [reviewingSubmission, setReviewingSubmission] =
+		useState<AdminSubmission | null>(null);
+
 	const submitSolutionMutation = useMutation(
 		trpc.challenge.submitSolution.mutationOptions({
 			onError: (err) => {
@@ -74,6 +83,33 @@ export default function ChallengeDetailPage() {
 				toast.success("Desafio excluído com sucesso!");
 				setIsDeleteModalOpen(false);
 				router.push("/admin");
+			},
+		})
+	);
+
+	const drawPairsMutation = useMutation(
+		trpc.admin.drawPairs.mutationOptions({
+			onError: (err) => {
+				toast.error(err.message || "Erro ao sortear duplas");
+			},
+			onSuccess: (data) => {
+				toast.success(
+					`Duplas sorteadas com sucesso! (${data.pairsCreated} criadas)`
+				);
+				queryClient.invalidateQueries();
+			},
+		})
+	);
+
+	const reviewSubmissionMutation = useMutation(
+		trpc.admin.reviewSubmission.mutationOptions({
+			onError: (err) => {
+				toast.error(err.message || "Erro ao avaliar submissão");
+			},
+			onSuccess: () => {
+				toast.success("Avaliação enviada com sucesso!");
+				setReviewingSubmission(null);
+				queryClient.invalidateQueries();
 			},
 		})
 	);
@@ -137,6 +173,56 @@ export default function ChallengeDetailPage() {
 	const handleBack = useCallback(() => {
 		router.back();
 	}, [router]);
+
+	const handleDrawPairs = useCallback(() => {
+		drawPairsMutation.mutate({ challengeId });
+	}, [challengeId, drawPairsMutation]);
+
+	const handleOpenReviewPair = useCallback(
+		(pair: ChallengePairItem) => {
+			if (!ch) {
+				return;
+			}
+			setReviewingSubmission({
+				challenge: {
+					description: ch.description,
+					pointsReward: ch.pointsReward,
+					rulesMarkdown: ch.rulesMarkdown,
+					title: ch.title,
+					trackTheme: ch.trackTheme,
+				},
+				currentStep: pair.currentStep,
+				feedback: pair.feedback,
+				id: pair.id,
+				member1: pair.member1
+					? { id: pair.member1.id, name: pair.member1.name }
+					: null,
+				member2: pair.member2
+					? { id: pair.member2.id, name: pair.member2.name }
+					: null,
+				member3: pair.member3
+					? { id: pair.member3.id, name: pair.member3.name }
+					: null,
+				prUrl: pair.prUrl,
+				repoUrl: pair.repoUrl,
+				status: pair.status,
+				submissionNotes: pair.submissionNotes,
+				submissionType: pair.submissionType,
+			});
+		},
+		[ch]
+	);
+
+	const handleCloseReviewModal = useCallback(() => {
+		setReviewingSubmission(null);
+	}, []);
+
+	const handleSubmitReview = useCallback(
+		(data: ReviewSubmitData) => {
+			reviewSubmissionMutation.mutate(data);
+		},
+		[reviewSubmissionMutation]
+	);
 
 	const handleSubmitSolution = useCallback(
 		(e: React.FormEvent) => {
@@ -225,6 +311,17 @@ export default function ChallengeDetailPage() {
 			{/* Rules & Markdown Section */}
 			<ChallengeRulesCard rulesMarkdown={ch.rulesMarkdown} />
 
+			{/* Admin Only: Complete Pairs and Progress Management */}
+			{isAdmin ? (
+				<AdminPairsCard
+					challengeTitle={ch.title}
+					isDrawing={drawPairsMutation.isPending}
+					onDrawPairs={handleDrawPairs}
+					onReviewPair={handleOpenReviewPair}
+					pairs={ch.pairs ?? []}
+				/>
+			) : null}
+
 			{/* Checkpoints Stepper */}
 			<CheckpointsStepper
 				isAdvancingStep={advanceStepMutation.isPending}
@@ -298,6 +395,16 @@ export default function ChallengeDetailPage() {
 				onConfirm={handleDeleteConfirm}
 				totalPairs={ch.totalPairs ?? 0}
 			/>
+
+			{/* Admin Review Submission Modal */}
+			{isAdmin ? (
+				<ReviewSubmissionModal
+					isPending={reviewSubmissionMutation.isPending}
+					onClose={handleCloseReviewModal}
+					onSubmitReview={handleSubmitReview}
+					submission={reviewingSubmission}
+				/>
+			) : null}
 		</div>
 	);
 }

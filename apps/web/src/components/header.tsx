@@ -8,11 +8,13 @@ import { trpc } from "@/utils/trpc";
 
 import { ModeToggle } from "./mode-toggle";
 import { PopLogo, PopPointsBadge } from "./pop-elements";
+import { usePwa } from "./pwa-provider";
 import UserMenu from "./user-menu";
 
 export default function Header() {
 	const pathname = usePathname();
 	const { data: session } = authClient.useSession();
+	const { isIos, isStandalone } = usePwa();
 	const userMe = useQuery({
 		...trpc.user.me.queryOptions(),
 		enabled: Boolean(session?.user),
@@ -26,7 +28,14 @@ export default function Header() {
 	const points = userMe.data?.points ?? sessionUser?.points ?? 0;
 
 	return (
-		<header className="sticky top-0 z-40 w-full border-black border-b-2 bg-background dark:border-white">
+		<header
+			className="app-header sticky top-0 z-40 w-full border-black border-b-2 bg-background transition-[padding] duration-200 dark:border-white"
+			style={{
+				paddingTop: isStandalone
+					? `max(env(safe-area-inset-top, 0px), ${isIos ? "44px" : "1.25rem"})`
+					: "max(env(safe-area-inset-top, 0px), 0px)",
+			}}
+		>
 			<div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-3 sm:h-16 sm:px-4">
 				<Link
 					className="btn-tactile group flex shrink-0 items-center gap-2"

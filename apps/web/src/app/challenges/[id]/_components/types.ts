@@ -7,9 +7,12 @@ export interface Evidence {
 }
 
 export interface SubmissionMember {
+	department?: string | null;
 	gifUrl?: string | null;
 	id: string;
+	image?: string | null;
 	name: string;
+	whatsapp?: string | null;
 }
 
 export interface ChallengeSubmission {
@@ -27,6 +30,36 @@ export interface ChallengeSubmission {
 	updatedAt: Date | string;
 }
 
+export interface ChallengePairMember {
+	department?: string | null;
+	gifUrl?: string | null;
+	id: string;
+	image?: string | null;
+	name: string;
+	whatsapp?: string | null;
+}
+
+export interface ChallengePairItem {
+	challengeId: string;
+	createdAt?: Date | string;
+	currentStep: number;
+	feedback?: string | null;
+	id: string;
+	member1?: ChallengePairMember | null;
+	member1Id: string;
+	member2?: ChallengePairMember | null;
+	member2Id: string;
+	member3?: ChallengePairMember | null;
+	member3Id?: string | null;
+	prUrl?: string | null;
+	repoUrl?: string | null;
+	reviewedAt?: Date | string | null;
+	status: string;
+	submissionNotes?: string | null;
+	submissionType?: string | null;
+	updatedAt?: Date | string;
+}
+
 export interface ChallengePairData {
 	currentStep: number;
 	feedback?: string | null;
@@ -35,12 +68,15 @@ export interface ChallengePairData {
 }
 
 export interface ChallengeData {
+	active?: boolean;
+	approvedPairs: number;
 	canViewAllSolutions?: boolean;
 	deadline: Date | string;
 	description: string;
 	id: string;
 	mkdocsUrl?: string | null;
 	myPair?: ChallengePairData | null;
+	pairs?: ChallengePairItem[];
 	pointsReward: number;
 	rulesMarkdown?: string | null;
 	submissions?: ChallengeSubmission[];

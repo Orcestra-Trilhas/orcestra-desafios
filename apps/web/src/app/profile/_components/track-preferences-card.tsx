@@ -10,21 +10,11 @@ interface TrackPreferencesCardProps {
 	selectedTracks: string[];
 }
 
-function getTrackStatusBadge(
-	isLocked: boolean,
-	isPrimary: boolean,
-	isEnabled: boolean
-) {
+function getTrackStatusBadge(isLocked: boolean, isEnabled: boolean) {
 	if (isLocked) {
 		return {
 			badgeClass: "bg-muted text-muted-foreground",
 			content: <Lock className="h-3 w-3" />,
-		};
-	}
-	if (isPrimary) {
-		return {
-			badgeClass: "bg-[#1E40AF] text-white",
-			content: "FIXO",
 		};
 	}
 	if (isEnabled) {
@@ -66,7 +56,7 @@ function OwnerTrackButton({
 		onToggle(track.id);
 	}, [onToggle, track.id]);
 
-	const status = getTrackStatusBadge(isLocked, isPrimary, isEnabled);
+	const status = getTrackStatusBadge(isLocked, isEnabled);
 	const buttonClass = getTrackButtonClass(isLocked, isEnabled);
 
 	return (
@@ -152,7 +142,7 @@ export function TrackPreferencesCard({
 				</h2>
 				<p className="font-medium text-muted-foreground text-xs">
 					{isOwner
-						? "Selecione as trilhas que você deseja receber desafios e ser alocado em duplas automaticamente."
+						? "Selecione as trilhas que você deseja receber desafios e ser alocado em duplas. Você pode desmarcar sua trilha para pausar a participação durante semanas de provas."
 						: "Trilhas em que este membro participa e recebe missões e desafios."}
 				</p>
 			</div>
@@ -224,7 +214,8 @@ export function TrackPreferencesCard({
 								<strong>Demais trilhas bloqueadas:</strong> Você precisa atingir
 								pelo menos 85% do progresso na sua trilha principal para
 								escolher as demais áreas (faltam{" "}
-								{Math.max(0, 85 - primaryTrackProgress)}%).
+								{Math.max(0, 85 - primaryTrackProgress)}%). Você ainda pode
+								desmarcar sua trilha principal caso precise pausar.
 							</span>
 						</div>
 					)}
@@ -238,7 +229,7 @@ export function TrackPreferencesCard({
 						!isPrimary && Boolean(primaryTrack) && !canChooseOtherTracks;
 
 					const isEnabled = isOwner
-						? isPrimary || selectedTracks.includes(t.id)
+						? selectedTracks.includes(t.id)
 						: (profile.trackPreferencesList || []).includes(t.id);
 
 					if (!(isOwner || isEnabled)) {

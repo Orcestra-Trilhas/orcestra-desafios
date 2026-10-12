@@ -157,17 +157,24 @@ export const userRouter = router({
 			const member = findSheetMember(foundUser.name);
 			const canChooseOtherTracks = canMemberChooseOtherTracks(member);
 
-			let tracks: string[] = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
-			if (foundUser.trackPreferences) {
+			let tracks: string[] = member?.primaryTrack
+				? [member.primaryTrack]
+				: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+			if (
+				foundUser.trackPreferences !== null &&
+				foundUser.trackPreferences !== undefined
+			) {
 				try {
 					tracks = JSON.parse(foundUser.trackPreferences);
 				} catch {
-					tracks = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+					tracks = member?.primaryTrack
+						? [member.primaryTrack]
+						: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
 				}
 			}
 
 			if (!canChooseOtherTracks && member?.primaryTrack) {
-				tracks = [member.primaryTrack];
+				tracks = tracks.filter((t) => t === member.primaryTrack);
 			}
 
 			return {
@@ -224,17 +231,24 @@ export const userRouter = router({
 		const member = findSheetMember(foundUser.name);
 		const canChooseOtherTracks = canMemberChooseOtherTracks(member);
 
-		let tracks: string[] = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
-		if (foundUser.trackPreferences) {
+		let tracks: string[] = member?.primaryTrack
+			? [member.primaryTrack]
+			: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+		if (
+			foundUser.trackPreferences !== null &&
+			foundUser.trackPreferences !== undefined
+		) {
 			try {
 				tracks = JSON.parse(foundUser.trackPreferences);
 			} catch {
-				tracks = ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
+				tracks = member?.primaryTrack
+					? [member.primaryTrack]
+					: ["BACK", "FRONT", "PROTOTIPACAO", "DEVOPS"];
 			}
 		}
 
 		if (!canChooseOtherTracks && member?.primaryTrack) {
-			tracks = [member.primaryTrack];
+			tracks = tracks.filter((t) => t === member.primaryTrack);
 		}
 
 		return {
@@ -407,11 +421,10 @@ export const userRouter = router({
 			}
 
 			let finalTrackPreferences = input.trackPreferences;
-			if (
-				member?.primaryTrack &&
-				!finalTrackPreferences.includes(member.primaryTrack)
-			) {
-				finalTrackPreferences = [member.primaryTrack, ...finalTrackPreferences];
+			if (!canChooseOther && member?.primaryTrack) {
+				finalTrackPreferences = input.trackPreferences.filter(
+					(t) => t === member.primaryTrack
+				);
 			}
 
 			await ctx.db

@@ -57,8 +57,23 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 		// Detect standalone (installed) mode
 		const isStandaloneMode =
 			window.matchMedia("(display-mode: standalone)").matches ||
-			Boolean((navigator as unknown as { standalone?: boolean }).standalone);
+			window.matchMedia("(display-mode: fullscreen)").matches ||
+			Boolean((navigator as unknown as { standalone?: boolean }).standalone) ||
+			document.referrer.includes("android-app://");
 		setIsStandalone(isStandaloneMode);
+
+		if (isStandaloneMode) {
+			document.documentElement.classList.add("standalone-mode");
+		}
+
+		const mql = window.matchMedia("(display-mode: standalone)");
+		const handleMqlChange = (e: MediaQueryListEvent) => {
+			if (e.matches) {
+				setIsStandalone(true);
+				document.documentElement.classList.add("standalone-mode");
+			}
+		};
+		mql.addEventListener?.("change", handleMqlChange);
 
 		// Detect iOS
 		const { userAgent } = window.navigator;
@@ -74,6 +89,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 
 		const handleAppInstalled = () => {
 			setIsStandalone(true);
+			document.documentElement.classList.add("standalone-mode");
 			setDeferredPrompt(null);
 		};
 
@@ -81,6 +97,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 		window.addEventListener("appinstalled", handleAppInstalled);
 
 		return () => {
+			mql.removeEventListener?.("change", handleMqlChange);
 			window.removeEventListener(
 				"beforeinstallprompt",
 				handleBeforeInstallPrompt
@@ -108,15 +125,10 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 		setShowBrowserModal(true);
 	}, [deferredPrompt, isIos]);
 
-	const closeIosModal = useCallback(() => {
-		setShowIosModal(false);
-	}, []);
+	const closeIosModal = useCallback(() => setShowIosModal(false), []);
+	const closeBrowserModal = useCallback(() => setShowBrowserModal(false), []);
 
-	const closeBrowserModal = useCallback(() => {
-		setShowBrowserModal(false);
-	}, []);
-
-	const contextValue = useMemo(
+	const value = useMemo(
 		() => ({
 			canInstall: Boolean(deferredPrompt) || (!isStandalone && isIos),
 			installApp,
@@ -127,31 +139,31 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	return (
-		<PwaContext.Provider value={contextValue}>
+		<PwaContext.Provider value={value}>
 			{children}
 
-			{/* iOS Installation Guide Modal */}
+			{/* Modal de Instruções para iOS (Safari) */}
 			{showIosModal ? (
 				<div
-					aria-labelledby="ios-modal-title"
+					aria-labelledby="ios-install-title"
 					aria-modal="true"
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs"
+					className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 backdrop-blur-xs sm:items-center"
 					role="dialog"
 				>
-					<div className="relative w-full max-w-md rounded-lg border-2 border-black bg-card p-5 shadow-hard dark:border-white">
-						<div className="flex items-center justify-between border-black/10 border-b-2 pb-3 dark:border-white/10">
+					<div className="fade-in-0 zoom-in-95 w-full max-w-sm animate-in rounded-lg border-2 border-black bg-card p-5 shadow-hard dark:border-white">
+						<div className="flex items-center justify-between border-black/10 border-b pb-3 dark:border-white/10">
 							<div className="flex items-center gap-2">
 								<Smartphone className="h-5 w-5 text-[#FF4A1C]" />
-								<h2
-									className="font-black font-display text-sm uppercase tracking-wide"
-									id="ios-modal-title"
+								<h3
+									className="font-black font-display text-sm uppercase"
+									id="ios-install-title"
 								>
-									INSTALAR NO IPHONE OU IPAD
-								</h2>
+									INSTALAR NO IPHONE
+								</h3>
 							</div>
 							<button
-								aria-label="Fechar instruções"
-								className="btn-tactile rounded-sm border border-black p-1 hover:bg-muted dark:border-white"
+								aria-label="Fechar"
+								className="btn-tactile rounded p-1 hover:bg-secondary"
 								onClick={closeIosModal}
 								type="button"
 							>
@@ -159,86 +171,77 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 							</button>
 						</div>
 
-						<div className="mt-4 space-y-3.5 font-medium text-xs leading-relaxed">
-							<div className="flex items-start gap-3 rounded-md border border-black/20 bg-secondary/30 p-2.5 dark:border-white/20">
-								<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] font-black text-white dark:border-white">
-									1
-								</span>
-								<p>
-									No Safari, toque no botão{" "}
-									<strong className="text-foreground">Compartilhar</strong> na
-									barra inferior do navegador (ícone de um quadrado com uma seta
-									para cima{" "}
-									<Share className="inline h-3.5 w-3.5 align-middle" />
-									).
-								</p>
-							</div>
+						<div className="space-y-4 py-4 text-xs">
+							<p className="font-mono text-muted-foreground">
+								Para instalar o app da Orc'estra no seu iPhone e usar em tela
+								cheia:
+							</p>
 
-							<div className="flex items-start gap-3 rounded-md border border-black/20 bg-secondary/30 p-2.5 dark:border-white/20">
-								<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] font-black text-white dark:border-white">
-									2
-								</span>
-								<p>
-									Role as opções para baixo e selecione{" "}
-									<strong className="text-foreground">
-										Adicionar à Tela de Início
-									</strong>
-									.
-								</p>
-							</div>
-
-							<div className="flex items-start gap-3 rounded-md border border-black/20 bg-secondary/30 p-2.5 dark:border-white/20">
-								<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] font-black text-white dark:border-white">
-									3
-								</span>
-								<p>
-									Toque em{" "}
-									<strong className="text-foreground">Adicionar</strong> no
-									canto superior direito da tela.
-								</p>
-							</div>
-
-							<div className="rounded-md border border-black/10 bg-background p-2.5 text-[11px] text-muted-foreground dark:border-white/10">
-								O aplicativo será instalado na sua tela de início e abrirá em
-								modo tela cheia, com ícone próprio e sem as barras do navegador.
-							</div>
+							<ol className="space-y-2.5 font-mono">
+								<li className="flex items-start gap-2.5">
+									<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-[11px] text-primary-foreground">
+										1
+									</span>
+									<span>
+										Toque no botão <strong>Compartilhar</strong>{" "}
+										<Share className="inline h-3.5 w-3.5 text-primary" /> no
+										Safari.
+									</span>
+								</li>
+								<li className="flex items-start gap-2.5">
+									<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-[11px] text-primary-foreground">
+										2
+									</span>
+									<span>
+										Role para baixo e selecione{" "}
+										<strong>"Adicionar à Tela de Início"</strong>.
+									</span>
+								</li>
+								<li className="flex items-start gap-2.5">
+									<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-[11px] text-primary-foreground">
+										3
+									</span>
+									<span>
+										Toque em <strong>Adicionar</strong> no canto superior
+										direito.
+									</span>
+								</li>
+							</ol>
 						</div>
 
-						<div className="mt-5 pt-2">
-							<button
-								className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 dark:border-white"
-								onClick={closeIosModal}
-								type="button"
-							>
-								ENTENDI, VOU ADICIONAR
-							</button>
-						</div>
+						<button
+							className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2.5 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm dark:border-white"
+							onClick={closeIosModal}
+							type="button"
+						>
+							ENTENDI
+						</button>
 					</div>
 				</div>
 			) : null}
 
-			{/* Browser Installation Guide Modal */}
+			{/* Modal para Desktop / Navegadores Padrão */}
 			{showBrowserModal ? (
 				<div
-					aria-labelledby="browser-modal-title"
+					aria-labelledby="browser-install-title"
 					aria-modal="true"
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs"
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
 					role="dialog"
 				>
-					<div className="relative w-full max-w-md rounded-lg border-2 border-black bg-card p-5 shadow-hard dark:border-white">
-						<div className="flex items-center justify-between border-black/10 border-b-2 pb-3 dark:border-white/10">
+					<div className="fade-in-0 zoom-in-95 w-full max-w-sm animate-in rounded-lg border-2 border-black bg-card p-5 shadow-hard dark:border-white">
+						<div className="flex items-center justify-between border-black/10 border-b pb-3 dark:border-white/10">
 							<div className="flex items-center gap-2">
-								<Monitor className="h-5 w-5 text-[#FF4A1C]" />
-								<h2
-									className="font-black font-display text-sm uppercase tracking-wide"
-									id="browser-modal-title"
+								<Monitor className="h-5 w-5 text-primary" />
+								<h3
+									className="font-black font-display text-sm uppercase"
+									id="browser-install-title"
 								>
-									INSTALAR NO SEU NAVEGADOR
-								</h2>
+									INSTALAR APLICATIVO
+								</h3>
 							</div>
 							<button
-								aria-label="Fechar instruções"
-								className="btn-tactile rounded-sm border border-black p-1 hover:bg-muted dark:border-white"
+								aria-label="Fechar"
+								className="btn-tactile rounded p-1 hover:bg-secondary"
 								onClick={closeBrowserModal}
 								type="button"
 							>
@@ -246,49 +249,25 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
 							</button>
 						</div>
 
-						<div className="mt-4 space-y-3.5 font-medium text-xs leading-relaxed">
-							<div className="flex items-start gap-3 rounded-md border border-black/20 bg-secondary/30 p-2.5 dark:border-white/20">
-								<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] font-black text-white dark:border-white">
-									1
-								</span>
-								<p>
-									No Chrome, Edge ou Brave, localize o ícone de{" "}
-									<strong className="text-foreground">
-										Instalar aplicativo
-									</strong>{" "}
-									na barra de endereços (lado direito) ou abra o menu de 3
-									pontos.
-								</p>
-							</div>
-
-							<div className="flex items-start gap-3 rounded-md border border-black/20 bg-secondary/30 p-2.5 dark:border-white/20">
-								<span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border border-black bg-[#FF4A1C] font-black text-white dark:border-white">
-									2
-								</span>
-								<p>
-									Clique em{" "}
-									<strong className="text-foreground">
-										{"Instalar orc//desafios"}
-									</strong>
-									.
-								</p>
-							</div>
-
-							<div className="rounded-md border border-black/10 bg-background p-2.5 text-[11px] text-muted-foreground dark:border-white/10">
-								O aplicativo será aberto em uma janela dedicada sem controles do
-								navegador, exatamente como um software nativo.
-							</div>
+						<div className="space-y-3 py-4 text-xs">
+							<p className="font-mono text-muted-foreground">
+								Para instalar o app pelo seu navegador:
+							</p>
+							<p className="font-mono">
+								Clique no ícone de <strong>instalar</strong> na barra de
+								endereço do navegador (Chrome, Edge ou Brave) ou abra as
+								configurações do navegador e selecione{" "}
+								<strong>"Instalar aplicativo"</strong>.
+							</p>
 						</div>
 
-						<div className="mt-5 pt-2">
-							<button
-								className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2 font-black font-display text-primary-foreground text-xs uppercase tracking-wider shadow-hard-sm hover:opacity-90 dark:border-white"
-								onClick={closeBrowserModal}
-								type="button"
-							>
-								FECHAR
-							</button>
-						</div>
+						<button
+							className="btn-tactile w-full rounded-md border-2 border-black bg-primary py-2.5 font-black font-display text-primary-foreground text-xs uppercase shadow-hard-sm dark:border-white"
+							onClick={closeBrowserModal}
+							type="button"
+						>
+							FECHAR
+						</button>
 					</div>
 				</div>
 			) : null}

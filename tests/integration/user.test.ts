@@ -340,7 +340,7 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 		]);
 	});
 
-	it("deve bloquear seleção de outras trilhas se progresso da trilha principal for inferior a 85%", async () => {
+	it("deve bloquear seleção de outras trilhas se progresso da trilha principal for inferior a 85%, mas permitir desmarcar/remarcar a própria trilha principal", async () => {
 		// Cria o usuário Carlos (Back-end, 0% no CSV)
 		const carlosUser = await createTestUser(testDb.db, {
 			email: "carlos.dev@orcestra.com",
@@ -407,6 +407,39 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 			trackPreferences: ["BACK"],
 		});
 		expect(successRes.success).toBe(true);
+
+		// Carlos desmarcando a trilha principal (para pausar em semanas de provas) -> deve ter sucesso
+		const unmarkRes = await carlosCaller.user.updateProfile({
+			department: "DIPROJ",
+			name: "Carlos",
+			trackPreferences: [],
+		});
+		expect(unmarkRes.success).toBe(true);
+
+		const carlosMeUnmarked = await carlosCaller.user.me();
+		expect(carlosMeUnmarked.trackPreferencesList).toEqual([]);
+
+		// Carlos tentando marcar outra trilha diretamente sem ter 85% -> deve falhar
+		await expect(
+			carlosCaller.user.updateProfile({
+				department: "DIPROJ",
+				name: "Carlos",
+				trackPreferences: ["DEVOPS"],
+			})
+		).rejects.toThrowError(
+			"Você precisa atingir pelo menos 85% de progresso na sua trilha principal (Back-end) para selecionar outras trilhas."
+		);
+
+		// Carlos remarcando sua trilha principal novamente -> deve ter sucesso
+		const remarkRes = await carlosCaller.user.updateProfile({
+			department: "DIPROJ",
+			name: "Carlos",
+			trackPreferences: ["BACK"],
+		});
+		expect(remarkRes.success).toBe(true);
+
+		const carlosMeRemarked = await carlosCaller.user.me();
+		expect(carlosMeRemarked.trackPreferencesList).toEqual(["BACK"]);
 	});
 
 	it("deve permitir seleção de outras trilhas se progresso da trilha principal for >= 85%", async () => {
