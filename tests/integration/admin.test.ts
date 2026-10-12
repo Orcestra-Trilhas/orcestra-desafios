@@ -15,6 +15,11 @@ import {
 import { createTestCaller } from "../helpers/test-context";
 import { createTestDatabase, type TestDbInstance } from "../helpers/test-db";
 
+const INSUFFICIENT_MEMBERS_REGEX =
+	/Membros insuficientes na trilha deste desafio \(PROTOTIPACAO\)/;
+const ALREADY_ALLOCATED_REGEX = /já estão alocados em outra dupla/;
+const SAME_MEMBER_REGEX = /não podem ser a mesma pessoa/;
+
 describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 	let testDb: TestDbInstance;
 
@@ -467,9 +472,7 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 			adminCaller.admin.drawPairs({
 				challengeId: chal.id,
 			})
-		).rejects.toThrow(
-			/Membros insuficientes na trilha deste desafio \(PROTOTIPACAO\)/
-		);
+		).rejects.toThrow(INSUFFICIENT_MEMBERS_REGEX);
 
 		const pairsCount = await testDb.db.query.pair.findMany({
 			where: { challengeId: chal.id },
@@ -516,7 +519,7 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 				member1Id: u1.id,
 				member2Id: u2.id,
 			})
-		).rejects.toThrow(/já estão alocados em outra dupla/);
+		).rejects.toThrow(ALREADY_ALLOCATED_REGEX);
 
 		// 3. Tenta alocar a mesma pessoa como member1 e member2
 		await expect(
@@ -525,7 +528,7 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 				member1Id: u1.id,
 				member2Id: u1.id,
 			})
-		).rejects.toThrow(/não podem ser a mesma pessoa/);
+		).rejects.toThrow(SAME_MEMBER_REGEX);
 	});
 
 	it("deve desortear duplas do desafio (clearPairs) e excluir dupla individual (deletePair)", async () => {
@@ -621,5 +624,4 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 		expect(carlosItem?.isMatchingTrack).toBe(false);
 		expect(carlosItem?.isAssigned).toBe(false);
 	});
-
 });

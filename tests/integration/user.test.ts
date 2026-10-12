@@ -280,6 +280,12 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 			name: "Eduardo L.",
 		});
 
+		// Cadastra usuário Danielle de Sousa Pinheiro (que mapeia para DaniProj)
+		await createTestUser(testDb.db, {
+			email: "danielle@orcestra.com",
+			name: "Danielle de Sousa Pinheiro",
+		});
+
 		const eligible = await caller.user.getEligibleMembers();
 		expect(eligible.length).toBeGreaterThan(0);
 
@@ -288,6 +294,16 @@ describe("User & Profile Router (Caixa-Cinza)", () => {
 		expect(eduardo).toBeDefined();
 		expect(eduardo?.isRegistered).toBe(true);
 		expect(eduardo?.trackPreferences).toEqual(["DEVOPS"]);
+
+		// DaniProj deve estar marcado como cadastrado através de Danielle de Sousa Pinheiro
+		const daniProj = eligible.find((m) => m.name === "DaniProj");
+		expect(daniProj).toBeDefined();
+		expect(daniProj?.isRegistered).toBe(true);
+
+		// DanyTOps NÃO está cadastrada ainda
+		const danyTops = eligible.find((m) => m.name === "DanyTOps");
+		expect(danyTops).toBeDefined();
+		expect(danyTops?.isRegistered).toBe(false);
 
 		// Outro membro não cadastrado ainda
 		const artur = eligible.find((m) => m.name === "Artur");

@@ -54,22 +54,30 @@ export const userRouter = router({
 			},
 		});
 
-		const registeredNames = new Set(
-			registeredUsers.map((u) => u.name.trim().toLowerCase())
-		);
+		const registeredUserNames = registeredUsers.map((u) => u.name);
 
-		return sheetMembers.map((m) => ({
-			canChooseOtherTracks: canMemberChooseOtherTracks(m),
-			displayTrack: m.displayTrack,
-			isRegistered: registeredNames.has(m.name.trim().toLowerCase()),
-			minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
-			name: m.name,
-			primaryTrack: m.primaryTrack,
-			progressPercent: m.progressPercent,
-			rawTrack: m.rawTrack,
-			satisfaction: m.satisfaction,
-			trackPreferences: m.trackPreferences,
-		}));
+		return sheetMembers.map((m) => {
+			const isRegistered = registeredUserNames.some((userName) => {
+				const found = findSheetMember(userName);
+				if (found && found.name.toLowerCase() === m.name.toLowerCase()) {
+					return true;
+				}
+				return userName.trim().toLowerCase() === m.name.trim().toLowerCase();
+			});
+
+			return {
+				canChooseOtherTracks: canMemberChooseOtherTracks(m),
+				displayTrack: m.displayTrack,
+				isRegistered,
+				minProgressRequired: MIN_PROGRESS_TO_CHOOSE_OTHER_TRACKS,
+				name: m.name,
+				primaryTrack: m.primaryTrack,
+				progressPercent: m.progressPercent,
+				rawTrack: m.rawTrack,
+				satisfaction: m.satisfaction,
+				trackPreferences: m.trackPreferences,
+			};
+		});
 	}),
 
 	getMemberTrackByName: publicProcedure

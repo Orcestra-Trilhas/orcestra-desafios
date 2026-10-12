@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 
 import { PopLogo } from "@/components/pop-elements";
@@ -40,6 +40,21 @@ export default function SignUpForm({
 		"Selecione seu nome acima"
 	);
 	const [loading, setLoading] = useState(false);
+
+	const isCustom = selectedMemberName === "__CUSTOM__";
+	const memberTrackQuery = useQuery(
+		trpc.user.getMemberTrackByName.queryOptions(
+			{ name: customName.trim() },
+			{ enabled: isCustom && customName.trim().length >= 3 }
+		)
+	);
+
+	useEffect(() => {
+		if (isCustom && memberTrackQuery.data) {
+			setAssignedTracks(memberTrackQuery.data.trackPreferences);
+			setAssignedTrackLabel(memberTrackQuery.data.displayTrack);
+		}
+	}, [isCustom, memberTrackQuery.data]);
 
 	const handleMemberSelect = useCallback(
 		(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -150,7 +165,6 @@ export default function SignUpForm({
 		return <Loader />;
 	}
 
-	const isCustom = selectedMemberName === "__CUSTOM__";
 	const membersList = eligibleMembersQuery.data ?? [];
 
 	return (

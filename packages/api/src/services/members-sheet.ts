@@ -215,6 +215,15 @@ export function getSheetMembers(): SheetMember[] {
 			trackPreferences: ["FRONT"],
 		},
 		{
+			displayTrack: "Back-end",
+			name: "DanyTOps",
+			primaryTrack: "BACK",
+			progressPercent: 0,
+			rawTrack: "Back-end",
+			satisfaction: "Sem avaliações",
+			trackPreferences: ["BACK"],
+		},
+		{
 			displayTrack: "DevOps",
 			name: "Eduardo L.",
 			primaryTrack: "DEVOPS",
@@ -258,6 +267,39 @@ export function getSheetMembers(): SheetMember[] {
 export function findSheetMember(name: string): SheetMember | null {
 	const members = getSheetMembers();
 	const target = normalizeName(name);
+
+	// Regra específica para Danis:
+	// "Danielle de Sousa Pinheiro" == DaniProj
+	// Qualquer outra Dani (ex: "Danielle", "Dany", "DanyTops", etc.) == DanyTOps
+	const isDanielleSousaPinheiro =
+		target === "daniproj" ||
+		target === "danielle de sousa pinheiro" ||
+		(target.includes("danielle") && target.includes("pinheiro")) ||
+		(target.includes("dani") && target.includes("proj"));
+
+	if (isDanielleSousaPinheiro) {
+		const daniProj = members.find((m) => normalizeName(m.name) === "daniproj");
+		if (daniProj) {
+			return daniProj;
+		}
+	}
+
+	// Se for Dandan específico, deixa para a correspondência normal
+	if (target !== "dandan") {
+		const isOtherDani =
+			target === "danytops" ||
+			target.includes("dany") ||
+			target.startsWith("dani");
+
+		if (isOtherDani) {
+			const danyTops = members.find(
+				(m) => normalizeName(m.name) === "danytops"
+			);
+			if (danyTops) {
+				return danyTops;
+			}
+		}
+	}
 
 	// 1. Correspondência exata normalizada
 	const exact = members.find((m) => normalizeName(m.name) === target);

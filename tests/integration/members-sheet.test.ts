@@ -126,4 +126,39 @@ describe("Members Sheet Service & CSV Parser (Issue #3 & #4)", () => {
 		const scoreUnknown = calculateMemberKnowledgeScore("MembroNovo", 150);
 		expect(scoreUnknown).toBe(150);
 	});
+
+	it("deve mapear Danielle de Sousa Pinheiro como DaniProj e qualquer outra Dani como DanyTOps", () => {
+		// Danielle de Sousa Pinheiro deve mapear estritamente para DaniProj (Front-end)
+		const daniProj1 = findSheetMember("Danielle de Sousa Pinheiro");
+		expect(daniProj1).toBeDefined();
+		expect(daniProj1?.name).toBe("DaniProj");
+		expect(daniProj1?.primaryTrack).toBe("FRONT");
+
+		const daniProj2 = findSheetMember("danielle pinheiro");
+		expect(daniProj2).toBeDefined();
+		expect(daniProj2?.name).toBe("DaniProj");
+
+		const daniProj3 = findSheetMember("DaniProj");
+		expect(daniProj3).toBeDefined();
+		expect(daniProj3?.name).toBe("DaniProj");
+
+		// Qualquer outra Dani (sem Sousa Pinheiro) deve mapear para DanyTOps (Back-end)
+		const danyTops1 = findSheetMember("Danielle");
+		expect(danyTops1).toBeDefined();
+		expect(danyTops1?.name).toBe("DanyTOps");
+		expect(danyTops1?.primaryTrack).toBe("BACK");
+
+		const danyTops2 = findSheetMember("Dany");
+		expect(danyTops2).toBeDefined();
+		expect(danyTops2?.name).toBe("DanyTOps");
+
+		const danyTops3 = findSheetMember("DanyTOps");
+		expect(danyTops3).toBeDefined();
+		expect(danyTops3?.name).toBe("DanyTOps");
+
+		// Dandan possui entrada própria no CSV
+		const dandan = findSheetMember("Dandan");
+		expect(dandan).toBeDefined();
+		expect(dandan?.name).toBe("Dandan");
+	});
 });
