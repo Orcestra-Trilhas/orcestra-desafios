@@ -19,6 +19,10 @@ const INSUFFICIENT_MEMBERS_REGEX =
 	/Membros insuficientes na trilha deste desafio \(PROTOTIPACAO\)/;
 const ALREADY_ALLOCATED_REGEX = /já estão alocados em outra dupla/;
 const SAME_MEMBER_REGEX = /não podem ser a mesma pessoa/;
+const ADMIN_CANNOT_PARTICIPATE_REGEX =
+	/Administradores não podem participar de duplas/;
+const ASSESSOR_CANNOT_BE_MEMBER_REGEX =
+	/O avaliador do desafio não pode ser alocado/;
 
 describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 	let testDb: TestDbInstance;
@@ -529,6 +533,40 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 				member2Id: u1.id,
 			})
 		).rejects.toThrow(SAME_MEMBER_REGEX);
+
+		// 4. Tenta alocar usuário com role ADMIN
+		const adminUser = await createTestUser(testDb.db, {
+			name: "Admin Dani",
+			role: "ADMIN",
+		});
+		const freshMember = await createTestUser(testDb.db, {
+			name: "Fresh Member",
+			role: "MEMBER",
+		});
+		await expect(
+			adminCaller.admin.allocatePair({
+				challengeId: chal.id,
+				member1Id: adminUser.id,
+				member2Id: freshMember.id,
+			})
+		).rejects.toThrow(ADMIN_CANNOT_PARTICIPATE_REGEX);
+
+		// 5. Tenta alocar o próprio assessor do desafio (mesmo se fosse role MEMBER)
+		const assessorMember = await createTestUser(testDb.db, {
+			name: "Assessor Membro",
+			role: "MEMBER",
+		});
+		const chalWithMemberAssessor = await createTestChallenge(testDb.db, {
+			assessorId: assessorMember.id,
+			trackTheme: "FRONT",
+		});
+		await expect(
+			adminCaller.admin.allocatePair({
+				challengeId: chalWithMemberAssessor.id,
+				member1Id: assessorMember.id,
+				member2Id: freshMember.id,
+			})
+		).rejects.toThrow(ASSESSOR_CANNOT_BE_MEMBER_REGEX);
 	});
 
 	it("deve desortear duplas do desafio (clearPairs) e excluir dupla individual (deletePair)", async () => {

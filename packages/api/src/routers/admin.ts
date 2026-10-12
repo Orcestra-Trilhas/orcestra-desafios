@@ -67,6 +67,28 @@ export const adminRouter = router({
 				}
 			}
 
+			// Verifica se algum dos membros selecionados é ADMIN ou o próprio assessor do desafio
+			const allUsers = await ctx.db.query.user.findMany();
+			const usersToAllocate = allUsers.filter((u) => selectedIds.has(u.id));
+			for (const u of usersToAllocate) {
+				if (u.role === "ADMIN") {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message:
+							"Administradores não podem participar de duplas em desafios (" +
+							u.name +
+							").",
+					});
+				}
+				if (u.id === ch.assessorId) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message:
+							"O avaliador do desafio não pode ser alocado como membro de dupla.",
+					});
+				}
+			}
+
 			const newPairId = crypto.randomUUID();
 			const [newPair] = await ctx.db
 				.insert(pair)
