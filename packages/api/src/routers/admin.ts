@@ -6,33 +6,90 @@ import { z } from "zod";
 import { calculateMemberKnowledgeScore } from "../services/members-sheet";
 import { adminProcedure, router } from "../trpc";
 
+function validateMemberDuplicates(
+	member1Id: string,
+	member2Id?: string | null,
+	member3Id?: string | null
+) {
+	if (member2Id && member1Id === member2Id) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: "O Membro 1 e o Membro 2 não podem ser a mesma pessoa.",
+		});
+	}
+	if (
+		member3Id &&
+		(member3Id === member1Id || (member2Id && member3Id === member2Id))
+	) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: "O Membro 3 não pode ser repetido.",
+		});
+	}
+}
+
+function validateMembersAvailability(
+	pairs: Array<{
+		member1Id: string;
+		member2Id: string | null;
+		member3Id: string | null;
+	}>,
+	selectedIds: Set<string>
+) {
+	for (const p of pairs) {
+		if (
+			selectedIds.has(p.member1Id) ||
+			(p.member2Id && selectedIds.has(p.member2Id)) ||
+			(p.member3Id && selectedIds.has(p.member3Id))
+		) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message:
+					"Um ou mais membros selecionados já estão alocados neste desafio.",
+			});
+		}
+	}
+}
+
+function validateMemberRoles(
+	users: Array<{ id: string; role: string; name: string }>,
+	selectedIds: Set<string>,
+	assessorId: string
+) {
+	const usersToAllocate = users.filter((u) => selectedIds.has(u.id));
+	for (const u of usersToAllocate) {
+		if (u.role === "ADMIN") {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: `Administradores não podem participar de desafios (${u.name}).`,
+			});
+		}
+		if (u.id === assessorId) {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message:
+					"O avaliador do desafio não pode ser alocado como participante.",
+			});
+		}
+	}
+}
+
 export const adminRouter = router({
 	allocatePair: adminProcedure
 		.input(
 			z.object({
 				challengeId: z.string(),
 				member1Id: z.string(),
-				member2Id: z.string(),
+				member2Id: z.string().optional().nullable(),
 				member3Id: z.string().optional().nullable(),
 			})
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (input.member1Id === input.member2Id) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "O Membro 1 e o Membro 2 não podem ser a mesma pessoa.",
-				});
-			}
-			if (
-				input.member3Id &&
-				(input.member3Id === input.member1Id ||
-					input.member3Id === input.member2Id)
-			) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "O Membro 3 não pode ser repetido.",
-				});
-			}
+			validateMemberDuplicates(
+				input.member1Id,
+				input.member2Id,
+				input.member3Id
+			);
 
 			const ch = await ctx.db.query.challenge.findFirst({
 				where: { id: input.challengeId },
@@ -46,49 +103,20 @@ export const adminRouter = router({
 				});
 			}
 
-			// Verifica se algum dos membros já está alocado em uma dupla deste desafio
+			// Verifica se algum dos membros já está alocado em uma participação deste desafio
 			const selectedIds = new Set(
 				[input.member1Id, input.member2Id, input.member3Id].filter(
-					Boolean
-				) as string[]
+					(id): id is string => Boolean(id)
+				)
 			);
 
-			for (const p of ch.pairs) {
-				if (
-					selectedIds.has(p.member1Id) ||
-					selectedIds.has(p.member2Id) ||
-					(p.member3Id && selectedIds.has(p.member3Id))
-				) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"Um ou mais membros selecionados já estão alocados em outra dupla deste desafio.",
-					});
-				}
-			}
+			validateMembersAvailability(ch.pairs, selectedIds);
 
 			// Verifica se algum dos membros selecionados é ADMIN ou o próprio assessor do desafio
 			const allUsers = await ctx.db.query.user.findMany();
-			const usersToAllocate = allUsers.filter((u) => selectedIds.has(u.id));
-			for (const u of usersToAllocate) {
-				if (u.role === "ADMIN") {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"Administradores não podem participar de duplas em desafios (" +
-							u.name +
-							").",
-					});
-				}
-				if (u.id === ch.assessorId) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message:
-							"O avaliador do desafio não pode ser alocado como membro de dupla.",
-					});
-				}
-			}
+			validateMemberRoles(allUsers, selectedIds, ch.assessorId);
 
+			const isSolo = !input.member2Id;
 			const newPairId = crypto.randomUUID();
 			const [newPair] = await ctx.db
 				.insert(pair)
@@ -97,19 +125,20 @@ export const adminRouter = router({
 					currentStep: 1,
 					id: newPairId,
 					member1Id: input.member1Id,
-					member2Id: input.member2Id,
+					member2Id: input.member2Id || null,
 					member3Id: input.member3Id || null,
 					status: "IN_PROGRESS",
 				})
 				.returning();
 
 			await ctx.db.insert(adminLog).values({
-				action: "ALOCOU_DUPLA_MANUAL",
+				action: isSolo ? "ALOCOU_SOLO_MANUAL" : "ALOCOU_DUPLA_MANUAL",
 				actorId: ctx.session.user.id,
 				details: {
 					challengeId: ch.id,
+					isSolo,
 					member1Id: input.member1Id,
-					member2Id: input.member2Id,
+					member2Id: input.member2Id || null,
 					member3Id: input.member3Id || null,
 					pairId: newPairId,
 				},
@@ -158,6 +187,7 @@ export const adminRouter = router({
 				success: true,
 			};
 		}),
+
 	createChallenge: adminProcedure
 		.input(
 			z.object({
@@ -294,7 +324,9 @@ export const adminRouter = router({
 			const assignedUserIds = new Set<string>();
 			for (const p of ch.pairs) {
 				assignedUserIds.add(p.member1Id);
-				assignedUserIds.add(p.member2Id);
+				if (p.member2Id) {
+					assignedUserIds.add(p.member2Id);
+				}
 				if (p.member3Id) {
 					assignedUserIds.add(p.member3Id);
 				}
@@ -340,12 +372,12 @@ export const adminRouter = router({
 			});
 
 			const pairsToInsert: Array<{
-				id: string;
 				challengeId: string;
+				currentStep: number;
+				id: string;
 				member1Id: string;
 				member2Id: string;
 				member3Id: string | null;
-				currentStep: number;
 				status: string;
 			}> = [];
 
@@ -378,7 +410,8 @@ export const adminRouter = router({
 			if (left === right) {
 				const medianMember = rankedMembers[left];
 				const lastPair = pairsToInsert.at(-1);
-				if (medianMember && lastPair) {
+
+				if (lastPair && medianMember) {
 					lastPair.member3Id = medianMember.id;
 				}
 			}
@@ -507,7 +540,9 @@ export const adminRouter = router({
 			const assignedUserIds = new Set<string>();
 			for (const p of ch.pairs) {
 				assignedUserIds.add(p.member1Id);
-				assignedUserIds.add(p.member2Id);
+				if (p.member2Id) {
+					assignedUserIds.add(p.member2Id);
+				}
 				if (p.member3Id) {
 					assignedUserIds.add(p.member3Id);
 				}
@@ -602,8 +637,7 @@ export const adminRouter = router({
 					.set({
 						currentStep: 3,
 						feedback:
-							input.feedback ||
-							"Desafio aprovado com sucesso! Parabéns à dupla!",
+							input.feedback || "Desafio aprovado com sucesso! Parabéns!",
 						reviewedAt: new Date(),
 						status: "APPROVED",
 					})

@@ -72,7 +72,9 @@ function SubmissionCard({
 							{members.map((m) => m.name.split(" ")[0]).join(" & ")}
 						</span>
 						{sub.isMyOwnPair ? (
-							<PopBadge color="neutral">SUA DUPLA</PopBadge>
+							<PopBadge color="neutral">
+								{members.length === 1 ? "SUA PARTICIPAÇÃO" : "SUA DUPLA"}
+							</PopBadge>
 						) : null}
 					</div>
 				</div>
@@ -108,8 +110,8 @@ function SubmissionCard({
 								</h4>
 								<p className="max-w-md font-medium text-white/70 text-xs">
 									O código, link de PR e anotações desta entrega foram tarjados
-									de preto para evitar spoilers. Envie a solução da sua dupla
-									para desbloquear.
+									de preto para evitar spoilers. Envie sua solução para
+									desbloquear.
 								</p>
 							</div>
 
@@ -155,7 +157,7 @@ function SubmissionCard({
 						{sub.submissionNotes ? (
 							<div className="rounded-md border border-black/20 bg-secondary/30 p-3 dark:border-white/20">
 								<span className="mb-1 block font-mono text-[10px] text-muted-foreground uppercase">
-									NOTAS {"//"} EXPLICAÇÃO DA DUPLA:
+									NOTAS {"//"} EXPLICAÇÃO:
 								</span>
 								<div className="font-mono text-xs leading-relaxed">
 									{renderSubmissionNotes(sub.submissionNotes)}
@@ -199,13 +201,13 @@ export function CommunitySolutionsSection({
 							)}
 						</div>
 						<h3 className="font-black font-display text-xs uppercase tracking-wider sm:text-sm">
-							SOLUÇÕES {"//"} ENTREGAS DAS DUPLAS
+							SOLUÇÕES {"//"} ENTREGAS DOS PARTICIPANTES
 						</h3>
 					</div>
 					<p className="font-medium text-muted-foreground text-xs">
 						{canViewAllSolutions
 							? "Você já enviou sua solução ou o prazo expirou. Todas as submissões estão desbloqueadas para estudo e comparação."
-							: "Modo anti-spoiler ativo. As respostas de outras duplas estão protegidas com tarja preta até que sua dupla submeta a solução."}
+							: "Modo anti-spoiler ativo. As respostas de outras participações estão protegidas com tarja preta até que sua entrega seja submetida."}
 					</p>
 				</div>
 
@@ -232,7 +234,7 @@ export function CommunitySolutionsSection({
 			) : (
 				<div className="rounded-md border-2 border-black border-dashed bg-secondary/30 p-6 text-center dark:border-white">
 					<span className="block font-black font-mono text-[11px] text-muted-foreground uppercase tracking-widest">
-						[ NENHUMA DUPLA SUBMETEU AINDA ]
+						[ NENHUMA SUBMISSÃO ENVIADA AINDA ]
 					</span>
 					<p className="mt-1 font-sans text-muted-foreground text-xs">
 						Assim que a primeira entrega for enviada pelos membros, ela

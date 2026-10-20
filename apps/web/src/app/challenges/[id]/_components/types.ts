@@ -48,7 +48,7 @@ export interface ChallengePairItem {
 	member1?: ChallengePairMember | null;
 	member1Id: string;
 	member2?: ChallengePairMember | null;
-	member2Id: string;
+	member2Id?: string | null;
 	member3?: ChallengePairMember | null;
 	member3Id?: string | null;
 	prUrl?: string | null;

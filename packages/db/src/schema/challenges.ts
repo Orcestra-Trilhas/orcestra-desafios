@@ -52,9 +52,9 @@ export const pair = pgTable(
 		member1Id: text("member1_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		member2Id: text("member2_id")
-			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
+		member2Id: text("member2_id").references(() => user.id, {
+			onDelete: "cascade",
+		}), // Nullable para desafios solos
 		member3Id: text("member3_id").references(() => user.id, {
 			onDelete: "set null",
 		}), // Trio se ímpar

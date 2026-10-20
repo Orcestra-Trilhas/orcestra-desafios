@@ -17,10 +17,9 @@ import { createTestDatabase, type TestDbInstance } from "../helpers/test-db";
 
 const INSUFFICIENT_MEMBERS_REGEX =
 	/Membros insuficientes na trilha deste desafio \(PROTOTIPACAO\)/;
-const ALREADY_ALLOCATED_REGEX = /já estão alocados em outra dupla/;
+const ALREADY_ALLOCATED_REGEX = /já estão alocados/;
 const SAME_MEMBER_REGEX = /não podem ser a mesma pessoa/;
-const ADMIN_CANNOT_PARTICIPATE_REGEX =
-	/Administradores não podem participar de duplas/;
+const ADMIN_CANNOT_PARTICIPATE_REGEX = /Administradores não podem participar/;
 const ASSESSOR_CANNOT_BE_MEMBER_REGEX =
 	/O avaliador do desafio não pode ser alocado/;
 
@@ -567,6 +566,86 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 				member2Id: freshMember.id,
 			})
 		).rejects.toThrow(ASSESSOR_CANNOT_BE_MEMBER_REGEX);
+	});
+
+	it("deve permitir inscrição/alocação manual de desafio solo e pontuar individualmente", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			pointsReward: 150,
+			trackTheme: "FRONT",
+		});
+
+		const soloUser = await createTestUser(testDb.db, {
+			name: "Membro Solo",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["FRONT"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		// 1. Aloca desafio solo com sucesso
+		const allocRes = await adminCaller.admin.allocatePair({
+			challengeId: chal.id,
+			member1Id: soloUser.id,
+			member2Id: null,
+		});
+
+		expect(allocRes.success).toBe(true);
+		expect(allocRes.pair).toBeDefined();
+
+		// Valida que member2Id no banco é nulo
+		const dbPair = await testDb.db.query.pair.findFirst({
+			where: { id: allocRes.pair.id },
+		});
+		expect(dbPair?.member1Id).toBe(soloUser.id);
+		expect(dbPair?.member2Id).toBeNull();
+		expect(dbPair?.member3Id).toBeNull();
+
+		// Valida log de auditoria ALOCOU_SOLO_MANUAL
+		const log = await testDb.db.query.adminLog.findFirst({
+			where: { action: "ALOCOU_SOLO_MANUAL" },
+		});
+		expect(log).toBeDefined();
+		expect(log?.actorId).toBe(adminPersona.id);
+
+		// 2. Tenta alocar novamente o mesmo membro (deve impedir duplicação)
+		await expect(
+			adminCaller.admin.allocatePair({
+				challengeId: chal.id,
+				member1Id: soloUser.id,
+				member2Id: null,
+			})
+		).rejects.toThrow(ALREADY_ALLOCATED_REGEX);
+
+		// 3. Valida listMembersForChallenge sinalizando que o membro solo agora está alocado
+		const listRes = await adminCaller.admin.listMembersForChallenge({
+			challengeId: chal.id,
+		});
+		const soloItem = listRes.members.find((m) => m.id === soloUser.id);
+		expect(soloItem?.isAssigned).toBe(true);
+
+		// 4. Aprova a submissão do desafio solo e verifica que pontua apenas o membro solo
+		const userBefore = await testDb.db.query.user.findFirst({
+			where: { id: soloUser.id },
+		});
+		const initialPoints = userBefore?.points ?? 0;
+
+		const reviewRes = await adminCaller.admin.reviewSubmission({
+			feedback: "Excelente entrega individual!",
+			pairId: allocRes.pair.id,
+			pointsBonus: 50,
+			status: "APPROVED",
+		});
+
+		expect(reviewRes.success).toBe(true);
+
+		const userAfter = await testDb.db.query.user.findFirst({
+			where: { id: soloUser.id },
+		});
+		expect(userAfter?.points).toBe(initialPoints + 200); // 150 base + 50 bonus
 	});
 
 	it("deve desortear duplas do desafio (clearPairs) e excluir dupla individual (deletePair)", async () => {

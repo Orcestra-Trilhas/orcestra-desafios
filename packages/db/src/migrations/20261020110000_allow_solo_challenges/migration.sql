@@ -1,0 +1,1 @@
+ALTER TABLE "pair" ALTER COLUMN "member2_id" DROP NOT NULL;

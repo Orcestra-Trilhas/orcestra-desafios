@@ -42,9 +42,7 @@ export default function ChallengeDetailPage() {
 				toast.error(err.message || "Erro ao avançar etapa");
 			},
 			onSuccess: () => {
-				toast.success(
-					"Passo 1 concluído! A dupla agora pode enviar a solução."
-				);
+				toast.success("Passo 1 concluído! A solução agora pode ser enviada.");
 				queryClient.invalidateQueries();
 			},
 		})
@@ -137,10 +135,10 @@ export default function ChallengeDetailPage() {
 	const allocatePairMutation = useMutation(
 		trpc.admin.allocatePair.mutationOptions({
 			onError: (err) => {
-				toast.error(err.message || "Erro ao alocar dupla");
+				toast.error(err.message || "Erro ao alocar");
 			},
 			onSuccess: () => {
-				toast.success("Dupla alocada com sucesso!");
+				toast.success("Alocação realizada com sucesso!");
 				setIsAllocateModalOpen(false);
 				queryClient.invalidateQueries();
 			},
@@ -236,7 +234,7 @@ export default function ChallengeDetailPage() {
 		(data: {
 			challengeId: string;
 			member1Id: string;
-			member2Id: string;
+			member2Id?: string | null;
 			member3Id?: string | null;
 		}) => {
 			allocatePairMutation.mutate(data);
@@ -378,7 +376,7 @@ export default function ChallengeDetailPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-4 px-3 py-4 pb-28 sm:space-y-6 sm:px-4 sm:py-6 sm:pb-32">
-			{/* Top Bar, Track lock notice & Header */}
+			{/* Header */}
 			<ChallengeHeader
 				challenge={ch}
 				isAdmin={isAdmin}
@@ -387,17 +385,34 @@ export default function ChallengeDetailPage() {
 				userMe={userMe.data}
 			/>
 
-			{/* Collective Thermometer */}
+			{/* Checkpoints Stepper (Progress Tracker) */}
+			{myPair ? (
+				<CheckpointsStepper
+					isAdvancingStep={advanceStepMutation.isPending}
+					myPair={myPair}
+					onAdvanceStep1={handleAdvanceStep1}
+					onOpenSubmit={handleOpenSubmit}
+				/>
+			) : null}
+
+			{/* Regras e Critérios do Desafio */}
+			<ChallengeRulesCard rulesMarkdown={ch.rulesMarkdown} />
+
+			{/* Termômetro Coletivo */}
 			<CollectiveThermometerCard
 				submittedCount={submittedCount}
 				thermometerPercent={thermometerPercent}
 				totalPairs={totalPairs}
 			/>
 
-			{/* Rules & Markdown Section */}
-			<ChallengeRulesCard rulesMarkdown={ch.rulesMarkdown} />
+			{/* Submissões da Comunidade */}
+			<CommunitySolutionsSection
+				hasMyPair={Boolean(myPair)}
+				onOpenSubmit={handleOpenSubmit}
+				submissions={ch.submissions}
+			/>
 
-			{/* Admin Only: Complete Pairs and Progress Management */}
+			{/* Admin Section: Gerenciamento de Duplas */}
 			{isAdmin ? (
 				<AdminPairsCard
 					challengeTitle={ch.title}
@@ -411,22 +426,6 @@ export default function ChallengeDetailPage() {
 					pairs={ch.pairs ?? []}
 				/>
 			) : null}
-
-			{/* Checkpoints Stepper */}
-			<CheckpointsStepper
-				isAdvancingStep={advanceStepMutation.isPending}
-				myPair={myPair}
-				onAdvanceStep1={handleAdvanceStep1}
-				onOpenSubmit={handleOpenSubmit}
-			/>
-
-			{/* Community Solutions & Anti-Spoiler Section */}
-			<CommunitySolutionsSection
-				canViewAllSolutions={ch.canViewAllSolutions}
-				hasMyPair={Boolean(myPair)}
-				onOpenSubmit={handleOpenSubmit}
-				submissions={ch.submissions}
-			/>
 
 			{/* Floating Bottom Bar */}
 			{myPair && pairStatus !== "APPROVED" ? (

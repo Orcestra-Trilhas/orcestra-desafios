@@ -8,7 +8,6 @@ import {
 	GitPullRequest,
 	MessageSquare,
 	RefreshCw,
-	Sparkles,
 	Trash2,
 	UserCheck,
 	UserPlus,
@@ -103,116 +102,79 @@ function getPairStatusConfig(status: string) {
 			};
 		case "SUBMITTED":
 			return {
-				bg: "bg-[#FFD700]/10 dark:bg-amber-950/20",
+				bg: "bg-[#FFD700]/20 dark:bg-amber-950/20",
 				border: "border-[#FFD700] dark:border-amber-400",
 				icon: Clock,
-				label: "EM REVISÃO",
+				label: "AGUARDANDO REVISÃO",
 				textColor: "text-[#B45309] dark:text-amber-400",
 			};
 		case "CHANGES_REQUESTED":
 			return {
-				bg: "bg-[#DC2626]/10 dark:bg-red-950/20",
-				border: "border-[#DC2626] dark:border-red-500",
+				bg: "bg-[#FF4A1C]/10 dark:bg-orange-950/20",
+				border: "border-[#FF4A1C] dark:border-orange-500",
 				icon: AlertCircle,
 				label: "AJUSTES SOLICITADOS",
-				textColor: "text-[#DC2626] dark:text-red-400",
+				textColor: "text-[#FF4A1C] dark:text-orange-400",
 			};
 		default:
 			return {
-				bg: "bg-secondary/40",
-				border: "border-black/30 dark:border-white/30",
-				icon: Sparkles,
+				bg: "bg-muted",
+				border: "border-border",
+				icon: RefreshCw,
 				label: "EM ANDAMENTO",
 				textColor: "text-muted-foreground",
 			};
 	}
 }
 
-function MemberItem({ member }: { member: ChallengePairMember }) {
-	return (
-		<div className="flex min-w-0 items-center justify-between gap-2 overflow-hidden rounded-md border border-border bg-background/80 p-2.5">
-			<div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
-				<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-primary/20 font-black font-display text-[11px] uppercase">
-					{member.name.charAt(0)}
-				</div>
-				<div className="min-w-0 flex-1 overflow-hidden">
-					{member.department ? (
-						<div className="flex items-center gap-1.5">
-							<span className="truncate rounded bg-muted px-1.5 py-0.2 font-mono text-[9px] text-muted-foreground">
-								{member.department}
-							</span>
-						</div>
-					) : null}
-					<Link
-						className="block truncate font-black font-display text-xs uppercase hover:text-primary hover:underline"
-						href={`/profile?id=${member.id}`}
-						title={member.name}
-					>
-						{member.name}
-					</Link>
-				</div>
-			</div>
-
-			{member.whatsapp ? (
-				<PopWhatsAppButton
-					className="shrink-0"
-					message={`Olá ${member.name}, acompanhando o desafio no Orcestra...`}
-					phone={member.whatsapp}
-				/>
-			) : null}
-		</div>
-	);
-}
-
 function PairDeliverablesSection({ pair }: { pair: ChallengePairItem }) {
-	if (!(pair.prUrl || pair.repoUrl || pair.submissionNotes)) {
+	const hasPullRequest = Boolean(pair.prUrl);
+	const hasNotes = Boolean(pair.submissionNotes);
+
+	if (!(hasPullRequest || hasNotes)) {
 		return (
-			<div className="flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
-				<Clock className="h-3.5 w-3.5" />
-				<span>Nenhum entregável submetido ainda.</span>
+			<div className="rounded border-2 border-black/10 border-dashed bg-muted/30 p-2.5 text-center font-mono text-[11px] text-muted-foreground dark:border-white/10">
+				Nenhum entregável enviado ainda por esta participação.
 			</div>
 		);
 	}
 
 	return (
-		<div className="space-y-2">
-			{pair.prUrl ? (
-				<div className="flex items-center gap-2">
-					<GitPullRequest className="h-3.5 w-3.5 text-[#FF4A1C]" />
-					<a
-						className="inline-flex items-center gap-1 font-mono text-primary text-xs underline hover:text-primary/80"
-						href={pair.prUrl}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<span>Ver Pull Request</span>
-						<ExternalLink className="h-3 w-3" />
-					</a>
-				</div>
-			) : null}
-
-			{pair.repoUrl ? (
-				<div className="flex items-center gap-2">
-					<span className="font-mono text-muted-foreground text-xs">REPO:</span>
-					<a
-						className="inline-flex items-center gap-1 font-mono text-primary text-xs underline hover:text-primary/80"
-						href={pair.repoUrl}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<span className="max-w-[200px] truncate">{pair.repoUrl}</span>
-						<ExternalLink className="h-3 w-3" />
-					</a>
-				</div>
-			) : null}
-
-			{pair.submissionNotes ? (
-				<div className="rounded border border-black/10 bg-background/50 p-2.5 font-mono text-xs leading-relaxed dark:border-white/10">
-					<div className="mb-1 font-bold text-[10px] text-muted-foreground uppercase">
-						NOTAS DA SUBMISSÃO:
+		<div className="space-y-2 rounded border border-black/10 bg-secondary/30 p-2.5 text-xs dark:border-white/10">
+			{hasPullRequest ? (
+				<div className="flex items-center justify-between gap-2 overflow-hidden">
+					<div className="flex min-w-0 items-center gap-1.5 font-bold font-mono text-[11px]">
+						<GitPullRequest className="h-3.5 w-3.5 shrink-0 text-[#15803D]" />
+						<span className="truncate">PR:</span>
+						<a
+							className="truncate text-primary underline hover:text-primary/80"
+							href={pair.prUrl ?? "#"}
+							rel="noopener noreferrer"
+							target="_blank"
+							title={pair.prUrl ?? ""}
+						>
+							{pair.prUrl}
+						</a>
 					</div>
-					<div className="max-h-48 overflow-y-auto">
-						{renderEvidenceImages(pair.submissionNotes)}
+					<a
+						className="inline-flex shrink-0 items-center gap-1 font-mono text-[10px] text-muted-foreground hover:text-foreground"
+						href={pair.prUrl ?? "#"}
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						<span>Abrir</span>
+						<ExternalLink className="h-2.5 w-2.5" />
+					</a>
+				</div>
+			) : null}
+
+			{hasNotes ? (
+				<div className="space-y-1">
+					<span className="block font-bold font-mono text-[10px] text-muted-foreground uppercase">
+						Anotações / Evidências:
+					</span>
+					<div className="max-h-48 overflow-y-auto rounded bg-card/60 p-2 font-mono text-[11px] text-foreground">
+						{renderEvidenceImages(pair.submissionNotes ?? "")}
 					</div>
 				</div>
 			) : null}
@@ -220,18 +182,57 @@ function PairDeliverablesSection({ pair }: { pair: ChallengePairItem }) {
 	);
 }
 
-function PairFeedbackSection({ feedback }: { feedback?: string | null }) {
+function PairFeedbackSection({
+	feedback,
+}: {
+	feedback: string | null | undefined;
+}) {
 	if (!feedback) {
 		return null;
 	}
 
 	return (
-		<div className="rounded-md border-2 border-[#1E40AF]/30 bg-[#1E40AF]/5 p-3 font-mono text-foreground text-xs dark:border-blue-500/30 dark:bg-blue-950/20">
-			<div className="mb-1 flex items-center gap-1.5 font-bold font-mono text-[#1E40AF] text-[10px] uppercase dark:text-blue-400">
+		<div className="rounded border border-black/15 bg-muted/60 p-2.5 dark:border-white/15">
+			<div className="mb-1 flex items-center gap-1 font-bold font-mono text-[10px] text-muted-foreground uppercase">
 				<MessageSquare className="h-3 w-3" />
-				<span>FEEDBACK DO AVALIADOR:</span>
+				<span>ÚLTIMO FEEDBACK REGISTRADO</span>
 			</div>
-			<p className="whitespace-pre-wrap">{feedback}</p>
+			<p className="whitespace-pre-wrap font-mono text-xs">{feedback}</p>
+		</div>
+	);
+}
+
+function MemberItem({ member }: { member: ChallengePairMember }) {
+	return (
+		<div className="flex items-center justify-between gap-2 rounded border border-black/15 bg-background p-2 dark:border-white/15">
+			<div className="flex min-w-0 items-center gap-2">
+				<Link
+					className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-black bg-primary font-black font-display text-[11px] text-primary-foreground dark:border-white"
+					href={`/profile?id=${member.id}`}
+					title={`Ver perfil de ${member.name}`}
+				>
+					{member.name.charAt(0)}
+				</Link>
+				<div className="min-w-0">
+					<Link
+						className="block truncate font-bold font-display text-xs uppercase hover:underline"
+						href={`/profile?id=${member.id}`}
+						title={member.name}
+					>
+						{member.name}
+					</Link>
+					<span className="block truncate font-mono text-[10px] text-muted-foreground">
+						{member.department || "Membro"}
+					</span>
+				</div>
+			</div>
+
+			<PopWhatsAppButton
+				className="shrink-0"
+				label="ZAP"
+				message={`Olá ${member.name}! Vamos alinhar sobre os desafios no orc//desafios?`}
+				phone={member.whatsapp}
+			/>
 		</div>
 	);
 }
@@ -255,6 +256,26 @@ function PairMembersList({ pair }: { pair: ChallengePairItem }) {
 			))}
 		</div>
 	);
+}
+
+function getPairTypeLabel(pair: ChallengePairItem): string {
+	if (pair.member3) {
+		return "Trio";
+	}
+	if (pair.member2) {
+		return "Dupla";
+	}
+	return "Solo";
+}
+
+function getPairActionLabel(isSubmitted: boolean, hasMember2: boolean): string {
+	if (isSubmitted) {
+		return "AVALIAR AGORA";
+	}
+	if (hasMember2) {
+		return "REVISAR DUPLA";
+	}
+	return "REVISAR SOLUÇÃO";
 }
 
 function PairCard({
@@ -282,6 +303,8 @@ function PairCard({
 		onDeletePair(pair.id);
 	}, [onDeletePair, pair.id]);
 
+	const typeLabel = getPairTypeLabel(pair);
+
 	return (
 		<div
 			className={`relative flex flex-col justify-between rounded-md border-2 bg-card p-4 shadow-hard-sm transition-all ${config.border}`}
@@ -293,7 +316,7 @@ function PairCard({
 							#{index + 1}
 						</span>
 						<h4 className="font-black font-display text-sm uppercase">
-							{pair.member3 ? "Trio" : "Dupla"}
+							{typeLabel}
 						</h4>
 					</div>
 
@@ -311,7 +334,11 @@ function PairCard({
 							className="btn-tactile flex h-6 w-6 items-center justify-center rounded border border-black/30 bg-secondary text-muted-foreground hover:bg-[#DC2626] hover:text-white disabled:opacity-50 dark:border-white/30"
 							disabled={isDeleting}
 							onClick={handleDelete}
-							title="Remover esta dupla"
+							title={
+								pair.member2
+									? "Remover esta dupla"
+									: "Remover esta participação solo"
+							}
 							type="button"
 						>
 							<Trash2 className="h-3 w-3" />
@@ -366,7 +393,9 @@ function PairCard({
 						type="button"
 					>
 						<UserCheck className="h-3.5 w-3.5" />
-						<span>{isSubmitted ? "AVALIAR AGORA" : "REVISAR DUPLA"}</span>
+						<span>
+							{getPairActionLabel(isSubmitted, Boolean(pair.member2))}
+						</span>
 					</button>
 				</div>
 			</div>
@@ -384,7 +413,7 @@ function PairsMetricsSummary({ pairs }: { pairs: ChallengePairItem[] }) {
 		<div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
 			<div className="rounded border-2 border-black/20 bg-secondary/30 p-2.5 text-center dark:border-white/20">
 				<span className="block font-bold font-mono text-[10px] text-muted-foreground uppercase">
-					TOTAL DE DUPLAS
+					TOTAL ALOCADOS
 				</span>
 				<span className="font-black font-display text-lg sm:text-xl">
 					{totalPairs}
@@ -438,11 +467,11 @@ export function AdminPairsCard({
 					</div>
 					<div>
 						<h3 className="font-black font-display text-base uppercase sm:text-lg">
-							PAINEL DE DUPLAS & ACOMPANHAMENTO
+							PAINEL DE DUPLAS & PARTICIPAÇÕES
 						</h3>
 						<p className="font-mono text-muted-foreground text-xs">
-							Visão administrativa completa de todas as duplas e submissões
-							deste desafio
+							Visão administrativa completa de todas as participações
+							(solo/dupla/trio) deste desafio
 						</p>
 					</div>
 				</div>
@@ -506,11 +535,11 @@ export function AdminPairsCard({
 					</div>
 					<div className="mt-3">
 						<h3 className="font-black font-display text-sm uppercase">
-							NENHUMA DUPLA FORMADA AINDA
+							NENHUMA PARTICIPAÇÃO OU DUPLA FORMADA AINDA
 						</h3>
 						<p className="mt-1 font-mono text-muted-foreground text-xs">
 							Os membros inscritos na trilha deste desafio ainda não foram
-							alocados em duplas.
+							alocados em duplas ou solo.
 						</p>
 					</div>
 					<div className="mt-5 flex flex-wrap items-center justify-center gap-3">
@@ -533,7 +562,7 @@ export function AdminPairsCard({
 							type="button"
 						>
 							<UserPlus className="h-3.5 w-3.5 text-primary" />
-							<span>ALOCAR DUPLA MANUALMENTE</span>
+							<span>ALOCAR MANUALMENTE (SOLO / DUPLA)</span>
 						</button>
 					</div>
 				</div>

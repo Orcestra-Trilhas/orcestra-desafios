@@ -31,6 +31,16 @@ function formatDaysRemaining(deadline: Date | string) {
 	return { label: `${diffDays} DIAS`, urgent: false };
 }
 
+function getPartnersTitle(count: number): string {
+	if (count > 1) {
+		return "SEU TRIO ALOCADO";
+	}
+	if (count === 1) {
+		return "SUA DUPLA TÉCNICA";
+	}
+	return "DESAFIO INDIVIDUAL";
+}
+
 function getStepThreeColor(status: string, currentStep: number): string {
 	if (status === "APPROVED") {
 		return "bg-[#15803D] dark:bg-[#16A34A]";
@@ -104,52 +114,59 @@ export const PairCard = memo(function PairCardRender({ pair }: PairCardProps) {
 				<div className="flex min-w-0 flex-col justify-between overflow-hidden rounded-md border-2 border-border bg-secondary/40 p-3 sm:p-4">
 					<div className="mb-2.5 flex items-center justify-between border-border/20 border-b pb-1.5">
 						<span className="truncate font-black font-display text-[11px] uppercase tracking-wider sm:text-xs">
-							{partners.length > 1 ? "SEU TRIO ALOCADO" : "SUA DUPLA TÉCNICA"}
+							{getPartnersTitle(partners.length)}
 						</span>
 						<span className="shrink-0 font-bold font-mono text-[9px] text-muted-foreground sm:text-[10px]">
-							[PARCEIRO]
+							{partners.length === 0 ? "[SOLO]" : "[PARCEIRO]"}
 						</span>
 					</div>
 
 					<div className="space-y-2.5 sm:space-y-3">
-						{partners.map((partner) => {
-							const zapMsg = `Olá ${partner.name}! Vamos alinhar nosso desafio "${ch.title}" no orc//desafios?`;
-							return (
-								<div
-									className="flex min-w-0 items-center justify-between gap-2 overflow-hidden"
-									key={partner.id}
-								>
-									<div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
-										<Link
-											className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-border bg-primary font-black text-primary-foreground text-xs transition hover:opacity-80 sm:h-8 sm:w-8"
-											href={`/profile?id=${partner.id}`}
-											title={`Ver perfil de ${partner.name}`}
-										>
-											{partner.name.charAt(0)}
-										</Link>
-										<div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+						{partners.length === 0 ? (
+							<div className="rounded border border-border/40 bg-background/50 p-2.5 font-mono text-muted-foreground text-xs leading-relaxed">
+								Desafio individual. Você é o único participante alocado nesta
+								missão.
+							</div>
+						) : (
+							partners.map((partner) => {
+								const zapMsg = `Olá ${partner.name}! Vamos alinhar nosso desafio "${ch.title}" no orc//desafios?`;
+								return (
+									<div
+										className="flex min-w-0 items-center justify-between gap-2 overflow-hidden"
+										key={partner.id}
+									>
+										<div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
 											<Link
-												className="truncate font-bold font-display text-xs uppercase hover:text-primary hover:underline"
+												className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border-2 border-border bg-primary font-black text-primary-foreground text-xs transition hover:opacity-80 sm:h-8 sm:w-8"
 												href={`/profile?id=${partner.id}`}
-												title={partner.name}
+												title={`Ver perfil de ${partner.name}`}
 											>
-												{partner.name}
+												{partner.name.charAt(0)}
 											</Link>
-											<span className="truncate font-mono text-[9px] text-muted-foreground sm:text-[10px]">
-												{partner.department}
-											</span>
+											<div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+												<Link
+													className="truncate font-bold font-display text-xs uppercase hover:text-primary hover:underline"
+													href={`/profile?id=${partner.id}`}
+													title={partner.name}
+												>
+													{partner.name}
+												</Link>
+												<span className="truncate font-mono text-[9px] text-muted-foreground sm:text-[10px]">
+													{partner.department}
+												</span>
+											</div>
 										</div>
-									</div>
 
-									<PopWhatsAppButton
-										className="shrink-0"
-										label="WHATSAPP"
-										message={zapMsg}
-										phone={partner.whatsapp}
-									/>
-								</div>
-							);
-						})}
+										<PopWhatsAppButton
+											className="shrink-0"
+											label="WHATSAPP"
+											message={zapMsg}
+											phone={partner.whatsapp}
+										/>
+									</div>
+								);
+							})
+						)}
 					</div>
 				</div>
 
@@ -207,7 +224,9 @@ export const PairCard = memo(function PairCardRender({ pair }: PairCardProps) {
 			<div className="space-y-2 border-border/10 border-t-2 pt-3 sm:space-y-2.5 sm:pt-3.5">
 				<div className="flex items-center justify-between font-mono text-[10px] sm:text-[11px]">
 					<span className="font-bold text-muted-foreground uppercase">
-						PROGRESSO DA DUPLA
+						{partners.length === 0
+							? "PROGRESSO INDIVIDUAL"
+							: "PROGRESSO DA DUPLA"}
 					</span>
 					<span className="font-black text-foreground">
 						ETAPA {currentStep} DE 3
