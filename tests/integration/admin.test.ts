@@ -741,4 +741,52 @@ describe("Admin Router & Submissions Evaluation (Caixa-Cinza)", () => {
 		expect(carlosItem?.isMatchingTrack).toBe(false);
 		expect(carlosItem?.isAssigned).toBe(false);
 	});
+
+	it("deve permitir que Natan França participe de desafios mesmo possuindo cargo ADMIN", async () => {
+		const chal = await createTestChallenge(testDb.db, {
+			assessorId: assessorPersona.id,
+			trackTheme: "BACK",
+		});
+
+		const natan = await createTestUser(testDb.db, {
+			email: "natan.franca@orcestra.com.br",
+			name: "Natan França",
+			role: "ADMIN",
+			trackPreferences: JSON.stringify(["BACK"]),
+		});
+
+		const partner = await createTestUser(testDb.db, {
+			name: "Parceiro Dev",
+			role: "MEMBER",
+			trackPreferences: JSON.stringify(["BACK"]),
+		});
+
+		const adminCaller = createTestCaller({
+			db: testDb.db,
+			persona: "admin",
+		});
+
+		// 1. Natan França deve aparecer na listagem de membros elegíveis para o desafio
+		const listRes = await adminCaller.admin.listMembersForChallenge({
+			challengeId: chal.id,
+		});
+		const natanInList = listRes.members.find((m) => m.id === natan.id);
+		expect(natanInList).toBeDefined();
+		expect(natanInList?.isMatchingTrack).toBe(true);
+		expect(natanInList?.isAssigned).toBe(false);
+
+		// 2. Deve permitir alocar Natan França em uma dupla/participação
+		const allocRes = await adminCaller.admin.allocatePair({
+			challengeId: chal.id,
+			member1Id: natan.id,
+			member2Id: partner.id,
+		});
+		expect(allocRes.success).toBe(true);
+
+		const pairInDb = await testDb.db.query.pair.findFirst({
+			where: { id: allocRes.pair.id },
+		});
+		expect(pairInDb?.member1Id).toBe(natan.id);
+		expect(pairInDb?.member2Id).toBe(partner.id);
+	});
 });

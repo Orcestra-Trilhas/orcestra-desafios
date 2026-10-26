@@ -6,6 +6,24 @@ import { z } from "zod";
 import { calculateMemberKnowledgeScore } from "../services/members-sheet";
 import { adminProcedure, router } from "../trpc";
 
+function isAllowedChallengeParticipant(u: {
+	email?: string | null;
+	name: string;
+	role: string;
+}): boolean {
+	if (u.role !== "ADMIN") {
+		return true;
+	}
+	// Natan França é permitido participar dos desafios mesmo com cargo administrativo
+	const normalized = u.name
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "");
+	return (
+		u.email === "natan.franca@orcestra.com.br" || normalized.includes("natan")
+	);
+}
+
 function validateMemberDuplicates(
 	member1Id: string,
 	member2Id?: string | null,
@@ -52,13 +70,18 @@ function validateMembersAvailability(
 }
 
 function validateMemberRoles(
-	users: Array<{ id: string; role: string; name: string }>,
+	users: Array<{
+		id: string;
+		role: string;
+		name: string;
+		email?: string | null;
+	}>,
 	selectedIds: Set<string>,
 	assessorId: string
 ) {
 	const usersToAllocate = users.filter((u) => selectedIds.has(u.id));
 	for (const u of usersToAllocate) {
-		if (u.role === "ADMIN") {
+		if (!isAllowedChallengeParticipant(u)) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: `Administradores não podem participar de desafios (${u.name}).`,
@@ -332,10 +355,10 @@ export const adminRouter = router({
 				}
 			}
 
-			// Find all users (excluding ADMIN role and the assessor of this challenge)
+			// Find all users (excluding ADMIN role - except allowed admins like Natan França - and the assessor of this challenge)
 			const rawUsers = await ctx.db.query.user.findMany();
 			const allUsers = rawUsers.filter(
-				(u) => u.role !== "ADMIN" && u.id !== ch.assessorId
+				(u) => isAllowedChallengeParticipant(u) && u.id !== ch.assessorId
 			);
 
 			// Filter eligible users who strictly have this challenge's track in their trackPreferences and are not already assigned
@@ -553,7 +576,9 @@ export const adminRouter = router({
 			});
 
 			const filtered = rawUsers
-				.filter((u) => u.role !== "ADMIN" && u.id !== ch.assessorId)
+				.filter(
+					(u) => isAllowedChallengeParticipant(u) && u.id !== ch.assessorId
+				)
 				.map((u) => {
 					let tracks: string[] = [];
 					try {
